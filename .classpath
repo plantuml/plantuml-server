@@ -5,5 +5,5 @@
 	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v6.0"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/HTTPClient.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/plantuml.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="output" path="WEB-INF/classes"/>
 </classpath>
