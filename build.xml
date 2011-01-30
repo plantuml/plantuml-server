@@ -1,0 +1,32 @@
+<project default="main" basedir=".">
+
+	<property name="tomcat-home" value="/tomcat" />
+
+	<path id="project-classpath">
+		<fileset dir="WEB-INF/lib" includes="*.jar" />
+		<fileset dir="${tomcat-home}/lib" includes="*.jar" />
+	</path>
+
+	<target name="main" depends="clean,compile,war">
+	</target>
+
+	<target name="clean">
+		<delete file="plantuml.war" />
+		<delete dir="WEB-INF/classes" />
+		<mkdir dir="WEB-INF/classes" />
+	</target>
+
+	<target name="compile">
+		<javac srcdir="WEB-INF/src" destdir="WEB-INF/classes" classpathref="project-classpath" />
+	</target>
+
+	<target name="war">
+		<war destfile="plantuml.war"
+			webxml="WEB-INF/web.xml">
+			<classes dir="WEB-INF/classes" />
+			<fileset file="favicon.ico" />
+			<lib dir="WEB-INF/lib" />
+		</war>
+	</target>
+
+</project>
