@@ -5,11 +5,36 @@
         <servlet-name>plantumlservlet</servlet-name>
         <servlet-class>net.sourceforge.plantuml.servlet.PlantUmlServlet</servlet-class>
     </servlet>
+    <!-- Patterns of the servlet -->
     <servlet-mapping>
         <servlet-name>plantumlservlet</servlet-name>
         <url-pattern>/uml/*</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>plantumlservlet</servlet-name>
+        <url-pattern>/form</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>plantumlservlet</servlet-name>
+        <url-pattern>/img/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>plantumlservlet</servlet-name>
+        <url-pattern>/start/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>plantumlservlet</servlet-name>
+        <url-pattern>/proxy/*</url-pattern>
+    </servlet-mapping>
     <welcome-file-list>
-    	<welcome-file>uml</welcome-file>
-    </welcome-file-list>    
+    	<welcome-file>/index.jsp</welcome-file>
+    </welcome-file-list>
+    <error-page>
+        <exception-type>java.lang.Throwable</exception-type>
+        <location>/error.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/error.jsp</location>
+    </error-page>
 </web-app>

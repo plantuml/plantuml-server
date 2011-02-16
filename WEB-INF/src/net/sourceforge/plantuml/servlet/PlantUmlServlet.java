@@ -1,21 +1,23 @@
 package net.sourceforge.plantuml.servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sourceforge.plantuml.SourceStringReader;
+import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.code.Transcoder;
 import net.sourceforge.plantuml.code.TranscoderUtil;
+
 import HTTPClient.CookieModule;
 import HTTPClient.HTTPConnection;
 import HTTPClient.HTTPResponse;
@@ -32,15 +34,14 @@ import HTTPClient.ParseException;
  */
 public class PlantUmlServlet extends HttpServlet {
 
-	private static final Pattern startumlPattern = Pattern
-			.compile("/\\w+/uml/startuml/(.*)");
+	private static final Pattern startumlPattern = Pattern.compile("/\\w+/start/(.*)");
+	private static final Pattern imagePattern = Pattern.compile("/\\w+/img/(.*)");
+	private static final Pattern proxyPattern = Pattern.compile("/\\w+/proxy/((\\d+)/)?(http://.*)");
+	private static final Pattern oldStartumlPattern = Pattern.compile("/\\w+/uml/startuml/(.*)");
+	private static final Pattern oldImagePattern = Pattern.compile("/\\w+/uml/image/(.*)");
+	private static final Pattern oldProxyPattern = Pattern.compile("/\\w+/uml/proxy/((\\d+)/)?(http://.*)");
 
-	private static final Pattern imagePattern = Pattern
-			.compile("/\\w+/uml/image/(.*)");
-
-	private static final Pattern proxyPattern = Pattern
-			.compile("/\\w+/uml/proxy/((\\d+)/)?(http://.*)");
-
+	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 
@@ -48,7 +49,9 @@ public class PlantUmlServlet extends HttpServlet {
 		Matcher startumlMatcher = startumlPattern.matcher(uri);
 		Matcher imageMatcher = imagePattern.matcher(uri);
 		Matcher proxyMatcher = proxyPattern.matcher(uri);
-
+		Matcher oldStartumlMatcher = oldStartumlPattern.matcher(uri);
+		Matcher oldImageMatcher = oldImagePattern.matcher(uri);
+		Matcher oldProxyMatcher = oldProxyPattern.matcher(uri);
 		if (startumlMatcher.matches()) {
 			String source = startumlMatcher.group(1);
 			handleImage(response, source);
@@ -59,79 +62,51 @@ public class PlantUmlServlet extends HttpServlet {
 			String num = proxyMatcher.group(2);
 			String source = proxyMatcher.group(3);
 			handleImageProxy(response, num, source);
+		} else if (oldStartumlMatcher.matches()) {
+			String source = oldStartumlMatcher.group(1);
+			handleImage(response, source);
+		} else if (oldImageMatcher.matches()) {
+			String source = oldImageMatcher.group(1);
+			handleImageDecompress(response, source);
+		} else if (oldProxyMatcher.matches()) {
+			String num = oldProxyMatcher.group(2);
+			String source = oldProxyMatcher.group(3);
+			handleImageProxy(response, num, source);
 		} else {
 			doPost(request, response);
 		}
 	}
 
 	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse resp)
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
-		PrintWriter writer = resp.getWriter();
-		writer.print("<html>");
-		writer.print("<head>");
-		writer
-				.print("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />");
-		writer.print("<meta http-equiv=\"expires\" content=\"0\">");
-		writer.print("<meta http-equiv=\"pragma\" content=\"no-cache\">");
-		writer
-				.print("<meta http-equiv=\"cache-control\" content=\"no-cache, must-revalidate\">");
-		writer
-				.print("<link rel=\"SHORTCUT ICON\" href=\"/plantuml/favicon.ico\">");
-		writer.print("</head>");
-		writer.print("<body>");
-		writer
-				.print("<h1>PlantUMLServer</h1><p>This application provides a servlet which serves images createdby <a href=\"http://plantuml.sourceforge.net\">PlantUML</a>.</p>");
 
 		String text = request.getParameter("text");
 		String url = request.getParameter("url");
-		String encode = "";
+		String encoded = "";
 
 		Transcoder transcoder = getTranscoder();
-		if (url != null) {
+		// the URL form has been submitted
+		if ((url != null) && (!url.trim().isEmpty())) {
+			// TODO Verify the url is correct
 			Pattern p = Pattern.compile(".*/(.*)");
 			Matcher m = p.matcher(url);
 			if (m.find()) {
 				url = m.group(1);
+				text = transcoder.decode(url);
 			}
-			text = transcoder.decode(url);
 		}
-		writer
-				.print("<form method=post action=\"/plantuml/uml/post\"><textarea name=\"text\" cols=\"120\" rows=\"10\">");
-		if (text != null) {
-			encode = transcoder.encode(text);
-			writer.print(text);
+		// the Text form has been submitted
+		if ((text != null) && (!text.trim().isEmpty())) {
+			encoded = transcoder.encode(text);
 		}
-		writer.print("</textarea><br><input type=\"submit\"></form>");
-		writer.print("<hr>");
-		writer.print("You can enter here a previously generated URL:<p>");
 
-		String host = "http://" + request.getServerName() + ":"
-				+ request.getServerPort();
-		String total = host + "/plantuml/uml/image/" + encode;
-
-		writer
-				.print("<form method=\"post\" action=\"/plantuml/uml/post\"><input name=\"url\" type=\"text\" size=\"150\" value=\""
-						+ total + "\">");
-		writer.print("<br><input type=\"submit\"></form>");
-
-		if (text != null) {
-			writer.print("<hr>");
-			writer.print("You can use the following URL:<p>");
-
-			String urlPart = "\"" + total + "\"";
-			writer.print("<a href=" + urlPart + " >");
-			writer.print("<code>");
-			writer.print("&lt;img src=" + urlPart + " &gt;");
-			writer.print("</code></a><p>");
-
-			writer.print("<a href=" + urlPart + " >");
-			writer.print("<img src=\"/plantuml/uml/image/" + encode + "\" >");
-			writer.print("</a>");
-		}
-		writer.print("</body></html>");
-		writer.flush();
+		request.setAttribute("net.sourceforge.plantuml.servlet.decoded", text);
+		request.setAttribute("net.sourceforge.plantuml.servlet.encoded", encoded);
+		
+		// forward to index.jsp
+		RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
+		dispatcher.forward(request, response);
 	}
 
 	private Transcoder getTranscoder() {
@@ -162,8 +137,7 @@ public class PlantUmlServlet extends HttpServlet {
 
 	private void handleImageProxy(HttpServletResponse response, String num,
 			String source) throws IOException {
-		String s = getContent(source);
-		SourceStringReader reader = new SourceStringReader(s);
+		SourceStringReader reader = new SourceStringReader( getContent(source));
 		int n = num == null ? 0 : Integer.parseInt(num);
 		// Write the first image to "os"
 		reader.generateImage(response.getOutputStream(), n);
@@ -175,16 +149,18 @@ public class PlantUmlServlet extends HttpServlet {
 		plantUmlSource.append("@startuml\n");
 		plantUmlSource.append(text);
 		plantUmlSource.append("\n@enduml");
-
-		SourceStringReader reader = new SourceStringReader(plantUmlSource
-				.toString());
+		final String uml = plantUmlSource.toString();
+		SourceStringReader reader = new SourceStringReader(uml);
 		// Write the first image to "os"
 		long today = System.currentTimeMillis();
-		response.addDateHeader("Expires", today + 31536000000L);
-		// today + 1 year
-		response.addDateHeader("Last-Modified", 1261440000000L);
-		// 2009 dec 22 constant date in the past
-		response.addHeader("Cache-Control", "public");
+		if ( StringUtils.isDiagramCacheable( uml)) {
+			// Add http headers to force the browser to cache the image
+			response.addDateHeader("Expires", today + 31536000000L);
+			// today + 1 year
+			response.addDateHeader("Last-Modified", 1261440000000L);
+			// 2009 dec 22 constant date in the past
+			response.addHeader("Cache-Control", "public");
+		}
 		response.setContentType("image/png");
 		reader.generateImage(response.getOutputStream());
 

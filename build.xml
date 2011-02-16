@@ -1,14 +1,18 @@
 <project default="main" basedir=".">
 
-	<property name="tomcat-home" value="/tomcat" />
-
-	<path id="project-classpath">
-		<fileset dir="WEB-INF/lib" includes="*.jar" />
-		<fileset dir="${tomcat-home}/lib" includes="*.jar" />
-	</path>
-
 	<target name="main" depends="clean,compile,war">
 	</target>
+
+    <target name="init">
+    	<!-- overwrite with your own values in a user.property file -->
+    	<property file="user.property" />
+        <property name="tomcat-home" value="/tomcat" />
+        <property name="debug" value="false" />
+        <path id="project-classpath">
+            <fileset dir="WEB-INF/lib" includes="*.jar" />
+            <fileset dir="${tomcat-home}/lib" includes="*.jar" />
+        </path>
+    </target>
 
 	<target name="clean">
 		<delete file="plantuml.war" />
@@ -16,17 +20,21 @@
 		<mkdir dir="WEB-INF/classes" />
 	</target>
 
-	<target name="compile">
-		<javac srcdir="WEB-INF/src" destdir="WEB-INF/classes" classpathref="project-classpath" />
+	<target name="compile" depends="init">
+		<javac srcdir="WEB-INF/src" destdir="WEB-INF/classes" debug="${debug}" classpathref="project-classpath" />
 	</target>
 
 	<target name="war">
 		<war destfile="plantuml.war"
 			webxml="WEB-INF/web.xml">
 			<classes dir="WEB-INF/classes" />
-			<fileset file="favicon.ico" />
+			<fileset dir="content" />
 			<lib dir="WEB-INF/lib" />
 		</war>
 	</target>
+
+    <target name="deploy" depends="main">
+        <copy file="plantuml.war" todir="${tomcat-home}/webapps" overwrite="true" />
+    </target>
 
 </project>
