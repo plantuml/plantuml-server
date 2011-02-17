@@ -6,35 +6,36 @@
     <target name="init">
     	<!-- overwrite with your own values in a user.property file -->
     	<property file="user.property" />
-        <property name="tomcat-home" value="/tomcat" />
+        <property name="target" value="." description="Target directory of the build"/>
+        <property name="tomcat-home" value="/tomcat" description="Home directory of Tomcat"/>
         <property name="debug" value="false" />
         <path id="project-classpath">
-            <fileset dir="WEB-INF/lib" includes="*.jar" />
+            <fileset dir="content/WEB-INF/lib" includes="*.jar" />
             <fileset dir="${tomcat-home}/lib" includes="*.jar" />
         </path>
     </target>
 
-	<target name="clean">
-		<delete file="plantuml.war" />
-		<delete dir="WEB-INF/classes" />
-		<mkdir dir="WEB-INF/classes" />
+	<target name="clean" depends="init">
+		<delete file="${target}/plantuml.war" />
+	    <mkdir dir="${target}" />
+		<delete dir="content/WEB-INF/classes" />
+		<mkdir dir="content/WEB-INF/classes" />
 	</target>
 
 	<target name="compile" depends="init">
-		<javac srcdir="WEB-INF/src" destdir="WEB-INF/classes" debug="${debug}" classpathref="project-classpath" />
+		<javac srcdir="src" destdir="content/WEB-INF/classes" debug="${debug}" classpathref="project-classpath" />
 	</target>
 
 	<target name="war">
-		<war destfile="plantuml.war"
-			webxml="WEB-INF/web.xml">
-			<classes dir="WEB-INF/classes" />
-			<fileset dir="content" />
-			<lib dir="WEB-INF/lib" />
+		<war destfile="${target}/plantuml.war" webxml="content/WEB-INF/web.xml">
+			<classes dir="content/WEB-INF/classes" />
+			<fileset dir="content" excludes="WEB-INF/**"/>
+			<lib dir="content/WEB-INF/lib" />
 		</war>
 	</target>
 
     <target name="deploy" depends="main">
-        <copy file="plantuml.war" todir="${tomcat-home}/webapps" overwrite="true" />
+        <copy file="${target}/plantuml.war" todir="${tomcat-home}/webapps" overwrite="true" />
     </target>
 
 </project>
