@@ -27,7 +27,7 @@
         <url-pattern>/proxy/*</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
-    	<welcome-file>/index.jsp</welcome-file>
+    	<welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
     <error-page>
         <exception-type>java.lang.Throwable</exception-type>
