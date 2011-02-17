@@ -148,7 +148,10 @@ public class PlantUmlServlet extends HttpServlet {
 		StringBuilder plantUmlSource = new StringBuilder();
 		plantUmlSource.append("@startuml\n");
 		plantUmlSource.append(text);
-		plantUmlSource.append("\n@enduml");
+        if (text.endsWith("\n") == false) {
+            plantUmlSource.append("\n");
+        }
+        plantUmlSource.append("@enduml");
 		final String uml = plantUmlSource.toString();
 		SourceStringReader reader = new SourceStringReader(uml);
 		// Write the first image to "os"
