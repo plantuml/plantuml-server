@@ -2,6 +2,11 @@
 * PlantUMLServlet style sheet *
 ******************************/
 
+/* Font */
+* {
+    font-family: sans-serif;
+}
+
 /* Header */
 #header {
     margin-left: auto;
@@ -9,12 +14,27 @@
     text-align: center;
 }
 
+/* Content */
+#content {
+    margin-left: auto;
+    margin-right: auto;
+    width: 95%;    
+}
+
 /* Form inputs */
 #content textarea, #content input[type=text] {
-    width: 900px;
+    background-color: #ffc;
+    font-family: monospace;
+    width: 100%;
+}
+
+/* XHTML tag */
+#content code {
+    font-family: monospace;
 }
 
 /* Diagram */
 #content img#diagram {
-    border: thin solid green;
+    border: medium solid green;
+    padding: 10px;
 }
