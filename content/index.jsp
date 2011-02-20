@@ -42,7 +42,7 @@ if (decodedAttribute == null) {
 </div>
 <div id="content">
     <%-- CONTENT --%>
-    <form method="post" action="<%=contextRoot %>/form">
+    <form method="post" accept-charset="UTF-8"  action="<%=contextRoot %>/form">
         <p>
             <textarea name="text" cols="120" rows="10"><%=umltext %></textarea>
             <br/>

@@ -17,7 +17,6 @@ import net.sourceforge.plantuml.SourceStringReader;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.code.Transcoder;
 import net.sourceforge.plantuml.code.TranscoderUtil;
-
 import HTTPClient.CookieModule;
 import HTTPClient.HTTPConnection;
 import HTTPClient.HTTPResponse;
@@ -54,33 +53,35 @@ public class PlantUmlServlet extends HttpServlet {
 		Matcher oldProxyMatcher = oldProxyPattern.matcher(uri);
 		if (startumlMatcher.matches()) {
 			String source = startumlMatcher.group(1);
-			handleImage(response, source);
+			handleImage(response, source, uri);
 		} else if (imageMatcher.matches()) {
 			String source = imageMatcher.group(1);
-			handleImageDecompress(response, source);
+			handleImageDecompress(response, source, uri);
 		} else if (proxyMatcher.matches()) {
 			String num = proxyMatcher.group(2);
 			String source = proxyMatcher.group(3);
-			handleImageProxy(response, num, source);
+			handleImageProxy(response, num, source, uri);
 		} else if (oldStartumlMatcher.matches()) {
 			String source = oldStartumlMatcher.group(1);
-			handleImage(response, source);
+			handleImage(response, source, uri);
 		} else if (oldImageMatcher.matches()) {
 			String source = oldImageMatcher.group(1);
-			handleImageDecompress(response, source);
+			handleImageDecompress(response, source, uri);
 		} else if (oldProxyMatcher.matches()) {
 			String num = oldProxyMatcher.group(2);
 			String source = oldProxyMatcher.group(3);
-			handleImageProxy(response, num, source);
+			handleImageProxy(response, num, source, uri);
 		} else {
 			doPost(request, response);
 		}
 	}
 
+
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
+		request.setCharacterEncoding("UTF-8");
 		String text = request.getParameter("text");
 		String url = request.getParameter("url");
 		String encoded = "";
@@ -113,7 +114,7 @@ public class PlantUmlServlet extends HttpServlet {
 		return TranscoderUtil.getDefaultTranscoder();
 	}
 
-	private void handleImage(HttpServletResponse response, String source)
+	private void handleImage(HttpServletResponse response, String source, String uri)
 			throws IOException {
 		source = URLDecoder.decode(source, "UTF-8");
 		StringBuilder plantUmlSource = new StringBuilder();
@@ -123,27 +124,27 @@ public class PlantUmlServlet extends HttpServlet {
 			String token = tokenizer.nextToken();
 			plantUmlSource.append(token).append("\n");
 		}
-		sendImage(response, plantUmlSource.toString());
+		sendImage(response, plantUmlSource.toString(), uri);
 
 	}
 
 	private void handleImageDecompress(HttpServletResponse response,
-			String source) throws IOException {
+			String source, String uri) throws IOException {
 		source = URLDecoder.decode(source, "UTF-8");
 		Transcoder transcoder = getTranscoder();
 		String text2 = transcoder.decode(source);
-		sendImage(response, text2);
+		sendImage(response, text2, uri);
 	}
 
 	private void handleImageProxy(HttpServletResponse response, String num,
-			String source) throws IOException {
+			String source, String uri) throws IOException {
 		SourceStringReader reader = new SourceStringReader( getContent(source));
 		int n = num == null ? 0 : Integer.parseInt(num);
 		// Write the first image to "os"
 		reader.generateImage(response.getOutputStream(), n);
 	}
 
-	private void sendImage(HttpServletResponse response, String text)
+	private void sendImage(HttpServletResponse response, String text, String uri)
 			throws IOException {
 		StringBuilder plantUmlSource = new StringBuilder();
 		plantUmlSource.append("@startuml\n");
@@ -153,7 +154,6 @@ public class PlantUmlServlet extends HttpServlet {
         }
         plantUmlSource.append("@enduml");
 		final String uml = plantUmlSource.toString();
-		SourceStringReader reader = new SourceStringReader(uml);
 		// Write the first image to "os"
 		long today = System.currentTimeMillis();
 		if ( StringUtils.isDiagramCacheable( uml)) {
@@ -165,11 +165,11 @@ public class PlantUmlServlet extends HttpServlet {
 			response.addHeader("Cache-Control", "public");
 		}
 		response.setContentType("image/png");
+		SourceStringReader reader = new SourceStringReader(uml);
 		reader.generateImage(response.getOutputStream());
-
 		response.flushBuffer();
 	}
-
+	
 	public String getContent(String adress) throws IOException {
 		// HTTPConnection.setProxyServer("proxy", 8080);
 		CookieModule.setCookiePolicyHandler(null);
