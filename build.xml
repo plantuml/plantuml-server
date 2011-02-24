@@ -3,21 +3,36 @@
 	<target name="main" depends="clean,compile,war">
 	</target>
 
+    <taskdef name="junit"
+        classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
+        <classpath>
+            <pathelement location="test/lib/junit-3.8.1.jar" />
+        </classpath>
+    </taskdef>
+
+    
     <target name="init">
     	<!-- overwrite with your own values in a user.property file -->
     	<property file="user.property" />
-        <property name="target" value="." description="Target directory of the build"/>
+        <property name="target" value="dist" description="Target directory of the build"/>
         <property name="tomcat-home" value="/tomcat" description="Home directory of Tomcat"/>
         <property name="debug" value="false" />
+        <mkdir dir="${target}" />
         <path id="project-classpath">
             <fileset dir="content/WEB-INF/lib" includes="*.jar" />
             <fileset dir="${tomcat-home}/lib" includes="*.jar" />
+        </path>
+        <path id="test-classpath">
+            <fileset dir="test/lib" includes="*.jar" />
+            <pathelement location="${target}"/>
         </path>
     </target>
 
 	<target name="clean" depends="init">
 		<delete file="${target}/plantuml.war" />
-	    <mkdir dir="${target}" />
+	    <delete>
+	        <fileset dir="${target}" includes="**/*.class"/>
+	      </delete>
 		<delete dir="content/WEB-INF/classes" />
 		<mkdir dir="content/WEB-INF/classes" />
 	</target>
@@ -36,6 +51,20 @@
 
     <target name="deploy" depends="main">
         <copy file="${target}/plantuml.war" todir="${tomcat-home}/webapps" overwrite="true" />
+    </target>
+
+    <target name="test" depends="init">
+        <echo>
+            WARN - Test execution requires an running PlantUMLServer.
+        </echo>
+        <javac srcdir="test/src" destdir="${target}" debug="${debug}" classpathref="test-classpath" />
+        <junit showoutput="true" >
+            <classpath>
+                <path refid="test-classpath"/>
+            </classpath>
+            <formatter type="plain" usefile="false" />
+            <test name="net.sourceforge.plantuml.servlet.AllTests"/>
+        </junit>
     </target>
 
 </project>

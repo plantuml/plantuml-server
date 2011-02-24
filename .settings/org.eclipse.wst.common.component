@@ -3,6 +3,7 @@
     <wb-module deploy-name="plantumlservlet">
         <wb-resource deploy-path="/" source-path="/content"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/test/src"/>
         <property name="java-output-path" value="/plantumlservlet/WEB-INF/classes"/>
         <property name="context-root" value="plantuml"/>
     </wb-module>
