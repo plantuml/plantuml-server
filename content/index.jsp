@@ -14,10 +14,12 @@ if (encodedAttribute != null) {
 	}
 }
 Object decodedAttribute = request.getAttribute("net.sourceforge.plantuml.servlet.decoded");
-if (decodedAttribute == null) {
+/*if (decodedAttribute == null) {
 	umltext = "Bob -> Alice : hello";
     imgurl = host + contextRoot + "/img/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000";
-} else {
+} else {    */
+
+if (decodedAttribute != null) {
 	umltext = decodedAttribute.toString();
 }
 %>
