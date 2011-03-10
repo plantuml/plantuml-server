@@ -170,7 +170,7 @@ public class PlantUmlServlet extends HttpServlet {
 		response.flushBuffer();
 	}
 	
-	public String getContent(String adress) throws IOException {
+	private String getContent(String adress) throws IOException {
 		// HTTPConnection.setProxyServer("proxy", 8080);
 		CookieModule.setCookiePolicyHandler(null);
 
