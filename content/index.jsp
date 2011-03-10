@@ -1,4 +1,4 @@
-<%@ page info="index" contentType="text/html; charset=utf-8" pageEncoding="utf-8" %>
+<%@ page info="index" contentType="text/html; charset=utf-8" pageEncoding="utf-8" session="false" %>
 
 <%
 String contextRoot = request.getContextPath();
