@@ -1,4 +1,4 @@
-<%@ page isErrorPage="true" contentType="text/html; charset=utf-8" pageEncoding="utf-8" %>
+<%@ page isErrorPage="true" contentType="text/html; charset=utf-8" pageEncoding="utf-8" session="false" %>
 <%
 String contextRoot = request.getContextPath();
 %>
