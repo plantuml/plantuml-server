@@ -1,4 +1,4 @@
-<%@ page info="index" contentType="text/html; charset=utf-8" pageEncoding="utf-8" %>
+<%@ page info="index" contentType="text/html; charset=utf-8" pageEncoding="utf-8" session="false" %>
 
 <%
 String contextRoot = request.getContextPath();
@@ -14,10 +14,7 @@ if (encodedAttribute != null) {
 	}
 }
 Object decodedAttribute = request.getAttribute("net.sourceforge.plantuml.servlet.decoded");
-if (decodedAttribute == null) {
-	umltext = "Bob -> Alice : hello";
-    imgurl = host + contextRoot + "/img/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000";
-} else {
+if (decodedAttribute != null) {
 	umltext = decodedAttribute.toString();
 }
 %>
@@ -68,7 +65,11 @@ if (decodedAttribute == null) {
     </p>
     <% } //endif %>
 </div>
-
+<!-- This comment is used by the TestProxy class  
+@startuml
+Bob -> Alice : hello
+@enduml
+-->
 <%-- FOOTER 
 <%@ include file="util/footer.jspf" %> --%>
 </body>

@@ -73,7 +73,7 @@ public class TestForm extends TestCase {
     public void testEmptyUrl() throws Exception {
         WebConversation conversation = new WebConversation();
         // Fill the form and submit it
-        WebRequest request = new GetMethodWebRequest( "http://localhost/plantuml/" );
+        WebRequest request = new GetMethodWebRequest( TestUtils.getServerUrl() );
         WebResponse response = TestUtils.tryGetResponse(conversation, request );
         WebForm formUrl = response.getForms()[1];
         formUrl.setParameter("url", "");
@@ -82,11 +82,11 @@ public class TestForm extends TestCase {
         WebForm forms[] = response.getForms();
         assertEquals( 2, forms.length );
         // Ensure the Text field is empty
-        assertTrue( forms[0].getParameterValue("text").startsWith("Bob"));
-        // Ensure the URL field is correct
-        assertTrue( forms[1].getParameterValue("url").endsWith("/img/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000"));
-        // Ensure the image is present
-        assertEquals( 1, response.getImages().length);
+        assertNull( forms[0].getParameterValue("text"));
+        // Ensure the URL field is empty
+        assertTrue( forms[1].getParameterValue("url").isEmpty());
+        // Ensure there is no image
+        assertEquals( 0, response.getImages().length);
     }
 
 }
