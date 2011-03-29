@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sourceforge.plantuml.FileFormat;
+import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.code.Transcoder;
@@ -166,7 +168,7 @@ public class PlantUmlServlet extends HttpServlet {
 		}
 		response.setContentType("image/png");
 		SourceStringReader reader = new SourceStringReader(uml);
-		reader.generateImage(response.getOutputStream());
+		reader.generateImage(response.getOutputStream(), new FileFormatOption(FileFormat.PNG));
 		response.flushBuffer();
 	}
 	
