@@ -4,7 +4,7 @@
 
 /* Font */
 * {
-    font-family: sans-serif;
+    font-family: arial,helvetica,sans-serif;
 }
 
 /* Header */
@@ -30,11 +30,26 @@
 
 /* XHTML tag */
 #content code {
-    font-family: monospace;
+    font-family: 'courier new',courier,monospace;
+    letter-spacing: -1pt;
 }
 
 /* Diagram */
-#content img#diagram {
+#content #diagram {
+    text-align: center;
+}
+
+#content #diagram img {
     border: medium solid green;
     padding: 10px;
+}
+
+/* Footer */
+#footer p {
+    background-color: #eee;
+    color: #666;
+    font-size: 0.7em;
+    padding: 2px;
+    text-align: center;
+    width: 100%;
 }

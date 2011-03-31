@@ -34,7 +34,7 @@ if (decodedAttribute != null) {
 <body>
 <div id="header">
     <%-- PAGE TITLE --%>
-    <h1>PlantUMLServer</h1>
+    <h1>PlantUML Server</h1>
     <p>This application provides a servlet which serves images created by <a href="http://plantuml.sourceforge.net">PlantUML</a>.</p>
 </div>
 <div id="content">
@@ -60,8 +60,9 @@ if (decodedAttribute != null) {
     <p>You can use the following URL:
         <br/>
         <a href="<%=imgurl %>"><code>&lt;img src="<%=imgurl %>" /&gt;</code></a>
-        <br/><br/>
-        <img id="diagram" src="<%=imgurl %>" alt="PlantUML diagram"/>
+    </p>
+    <p id="diagram">
+        <img src="<%=imgurl %>" alt="PlantUML diagram"/>
     </p>
     <% } //endif %>
 </div>
@@ -70,7 +71,7 @@ if (decodedAttribute != null) {
 Bob -> Alice : hello
 @enduml
 -->
-<%-- FOOTER 
-<%@ include file="util/footer.jspf" %> --%>
+<%-- FOOTER --%>
+<%@ include file="footer.jspf" %> 
 </body>
 </html>
