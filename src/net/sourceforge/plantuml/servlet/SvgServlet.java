@@ -27,7 +27,7 @@ import net.sourceforge.plantuml.FileFormat;
 
 /* 
  * SVG servlet of the webapp.
- * TODO.
+ * This servlet produces the UML diagram in SVG format.
  */
 @SuppressWarnings("serial")
 public class SvgServlet extends UmlDiagramService {
@@ -43,7 +43,7 @@ public class SvgServlet extends UmlDiagramService {
     }
 
     @Override
-    FileFormat getOutputFormat() {
+    public FileFormat getOutputFormat() {
         return FileFormat.SVG;
     }
 

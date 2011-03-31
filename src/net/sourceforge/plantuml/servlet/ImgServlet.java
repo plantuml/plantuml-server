@@ -43,7 +43,7 @@ public class ImgServlet extends UmlDiagramService {
     }
 
     @Override
-    FileFormat getOutputFormat() {
+    public FileFormat getOutputFormat() {
         return FileFormat.PNG;
     }
 

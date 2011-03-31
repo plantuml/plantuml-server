@@ -60,7 +60,6 @@ import HTTPClient.ParseException;
 public class PlantUmlServlet extends HttpServlet {
 
 	private static final Pattern startumlPattern = Pattern.compile("/\\w+/start/(.*)");
-	private static final Pattern imagePattern = Pattern.compile("/\\w+/img/(.*)");
 	private static final Pattern proxyPattern = Pattern.compile("/\\w+/proxy/((\\d+)/)?(http://.*)");
 	private static final Pattern oldStartumlPattern = Pattern.compile("/\\w+/uml/startuml/(.*)");
 	private static final Pattern oldImagePattern = Pattern.compile("/\\w+/uml/image/(.*)");
@@ -72,7 +71,6 @@ public class PlantUmlServlet extends HttpServlet {
 
 		final String uri = request.getRequestURI();
 		Matcher startumlMatcher = startumlPattern.matcher(uri);
-		Matcher imageMatcher = imagePattern.matcher(uri);
 		Matcher proxyMatcher = proxyPattern.matcher(uri);
 		Matcher oldStartumlMatcher = oldStartumlPattern.matcher(uri);
 		Matcher oldImageMatcher = oldImagePattern.matcher(uri);
@@ -80,9 +78,6 @@ public class PlantUmlServlet extends HttpServlet {
 		if (startumlMatcher.matches()) {
 			String source = startumlMatcher.group(1);
 			handleImage(response, source, uri);
-		} else if (imageMatcher.matches()) {
-			String source = imageMatcher.group(1);
-			handleImageDecompress(response, source, uri);
 		} else if (proxyMatcher.matches()) {
 			String num = proxyMatcher.group(2);
 			String source = proxyMatcher.group(3);

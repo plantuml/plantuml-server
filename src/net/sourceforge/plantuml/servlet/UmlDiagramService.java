@@ -36,7 +36,8 @@ import net.sourceforge.plantuml.code.Transcoder;
 import net.sourceforge.plantuml.code.TranscoderUtil;
 
 /**
- * Common service servlet to produce diagram from compressed UML source.
+ * Common service servlet to produce diagram from compressed UML source
+ * contained in the end part of the requested URI.
  */
 @SuppressWarnings("serial")
 public abstract class UmlDiagramService extends HttpServlet {
@@ -45,7 +46,7 @@ public abstract class UmlDiagramService extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
 
-        // build the uml source from the compressed request parameter
+        // build the UML source from the compressed request parameter
         String text = URLDecoder.decode( getSource( request.getRequestURI()), "UTF-8");
         Transcoder transcoder = getTranscoder();
         text = transcoder.decode(text);
@@ -76,7 +77,7 @@ public abstract class UmlDiagramService extends HttpServlet {
      * This value is used by the DiagramResponse class. 
      * @return the format
      */
-    abstract FileFormat getOutputFormat();
+    abstract public FileFormat getOutputFormat();
     
     private Transcoder getTranscoder() {
         return TranscoderUtil.getDefaultTranscoder();
