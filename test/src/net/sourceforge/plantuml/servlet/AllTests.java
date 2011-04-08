@@ -10,6 +10,7 @@ public class AllTests extends TestSuite {
         //$JUnit-BEGIN$
         suite.addTestSuite(TestForm.class);
         suite.addTestSuite(TestImage.class);
+        suite.addTestSuite(TestAsciiArt.class);
         suite.addTestSuite(TestProxy.class);
         //$JUnit-END$
         return suite;
