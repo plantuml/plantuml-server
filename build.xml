@@ -32,7 +32,8 @@
 		<delete file="${target}/plantuml.war" />
 	    <delete>
 	        <fileset dir="${target}" includes="**/*.class"/>
-	      </delete>
+	    </delete>
+        <delete dir="${target}/root" />
 		<delete dir="content/WEB-INF/classes" />
 		<mkdir dir="content/WEB-INF/classes" />
 	</target>
