@@ -167,14 +167,19 @@ public class PlantUmlServlet extends HttpServlet {
 
 	private void sendImage(HttpServletResponse response, String text, String uri)
 			throws IOException {
-		StringBuilder plantUmlSource = new StringBuilder();
-		plantUmlSource.append("@startuml\n");
-		plantUmlSource.append(text);
-        if (text.endsWith("\n") == false) {
-            plantUmlSource.append("\n");
-        }
-        plantUmlSource.append("@enduml");
-		final String uml = plantUmlSource.toString();
+		final String uml;
+		if (text.startsWith("@startuml")) {
+			uml = text;
+		} else {
+			StringBuilder plantUmlSource = new StringBuilder();
+			plantUmlSource.append("@startuml\n");
+			plantUmlSource.append(text);
+			if (text.endsWith("\n") == false) {
+				plantUmlSource.append("\n");
+			}
+			plantUmlSource.append("@enduml");
+			uml = plantUmlSource.toString();
+		}
 		// Write the first image to "os"
 		long today = System.currentTimeMillis();
 		if ( StringUtils.isDiagramCacheable( uml)) {
