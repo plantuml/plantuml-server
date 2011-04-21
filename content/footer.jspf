@@ -1,4 +1,5 @@
+
 <div id="footer">
-  <p>PlantUML Server @timestamp@
+  <p>PlantUML Server @timestamp@ / version <%= net.sourceforge.plantuml.version.Version.version() %>
   </p>
 </div>

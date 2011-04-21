@@ -6,11 +6,15 @@ String host = "http://" + request.getServerName() + ":" + request.getServerPort(
 String encoded = "";
 String umltext = "";
 String imgurl = "";
+String svgurl = "";
+String txturl = "";
 Object encodedAttribute = request.getAttribute("net.sourceforge.plantuml.servlet.encoded");
 if (encodedAttribute != null) {
     encoded = encodedAttribute.toString();
     if (!encoded.isEmpty()) {
 	    imgurl = host + contextRoot + "/img/" + encoded;
+	    svgurl = host + contextRoot + "/svg/" + encoded;
+	    txturl = host + contextRoot + "/txt/" + encoded;
 	}
 }
 Object decodedAttribute = request.getAttribute("net.sourceforge.plantuml.servlet.decoded");
@@ -57,10 +61,8 @@ if (decodedAttribute != null) {
     </form>
     <% if ( !imgurl.isEmpty()) { %>
     <hr/>
-    <p>You can use the following URL:
-        <br/>
-        <a href="<%=imgurl %>"><code>&lt;img src="<%=imgurl %>" /&gt;</code></a>
-    </p>
+    <a href="<%=svgurl%>"/>View as SVG</a>&nbsp;
+    <a href="<%=txturl%>"/>View as ASCII Art</a>
     <p id="diagram">
         <img src="<%=imgurl %>" alt="PlantUML diagram"/>
     </p>
