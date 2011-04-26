@@ -61,8 +61,8 @@ if (decodedAttribute != null) {
     </form>
     <% if ( !imgurl.isEmpty()) { %>
     <hr/>
-    <a href="<%=svgurl%>"/>View as SVG</a>&nbsp;
-    <a href="<%=txturl%>"/>View as ASCII Art</a>
+    <a href="<%=svgurl%>">View as SVG</a>&nbsp;
+    <a href="<%=txturl%>">View as ASCII Art</a>
     <p id="diagram">
         <img src="<%=imgurl %>" alt="PlantUML diagram"/>
     </p>
