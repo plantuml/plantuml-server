@@ -47,21 +47,28 @@ public abstract class UmlDiagramService extends HttpServlet {
             throws IOException, ServletException {
 
         // build the UML source from the compressed request parameter
-        String text = URLDecoder.decode( getSource( request.getRequestURI()), "UTF-8");
+        String text = URLDecoder.decode( getSource(request.getRequestURI()), "UTF-8");
         Transcoder transcoder = getTranscoder();
         text = transcoder.decode(text);
-        StringBuilder plantUmlSource = new StringBuilder();
-        plantUmlSource.append("@startuml\n");
-        plantUmlSource.append( text);
-        if (text.endsWith("\n") == false) {
-            plantUmlSource.append("\n");
+        
+        // encapsulate the UML syntax if necessary 
+        String uml;
+        if (text.startsWith("@start")) {
+            uml = text;
+        } else {
+            StringBuilder plantUmlSource = new StringBuilder();
+            plantUmlSource.append( "@startuml\n");
+            plantUmlSource.append( text);
+            if (text.endsWith( "\n") == false) {
+                plantUmlSource.append( "\n");
+            }
+            plantUmlSource.append( "@enduml");
+            uml = plantUmlSource.toString();
         }
-        plantUmlSource.append("@enduml");
-        final String uml = plantUmlSource.toString();
 
         // generate the response
         DiagramResponse dr = new DiagramResponse( response, getOutputFormat());
-        dr.sendDiagram( uml);
+        dr.sendDiagram(uml);
         dr = null;
     }
     

@@ -68,7 +68,7 @@ public class TestForm extends TestCase {
     }
         
     /**
-     * Verifies that when the encoded URL is empty, the default image is generated
+     * Verifies that when the encoded URL is empty, no image is generated
      */
     public void testEmptyUrl() throws Exception {
         WebConversation conversation = new WebConversation();
@@ -87,6 +87,28 @@ public class TestForm extends TestCase {
         assertTrue( forms[1].getParameterValue("url").isEmpty());
         // Ensure there is no image
         assertEquals( 0, response.getImages().length);
+    }
+    
+    /**
+     * Verifies that a ditaa diagram is generated
+     */
+    public void testDitaaText() throws Exception {
+        WebConversation conversation = new WebConversation();
+        // Fill the form and submit it
+        WebRequest request = new GetMethodWebRequest( TestUtils.getServerUrl() );
+        WebResponse response = TestUtils.tryGetResponse(conversation, request );
+        WebForm formDitaaText = response.getForms()[0];
+        formDitaaText.setParameter("text", "@startditaa \n*--> \n@endditaa");
+        response = formDitaaText.submit();
+        // Analyze response
+        WebForm forms[] = response.getForms();
+        assertEquals( 2, forms.length );
+        // Ensure the Text field is correct
+        assertTrue( forms[0].getParameterValue("text").startsWith( "@startditaa"));
+        // Ensure the URL field is correct
+        assertTrue( forms[1].getParameterValue("url").endsWith("/img/SoWkIImgISaiIKnKuDBIrRLJu798pKi12m00"));
+        // Ensure the image is present
+        assertEquals( 1, response.getImages().length);
     }
 
 }
