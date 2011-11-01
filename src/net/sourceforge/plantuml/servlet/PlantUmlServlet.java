@@ -3,7 +3,7 @@
  * ========================================================================
  *
  * Project Info:  http://plantuml.sourceforge.net
- * 
+ *
  * This file is part of PlantUML.
  *
  * PlantUML is free software; you can redistribute it and/or modify it
@@ -48,22 +48,23 @@ import HTTPClient.HTTPResponse;
 import HTTPClient.ModuleException;
 import HTTPClient.ParseException;
 
-/* 
+/*
  * Original idea from Achim Abeling for Confluence macro
  * See http://www.banapple.de/display/BANAPPLE/plantuml+user+macro
- * 
+ *
  * Modified by Arnaud Roques
+ * Modified by Pablo Lalloni
  * Packaged by Maxime Sinclair
- * 
+ *
  */
 @SuppressWarnings("serial")
 public class PlantUmlServlet extends HttpServlet {
 
 	private static final Pattern startumlPattern = Pattern.compile("/\\w+/start/(.*)");
-	private static final Pattern proxyPattern = Pattern.compile("/\\w+/proxy/((\\d+)/)?(http://.*)");
+    private static final Pattern proxyPattern = Pattern.compile("/\\w+/proxy/((\\d+)/)?((\\w+)/)?(http://.*)");
 	private static final Pattern oldStartumlPattern = Pattern.compile("/\\w+/uml/startuml/(.*)");
 	private static final Pattern oldImagePattern = Pattern.compile("/\\w+/uml/image/(.*)");
-	private static final Pattern oldProxyPattern = Pattern.compile("/\\w+/uml/proxy/((\\d+)/)?(http://.*)");
+    private static final Pattern oldProxyPattern = Pattern.compile("/\\w+/uml/proxy/((\\d+)/)?((\\w+)/)?(http://.*)");
 
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -80,8 +81,9 @@ public class PlantUmlServlet extends HttpServlet {
 			handleImage(response, source, uri);
 		} else if (proxyMatcher.matches()) {
 			String num = proxyMatcher.group(2);
-			String source = proxyMatcher.group(3);
-			handleImageProxy(response, num, source, uri);
+            String format = proxyMatcher.group(4);
+            String source = proxyMatcher.group(5);
+            handleImageProxy(response, num, source, format, uri);
 		} else if (oldStartumlMatcher.matches()) {
 			String source = oldStartumlMatcher.group(1);
 			handleImage(response, source, uri);
@@ -90,8 +92,9 @@ public class PlantUmlServlet extends HttpServlet {
 			handleImageDecompress(response, source, uri);
 		} else if (oldProxyMatcher.matches()) {
 			String num = oldProxyMatcher.group(2);
-			String source = oldProxyMatcher.group(3);
-			handleImageProxy(response, num, source, uri);
+            String format = oldProxyMatcher.group(4);
+            String source = oldProxyMatcher.group(5);
+            handleImageProxy(response, num, source, format, uri);
 		} else {
 			doPost(request, response);
 		}
@@ -109,7 +112,7 @@ public class PlantUmlServlet extends HttpServlet {
 
 		Transcoder transcoder = getTranscoder();
 		// the URL form has been submitted
-		if ((url != null) && (!url.trim().isEmpty())) {
+		if (url != null && !url.trim().isEmpty()) {
 			// TODO Verify the url is correct
 			Pattern p = Pattern.compile(".*/(.*)");
 			Matcher m = p.matcher(url);
@@ -119,13 +122,13 @@ public class PlantUmlServlet extends HttpServlet {
 			}
 		}
 		// the Text form has been submitted
-		if ((text != null) && (!text.trim().isEmpty())) {
+		if (text != null && !text.trim().isEmpty()) {
 			encoded = transcoder.encode(text);
 		}
 
 		request.setAttribute("net.sourceforge.plantuml.servlet.decoded", text);
 		request.setAttribute("net.sourceforge.plantuml.servlet.encoded", encoded);
-		
+
 		// forward to index.jsp
 		RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
 		dispatcher.forward(request, response);
@@ -158,11 +161,15 @@ public class PlantUmlServlet extends HttpServlet {
 	}
 
 	private void handleImageProxy(HttpServletResponse response, String num,
-			String source, String uri) throws IOException {
+            String source, String format, String uri) throws IOException {
 		SourceStringReader reader = new SourceStringReader( getContent(source));
 		int n = num == null ? 0 : Integer.parseInt(num);
-		// Write the first image to "os"
-		reader.generateImage(response.getOutputStream(), n);
+        // Write the requested image to "os"
+        if (format != null) {
+            reader.generateImage(response.getOutputStream(), n, new FileFormatOption(FileFormat.valueOf(format)));
+        } else {
+            reader.generateImage(response.getOutputStream(), n);
+        }
 	}
 
 	private void sendImage(HttpServletResponse response, String text, String uri)
@@ -195,7 +202,7 @@ public class PlantUmlServlet extends HttpServlet {
 		reader.generateImage(response.getOutputStream(), new FileFormatOption(FileFormat.PNG));
 		response.flushBuffer();
 	}
-	
+
 	private String getContent(String adress) throws IOException {
 		// HTTPConnection.setProxyServer("proxy", 8080);
 		CookieModule.setCookiePolicyHandler(null);
