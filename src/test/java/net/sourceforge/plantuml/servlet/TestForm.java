@@ -1,19 +1,22 @@
 package net.sourceforge.plantuml.servlet;
 
-import junit.framework.TestCase;
-import com.meterware.httpunit.*;
+import com.meterware.httpunit.GetMethodWebRequest;
+import com.meterware.httpunit.WebConversation;
+import com.meterware.httpunit.WebForm;
+import com.meterware.httpunit.WebRequest;
+import com.meterware.httpunit.WebResponse;
 
-public class TestForm extends TestCase {
-	
+public class TestForm extends WebappTestCase {
+
 	/**
 	 * Verifies that the welcome page has exactly two form
 	 * with the Bob --> Alice sample
 	 */
     public void testWelcomePage() throws Exception {
         WebConversation conversation = new WebConversation();
-	    WebRequest request = new GetMethodWebRequest( TestUtils.getServerUrl());
+        WebRequest request = new GetMethodWebRequest(getServerUrl());
 	    WebResponse response = TestUtils.tryGetResponse(conversation, request );
-        // Analyze response  
+        // Analyze response
 	    WebForm forms[] = response.getForms();
 	    assertEquals( 2, forms.length );
         assertEquals( "url", forms[1].getParameterNames()[0] );
@@ -29,7 +32,7 @@ public class TestForm extends TestCase {
     public void testVersion() throws Exception {
         WebConversation conversation = new WebConversation();
         // Fill the form and submit it
-        WebRequest request = new GetMethodWebRequest( TestUtils.getServerUrl());
+        WebRequest request = new GetMethodWebRequest(getServerUrl());
         WebResponse response = TestUtils.tryGetResponse(conversation, request );
         WebForm formUMLText = response.getForms()[0];
         formUMLText.setParameter("text", "version");
@@ -51,7 +54,7 @@ public class TestForm extends TestCase {
     public void testEmptyText() throws Exception {
         WebConversation conversation = new WebConversation();
         // Fill the form and submit it
-        WebRequest request = new GetMethodWebRequest( TestUtils.getServerUrl());
+        WebRequest request = new GetMethodWebRequest(getServerUrl());
         WebResponse response = TestUtils.tryGetResponse(conversation, request );
         WebForm formUMLText = response.getForms()[0];
         formUMLText.setParameter("text", "");
@@ -66,14 +69,14 @@ public class TestForm extends TestCase {
         // Ensure there is no image
         assertEquals( 0, response.getImages().length);
     }
-        
+
     /**
      * Verifies that when the encoded URL is empty, no image is generated
      */
     public void testEmptyUrl() throws Exception {
         WebConversation conversation = new WebConversation();
         // Fill the form and submit it
-        WebRequest request = new GetMethodWebRequest( TestUtils.getServerUrl() );
+        WebRequest request = new GetMethodWebRequest(getServerUrl());
         WebResponse response = TestUtils.tryGetResponse(conversation, request );
         WebForm formUrl = response.getForms()[1];
         formUrl.setParameter("url", "");
@@ -88,14 +91,14 @@ public class TestForm extends TestCase {
         // Ensure there is no image
         assertEquals( 0, response.getImages().length);
     }
-    
+
     /**
      * Verifies that a ditaa diagram is generated
      */
     public void testDitaaText() throws Exception {
         WebConversation conversation = new WebConversation();
         // Fill the form and submit it
-        WebRequest request = new GetMethodWebRequest( TestUtils.getServerUrl() );
+        WebRequest request = new GetMethodWebRequest(getServerUrl());
         WebResponse response = TestUtils.tryGetResponse(conversation, request );
         WebForm formDitaaText = response.getForms()[0];
         formDitaaText.setParameter("text", "@startditaa \n*--> \n@endditaa");

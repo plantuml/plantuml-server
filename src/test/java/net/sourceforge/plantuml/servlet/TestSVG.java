@@ -1,19 +1,17 @@
 package net.sourceforge.plantuml.servlet;
 
-import junit.framework.TestCase;
-import com.meterware.httpunit.*;
+import com.meterware.httpunit.GetMethodWebRequest;
+import com.meterware.httpunit.WebConversation;
+import com.meterware.httpunit.WebRequest;
+import com.meterware.httpunit.WebResponse;
 
-import java.util.Date;
-import java.util.Locale;
-import java.text.SimpleDateFormat;
-
-public class TestSVG extends TestCase {
+public class TestSVG extends WebappTestCase {
     /**
      * Verifies the generation of the SVG for the Bob -> Alice sample
      */
     public void testSimpleSequenceDiagram() throws Exception {
         WebConversation conversation = new WebConversation();
-        WebRequest request = new GetMethodWebRequest( TestUtils.getServerUrl()+"svg/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000");
+        WebRequest request = new GetMethodWebRequest(getServerUrl() + "svg/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000");
         WebResponse response = conversation.getResource( request);
         // Analyze response
         // Verifies the Content-Type header
@@ -22,7 +20,7 @@ public class TestSVG extends TestCase {
         String diagram = response.getText();
         int diagramLen = diagram.length();
         assertTrue( diagramLen > 1700);
-        assertTrue( diagramLen < 1800); 
+        assertTrue( diagramLen < 1800);
     }
 
 }

@@ -1,26 +1,28 @@
 package net.sourceforge.plantuml.servlet;
 
-import junit.framework.TestCase;
-import com.meterware.httpunit.*;
-
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.text.SimpleDateFormat;
 
-public class TestImage extends TestCase {
+import com.meterware.httpunit.GetMethodWebRequest;
+import com.meterware.httpunit.WebConversation;
+import com.meterware.httpunit.WebRequest;
+import com.meterware.httpunit.WebResponse;
+
+public class TestImage extends WebappTestCase {
     /**
      * Verifies the generation of the version image from an encoded URL
      */
     public void testVersionImage() throws Exception {
         WebConversation conversation = new WebConversation();
-        WebRequest request = new GetMethodWebRequest( TestUtils.getServerUrl()+"img/AqijAixCpmC0");
+        WebRequest request = new GetMethodWebRequest(getServerUrl() + "img/AqijAixCpmC0");
         WebResponse response = conversation.getResource( request);
         // Analyze response
         // Verifies the Content-Type header
         assertEquals( "Response content type is not PNG", "image/png", response.getContentType());
-        // Get the image and verify its size 
+        // Get the image and verify its size
         InputStream responseStream = response.getInputStream();
         ByteArrayOutputStream imageStream = new ByteArrayOutputStream();
         byte[] buf = new byte[1024];
@@ -33,7 +35,7 @@ public class TestImage extends TestCase {
         byte[] inMemoryImage = imageStream.toByteArray();
         int diagramLen = inMemoryImage.length;
         assertTrue( diagramLen > 10000);
-        assertTrue( diagramLen < 20000); 
+        assertTrue( diagramLen < 20000);
     }
 
     /**
@@ -41,8 +43,8 @@ public class TestImage extends TestCase {
      */
     public void testDiagramHttpHeader() throws Exception {
         WebConversation conversation = new WebConversation();
-        // Bob -> Alice : hello 
-        WebRequest request = new GetMethodWebRequest( TestUtils.getServerUrl()+"img/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000");
+        // Bob -> Alice : hello
+        WebRequest request = new GetMethodWebRequest(getServerUrl() + "img/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000");
         WebResponse response = conversation.getResource( request);
         // Analyze response
         // Verifies the Content-Type header

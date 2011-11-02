@@ -1,19 +1,22 @@
 package net.sourceforge.plantuml.servlet;
 
-import junit.framework.TestCase;
-import com.meterware.httpunit.*;
-
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
-public class TestProxy extends TestCase {
+import com.meterware.httpunit.GetMethodWebRequest;
+import com.meterware.httpunit.WebConversation;
+import com.meterware.httpunit.WebForm;
+import com.meterware.httpunit.WebRequest;
+import com.meterware.httpunit.WebResponse;
+
+public class TestProxy extends WebappTestCase {
     /**
      * Verifies the proxified reception of the default Bob and Alice diagram
      */
     public void testDefaultProxy() throws Exception {
         WebConversation conversation = new WebConversation();
-        WebRequest request = new GetMethodWebRequest( TestUtils.getServerUrl()+"proxy/"
-                +TestUtils.getServerUrl()+"welcome");
+        WebRequest request = new GetMethodWebRequest(getServerUrl() + "proxy/"
+                + getServerUrl() + "welcome");
         WebResponse response = conversation.getResource( request);
         // Analyze response
         // Verifies the Content-Type header
@@ -31,7 +34,7 @@ public class TestProxy extends TestCase {
         byte[] inMemoryImage = imageStream.toByteArray();
         int diagramLen = inMemoryImage.length;
         assertTrue( diagramLen > 1500);
-        assertTrue( diagramLen < 1600); 
+        assertTrue( diagramLen < 1600);
     }
 
     /**
@@ -39,8 +42,8 @@ public class TestProxy extends TestCase {
      */
     public void testInvalidUrl() throws Exception {
         WebConversation conversation = new WebConversation();
-        // Try to proxify an invalid address 
-        WebRequest request = new GetMethodWebRequest( TestUtils.getServerUrl()+"proxy/invalidURL");
+        // Try to proxify an invalid address
+        WebRequest request = new GetMethodWebRequest(getServerUrl() + "proxy/invalidURL");
         WebResponse response = conversation.getResource( request);
         // Analyze response, it must be the empty form
         // Verifies the Content-Type header

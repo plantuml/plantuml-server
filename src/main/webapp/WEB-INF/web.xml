@@ -24,7 +24,7 @@
     <!-- Patterns of the servlet -->
     <servlet-mapping>
         <servlet-name>welcome</servlet-name>
-        <url-pattern>/welcome</url-pattern>
+        <url-pattern>/</url-pattern>
     </servlet-mapping>    
     <servlet-mapping>
         <servlet-name>plantumlservlet</servlet-name>
@@ -54,9 +54,6 @@
         <servlet-name>plantumlservlet</servlet-name>
         <url-pattern>/proxy/*</url-pattern>
     </servlet-mapping>
-    <welcome-file-list>
-    	<welcome-file>welcome</welcome-file>
-    </welcome-file-list>
     <error-page>
         <exception-type>java.lang.Throwable</exception-type>
         <location>/error.jsp</location>
