@@ -52,6 +52,9 @@ import HTTPClient.ParseException;
  * Original idea from Achim Abeling for Confluence macro
  * See http://www.banapple.de/display/BANAPPLE/plantuml+user+macro
  *
+ * This class is the old all-in-one historic implementation of the PlantUml server.
+ * See package.html for the new design. It's a work in progress.
+ * 
  * Modified by Arnaud Roques
  * Modified by Pablo Lalloni
  * Packaged by Maxime Sinclair
@@ -164,14 +167,23 @@ public class PlantUmlServlet extends HttpServlet {
             String source, String format, String uri) throws IOException {
 		SourceStringReader reader = new SourceStringReader( getContent(source));
 		int n = num == null ? 0 : Integer.parseInt(num);
-        // Write the requested image to "os"
-        if (format != null) {
-            reader.generateImage(response.getOutputStream(), n, new FileFormatOption(FileFormat.valueOf(format)));
-        } else {
-            reader.generateImage(response.getOutputStream(), n);
-        }
+        
+        reader.generateImage(response.getOutputStream(), n, getFormat(format));
 	}
-
+	
+	private FileFormatOption getFormat(String f) {
+	    if (f==null) {
+	        return new FileFormatOption(FileFormat.PNG);
+	    }
+	    if (f.equals("svg")) {
+	        return new FileFormatOption(FileFormat.SVG);
+	    }
+        if (f.equals("txt")) {
+            return new FileFormatOption(FileFormat.ATXT);
+        }
+	    return new FileFormatOption(FileFormat.PNG);
+	}
+	
 	private void sendImage(HttpServletResponse response, String text, String uri)
 			throws IOException {
 		final String uml;

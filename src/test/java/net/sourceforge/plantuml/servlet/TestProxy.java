@@ -37,6 +37,21 @@ public class TestProxy extends WebappTestCase {
         assertTrue( diagramLen < 1700);
     }
 
+    public void testProxyWithFormat() throws Exception {
+        WebConversation conversation = new WebConversation();
+        WebRequest request = new GetMethodWebRequest(getServerUrl() + "proxy/svg/"
+                + getServerUrl() + "welcome");
+        WebResponse response = conversation.getResource( request);
+        // Analyze response
+        // Verifies the Content-Type header
+        // TODO assertEquals( "Response content type is not SVG", "image/svg+xml", response.getContentType());
+        // Get the content and verify its size
+        String diagram = response.getText();
+        int diagramLen = diagram.length();
+        assertTrue( diagramLen > 1700);
+        assertTrue( diagramLen < 1800);
+    }
+
     /**
      * Verifies that the HTTP header of a diagram incites the browser to cache it.
      */
