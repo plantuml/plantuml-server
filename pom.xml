@@ -64,7 +64,7 @@
 		<dependency>
 			<groupId>net.sourceforge.plantuml</groupId>
 			<artifactId>plantuml</artifactId>
-			<version>7481</version>
+			<version>7500</version>
 		</dependency>
 		<dependency>
 			<groupId>HTTPClient</groupId>
