@@ -34,10 +34,29 @@
 					</webApp>
 				</configuration>
 			</plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.1.1</version>
+        <configuration>
+          <webResources>
+            <resource>
+              <directory>src/main/webapp</directory>
+              <includes>
+                <include>*.jspf</include>
+              </includes>
+              <filtering>true</filtering>
+            </resource>
+          </webResources>
+        </configuration>
+      </plugin>
 		</plugins>
+
 	</build>
 	<properties>
 		<jetty.version>8.0.4.v20111024</jetty.version>
+    <maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
+    <timestamp>${maven.build.timestamp}</timestamp>
 	</properties>
 	<dependencies>
 		<dependency>
