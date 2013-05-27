@@ -135,6 +135,7 @@ public class PlantUmlServlet extends HttpServlet {
 		// forward to index.jsp
 		RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
 		dispatcher.forward(request, response);
+		return;
 	}
 
 	private Transcoder getTranscoder() {

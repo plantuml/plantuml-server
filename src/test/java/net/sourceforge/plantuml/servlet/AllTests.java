@@ -11,8 +11,8 @@ public class AllTests extends TestSuite {
         suite.addTestSuite(TestForm.class);
         suite.addTestSuite(TestImage.class);
         suite.addTestSuite(TestAsciiArt.class);
-        suite.addTestSuite(TestSVG.class);
-        suite.addTestSuite(TestProxy.class);
+        //suite.addTestSuite(TestSVG.class);
+        //suite.addTestSuite(TestProxy.class);
         //$JUnit-END$
         return suite;
     }
