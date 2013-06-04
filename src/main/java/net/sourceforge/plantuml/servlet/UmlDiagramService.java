@@ -68,7 +68,11 @@ public abstract class UmlDiagramService extends HttpServlet {
 
         // generate the response
         DiagramResponse dr = new DiagramResponse( response, getOutputFormat());
-        dr.sendDiagram(uml);
+        try {
+            dr.sendDiagram(uml);
+        } catch (IOException ioe) {
+            // Browser has closed the connection, do nothing 
+        }
         dr = null;
     }
     
