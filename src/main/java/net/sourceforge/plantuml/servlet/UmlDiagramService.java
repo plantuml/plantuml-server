@@ -24,6 +24,7 @@
 package net.sourceforge.plantuml.servlet;
 
 import java.io.IOException;
+import javax.imageio.IIOException;
 import java.net.URLDecoder;
 
 import javax.servlet.ServletException;
@@ -70,7 +71,7 @@ public abstract class UmlDiagramService extends HttpServlet {
         DiagramResponse dr = new DiagramResponse( response, getOutputFormat());
         try {
             dr.sendDiagram(uml);
-        } catch (IOException ioe) {
+        } catch (IIOException iioe) {
             // Browser has closed the connection, do nothing 
         }
         dr = null;
