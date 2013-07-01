@@ -31,11 +31,12 @@ public class TestImage extends WebappTestCase {
             imageStream.write( buf, 0, n);
         }
         imageStream.close();
-        responseStream.close();
         byte[] inMemoryImage = imageStream.toByteArray();
         int diagramLen = inMemoryImage.length;
         assertTrue( diagramLen > 10000);
         assertTrue( diagramLen < 20000);
+        Thread.sleep(500);
+        responseStream.close();
     }
 
     /**

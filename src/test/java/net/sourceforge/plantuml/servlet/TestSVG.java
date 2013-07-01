@@ -19,8 +19,8 @@ public class TestSVG extends WebappTestCase {
         // Get the content and verify its size
         String diagram = response.getText();
         int diagramLen = diagram.length();
-        assertTrue( diagramLen > 1700);
-        assertTrue( diagramLen < 1800);
+        assertTrue( diagramLen > 1000);
+        assertTrue( diagramLen < 3000);
     }
 
 }
