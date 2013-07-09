@@ -35,7 +35,6 @@ public class TestImage extends WebappTestCase {
         int diagramLen = inMemoryImage.length;
         assertTrue( diagramLen > 10000);
         assertTrue( diagramLen < 20000);
-        Thread.sleep(500);
         responseStream.close();
     }
 
@@ -58,5 +57,6 @@ public class TestImage extends WebappTestCase {
         SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss ZZZ", Locale.ENGLISH);
         Date lastModified = format.parse( response.getHeaderField( "Last-Modified"));
         assertTrue( "Last-Modified is not in the past", lastModified.before( new Date()));
+        Thread.sleep(500); // Time to receive the image
     }
 }
