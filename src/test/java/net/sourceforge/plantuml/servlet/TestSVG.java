@@ -14,32 +14,31 @@ public class TestSVG extends WebappTestCase {
     public void testSimpleSequenceDiagram() throws Exception {
         WebConversation conversation = new WebConversation();
         WebRequest request = new GetMethodWebRequest(getServerUrl() + "svg/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000");
-        WebResponse response = conversation.getResource( request);
+        WebResponse response = conversation.getResource(request);
         // Analyze response
         // Verifies the Content-Type header
-        assertEquals( "Response content type is not SVG", "image/svg+xml", response.getContentType());
+        assertEquals("Response content type is not SVG", "image/svg+xml", response.getContentType());
         // Get the content and verify its size
         String diagram = response.getText();
         int diagramLen = diagram.length();
-        assertTrue( diagramLen > 1000);
-        assertTrue( diagramLen < 3000);
+        assertTrue(diagramLen > 1000);
+        assertTrue(diagramLen < 3000);
     }
-    
+
     /**
      * Check the content of the SVG
      */
     public void testSequenceDiagramContent() throws Exception {
         WebConversation conversation = new WebConversation();
         WebRequest request = new GetMethodWebRequest(getServerUrl() + "svg/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000");
-        WebResponse response = conversation.getResource( request);
+        WebResponse response = conversation.getResource(request);
         // Analyze response
         // Get the data contained in the XML
         Scanner s = new Scanner(response.getInputStream()).useDelimiter("(<([^<>]+)>)+");
         String token;
         int bobCounter = 0, aliceCounter = 0;
-        while(s.hasNext()) {
+        while (s.hasNext()) {
             token = s.next();
-            System.out.println("Token : " + token);
             if (token.startsWith("Bob")) {
                 bobCounter++;
             }
