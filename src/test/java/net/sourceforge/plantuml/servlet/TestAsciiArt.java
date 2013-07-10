@@ -1,6 +1,5 @@
 package net.sourceforge.plantuml.servlet;
 
-
 import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.WebConversation;
 import com.meterware.httpunit.WebRequest;

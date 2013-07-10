@@ -35,10 +35,9 @@ import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
 import net.sourceforge.plantuml.StringUtils;
 
-/** 
- * Delegates the diagram generation from the UML source and
- * the filling of the HTTP response with the diagram in the right format.
- * Its own responsibility is to produce the right HTTP headers.
+/**
+ * Delegates the diagram generation from the UML source and the filling of the HTTP response with the diagram in the
+ * right format. Its own responsibility is to produce the right HTTP headers.
  */
 class DiagramResponse {
     private HttpServletResponse response;
@@ -52,31 +51,29 @@ class DiagramResponse {
         contentType = Collections.unmodifiableMap(map);
     }
 
-    DiagramResponse( HttpServletResponse r, FileFormat f) {
+    DiagramResponse(HttpServletResponse r, FileFormat f) {
         response = r;
         format = f;
     }
-    
-  
-    void sendDiagram( String uml) throws IOException {
+
+    void sendDiagram(String uml) throws IOException {
         long today = System.currentTimeMillis();
-        if ( StringUtils.isDiagramCacheable( uml)) {
+        if (StringUtils.isDiagramCacheable(uml)) {
             // Add http headers to force the browser to cache the image
-            response.addDateHeader( "Expires", today + 31536000000L);
+            response.addDateHeader("Expires", today + 31536000000L);
             // today + 1 year
-            response.addDateHeader( "Last-Modified", 1261440000000L);
+            response.addDateHeader("Last-Modified", 1261440000000L);
             // 2009 dec 22 constant date in the past
-            response.addHeader( "Cache-Control", "public");
+            response.addHeader("Cache-Control", "public");
         }
-        response.setContentType( getContentType());
-        SourceStringReader reader = new SourceStringReader( uml);
-        reader.generateImage( response.getOutputStream(), new FileFormatOption(format));
+        response.setContentType(getContentType());
+        SourceStringReader reader = new SourceStringReader(uml);
+        reader.generateImage(response.getOutputStream(), new FileFormatOption(format));
         response.flushBuffer();
     }
-    
+
     private String getContentType() {
-        return contentType.get( format);
+        return contentType.get(format);
     }
-    
 
 }

@@ -37,60 +37,60 @@ import net.sourceforge.plantuml.code.Transcoder;
 import net.sourceforge.plantuml.code.TranscoderUtil;
 
 /**
- * Common service servlet to produce diagram from compressed UML source
- * contained in the end part of the requested URI.
+ * Common service servlet to produce diagram from compressed UML source contained in the end part of the requested URI.
  */
 @SuppressWarnings("serial")
 public abstract class UmlDiagramService extends HttpServlet {
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         // build the UML source from the compressed request parameter
-        String text = URLDecoder.decode( getSource(request.getRequestURI()), "UTF-8");
+        String text = URLDecoder.decode(getSource(request.getRequestURI()), "UTF-8");
         Transcoder transcoder = getTranscoder();
         text = transcoder.decode(text);
-        
-        // encapsulate the UML syntax if necessary 
+
+        // encapsulate the UML syntax if necessary
         String uml;
         if (text.startsWith("@start")) {
             uml = text;
         } else {
             StringBuilder plantUmlSource = new StringBuilder();
-            plantUmlSource.append( "@startuml\n");
-            plantUmlSource.append( text);
-            if (text.endsWith( "\n") == false) {
-                plantUmlSource.append( "\n");
+            plantUmlSource.append("@startuml\n");
+            plantUmlSource.append(text);
+            if (text.endsWith("\n") == false) {
+                plantUmlSource.append("\n");
             }
-            plantUmlSource.append( "@enduml");
+            plantUmlSource.append("@enduml");
             uml = plantUmlSource.toString();
         }
 
         // generate the response
-        DiagramResponse dr = new DiagramResponse( response, getOutputFormat());
+        DiagramResponse dr = new DiagramResponse(response, getOutputFormat());
         try {
             dr.sendDiagram(uml);
         } catch (IIOException iioe) {
-            // Browser has closed the connection, do nothing 
+            // Browser has closed the connection, do nothing
         }
         dr = null;
     }
-    
+
     /**
      * Extracts the compressed UML source from the HTTP URI.
-     * @param uri the complete URI as returned by request.getRequestURI()
+     * 
+     * @param uri
+     *            the complete URI as returned by request.getRequestURI()
      * @return the compressed UML source
      */
-    abstract public String getSource( String uri);
-    
+    abstract public String getSource(String uri);
+
     /**
-     * Gives the wished output format of the diagram.
-     * This value is used by the DiagramResponse class. 
+     * Gives the wished output format of the diagram. This value is used by the DiagramResponse class.
+     * 
      * @return the format
      */
     abstract public FileFormat getOutputFormat();
-    
+
     private Transcoder getTranscoder() {
         return TranscoderUtil.getDefaultTranscoder();
     }

@@ -15,41 +15,39 @@ public class TestProxy extends WebappTestCase {
      */
     public void testDefaultProxy() throws Exception {
         WebConversation conversation = new WebConversation();
-        WebRequest request = new GetMethodWebRequest(getServerUrl() + "proxy/"
-                + getServerUrl() + "welcome");
-        WebResponse response = conversation.getResource( request);
+        WebRequest request = new GetMethodWebRequest(getServerUrl() + "proxy/" + getServerUrl() + "welcome");
+        WebResponse response = conversation.getResource(request);
         // Analyze response
         // Verifies the Content-Type header
-        //assertEquals( "Response content type is not PNG", "image/png", response.getContentType());
+        // assertEquals( "Response content type is not PNG", "image/png", response.getContentType());
         // Get the image and verify its size (~2000 bytes)
         InputStream responseStream = response.getInputStream();
         ByteArrayOutputStream imageStream = new ByteArrayOutputStream();
         byte[] buf = new byte[1024];
         int n = 0;
-        while( ( n = responseStream.read( buf)) != -1) {
-            imageStream.write( buf, 0, n);
+        while ((n = responseStream.read(buf)) != -1) {
+            imageStream.write(buf, 0, n);
         }
         imageStream.close();
         responseStream.close();
         byte[] inMemoryImage = imageStream.toByteArray();
         int diagramLen = inMemoryImage.length;
-        assertTrue( diagramLen > 1500);
-        assertTrue( diagramLen < 2500);
+        assertTrue(diagramLen > 1500);
+        assertTrue(diagramLen < 2500);
     }
 
     public void testProxyWithFormat() throws Exception {
         WebConversation conversation = new WebConversation();
-        WebRequest request = new GetMethodWebRequest(getServerUrl() + "proxy/svg/"
-                + getServerUrl() + "welcome");
-        WebResponse response = conversation.getResource( request);
+        WebRequest request = new GetMethodWebRequest(getServerUrl() + "proxy/svg/" + getServerUrl() + "welcome");
+        WebResponse response = conversation.getResource(request);
         // Analyze response
         // Verifies the Content-Type header
         // TODO assertEquals( "Response content type is not SVG", "image/svg+xml", response.getContentType());
         // Get the content and verify its size
         String diagram = response.getText();
         int diagramLen = diagram.length();
-        assertTrue( diagramLen > 1000);
-        assertTrue( diagramLen < 3000);
+        assertTrue(diagramLen > 1000);
+        assertTrue(diagramLen < 3000);
     }
 
     /**
@@ -59,11 +57,11 @@ public class TestProxy extends WebappTestCase {
         WebConversation conversation = new WebConversation();
         // Try to proxify an invalid address
         WebRequest request = new GetMethodWebRequest(getServerUrl() + "proxy/invalidURL");
-        WebResponse response = conversation.getResource( request);
+        WebResponse response = conversation.getResource(request);
         // Analyze response, it must be the empty form
         // Verifies the Content-Type header
-        assertEquals( "Response content type is not HTML", "text/html", response.getContentType());
+        assertEquals("Response content type is not HTML", "text/html", response.getContentType());
         WebForm forms[] = response.getForms();
-        assertEquals( 2, forms.length );
+        assertEquals(2, forms.length);
     }
 }

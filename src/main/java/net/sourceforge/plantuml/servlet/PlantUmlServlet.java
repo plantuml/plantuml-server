@@ -64,7 +64,8 @@ import HTTPClient.ParseException;
 public class PlantUmlServlet extends HttpServlet {
 
     private static final Pattern urlPattern = Pattern.compile(".*/(.*)"); // Last part of the URL
-    private static final Pattern encodedPattern = Pattern.compile("^[a-zA-Z0-9\\-\\_]+$"); // Format of a compressed diagram
+    private static final Pattern encodedPattern = Pattern.compile("^[a-zA-Z0-9\\-\\_]+$"); // Format of a compressed
+                                                                                           // diagram
     private static final Pattern startumlPattern = Pattern.compile("/\\w+/start/(.*)");
     private static final Pattern proxyPattern = Pattern.compile("/\\w+/proxy/((\\d+)/)?((\\w+)/)?(http://.*)");
     private static final Pattern oldStartumlPattern = Pattern.compile("/\\w+/uml/startuml/(.*)");

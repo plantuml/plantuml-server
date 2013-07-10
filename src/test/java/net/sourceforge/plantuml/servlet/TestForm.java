@@ -8,23 +8,22 @@ import com.meterware.httpunit.WebResponse;
 
 public class TestForm extends WebappTestCase {
 
-	/**
-	 * Verifies that the welcome page has exactly two form
-	 * with the Bob --> Alice sample
-	 */
+    /**
+     * Verifies that the welcome page has exactly two form with the Bob --> Alice sample
+     */
     public void testWelcomePage() throws Exception {
         WebConversation conversation = new WebConversation();
         WebRequest request = new GetMethodWebRequest(getServerUrl());
-	    WebResponse response = TestUtils.tryGetResponse(conversation, request );
+        WebResponse response = TestUtils.tryGetResponse(conversation, request);
         // Analyze response
-	    WebForm forms[] = response.getForms();
-	    assertEquals( 2, forms.length );
-        assertEquals( "url", forms[1].getParameterNames()[0] );
-        assertTrue( forms[1].getParameterValue("url").endsWith("/img/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000"));
+        WebForm forms[] = response.getForms();
+        assertEquals(2, forms.length);
+        assertEquals("url", forms[1].getParameterNames()[0]);
+        assertTrue(forms[1].getParameterValue("url").endsWith("/img/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000"));
         // Ensure the generated image is present
-        assertEquals( 1, response.getImages().length);
+        assertEquals(1, response.getImages().length);
 
-	}
+    }
 
     /**
      * Verifies that the version image is generated
@@ -33,19 +32,19 @@ public class TestForm extends WebappTestCase {
         WebConversation conversation = new WebConversation();
         // Fill the form and submit it
         WebRequest request = new GetMethodWebRequest(getServerUrl());
-        WebResponse response = TestUtils.tryGetResponse(conversation, request );
+        WebResponse response = TestUtils.tryGetResponse(conversation, request);
         WebForm formUMLText = response.getForms()[0];
         formUMLText.setParameter("text", "version");
         response = formUMLText.submit();
         // Analyze response
         WebForm forms[] = response.getForms();
-        assertEquals( 2, forms.length );
+        assertEquals(2, forms.length);
         // Ensure the Text field is correct
-        assertEquals( "version", forms[0].getParameterValue("text"));
+        assertEquals("version", forms[0].getParameterValue("text"));
         // Ensure the URL field is correct
-        assertTrue( forms[1].getParameterValue("url").endsWith("/img/AqijAixCpmC0"));
+        assertTrue(forms[1].getParameterValue("url").endsWith("/img/AqijAixCpmC0"));
         // Ensure the image is present
-        assertEquals( 1, response.getImages().length);
+        assertEquals(1, response.getImages().length);
     }
 
     /**
@@ -55,19 +54,19 @@ public class TestForm extends WebappTestCase {
         WebConversation conversation = new WebConversation();
         // Fill the form and submit it
         WebRequest request = new GetMethodWebRequest(getServerUrl());
-        WebResponse response = TestUtils.tryGetResponse(conversation, request );
+        WebResponse response = TestUtils.tryGetResponse(conversation, request);
         WebForm formUMLText = response.getForms()[0];
         formUMLText.setParameter("text", "");
         response = formUMLText.submit();
         // Analyze response
         WebForm forms[] = response.getForms();
-        assertEquals( 2, forms.length );
+        assertEquals(2, forms.length);
         // Ensure the Text field is empty
-        assertNull( forms[0].getParameterValue("text"));
+        assertNull(forms[0].getParameterValue("text"));
         // Ensure the URL field is empty
-        assertTrue( forms[1].getParameterValue("url").isEmpty());
+        assertTrue(forms[1].getParameterValue("url").isEmpty());
         // Ensure there is no image
-        assertEquals( 0, response.getImages().length);
+        assertEquals(0, response.getImages().length);
     }
 
     /**
@@ -77,19 +76,19 @@ public class TestForm extends WebappTestCase {
         WebConversation conversation = new WebConversation();
         // Fill the form and submit it
         WebRequest request = new GetMethodWebRequest(getServerUrl());
-        WebResponse response = TestUtils.tryGetResponse(conversation, request );
+        WebResponse response = TestUtils.tryGetResponse(conversation, request);
         WebForm formUrl = response.getForms()[1];
         formUrl.setParameter("url", "");
         response = formUrl.submit();
         // Analyze response
         WebForm forms[] = response.getForms();
-        assertEquals( 2, forms.length );
+        assertEquals(2, forms.length);
         // Ensure the Text field is empty
-        assertNull( forms[0].getParameterValue("text"));
+        assertNull(forms[0].getParameterValue("text"));
         // Ensure the URL field is empty
-        assertTrue( forms[1].getParameterValue("url").isEmpty());
+        assertTrue(forms[1].getParameterValue("url").isEmpty());
         // Ensure there is no image
-        assertEquals( 0, response.getImages().length);
+        assertEquals(0, response.getImages().length);
     }
 
     /**
@@ -99,19 +98,19 @@ public class TestForm extends WebappTestCase {
         WebConversation conversation = new WebConversation();
         // Fill the form and submit it
         WebRequest request = new GetMethodWebRequest(getServerUrl());
-        WebResponse response = TestUtils.tryGetResponse(conversation, request );
+        WebResponse response = TestUtils.tryGetResponse(conversation, request);
         WebForm formDitaaText = response.getForms()[0];
         formDitaaText.setParameter("text", "@startditaa \n*--> \n@endditaa");
         response = formDitaaText.submit();
         // Analyze response
         WebForm forms[] = response.getForms();
-        assertEquals( 2, forms.length );
+        assertEquals(2, forms.length);
         // Ensure the Text field is correct
-        assertTrue( forms[0].getParameterValue("text").startsWith( "@startditaa"));
+        assertTrue(forms[0].getParameterValue("text").startsWith("@startditaa"));
         // Ensure the URL field is correct
-        assertTrue( forms[1].getParameterValue("url").endsWith("/img/SoWkIImgISaiIKnKuDBIrRLJu798pKi12m00"));
+        assertTrue(forms[1].getParameterValue("url").endsWith("/img/SoWkIImgISaiIKnKuDBIrRLJu798pKi12m00"));
         // Ensure the image is present
-        assertEquals( 1, response.getImages().length);
+        assertEquals(1, response.getImages().length);
     }
 
 }

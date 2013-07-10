@@ -18,23 +18,23 @@ public class TestImage extends WebappTestCase {
     public void testVersionImage() throws Exception {
         WebConversation conversation = new WebConversation();
         WebRequest request = new GetMethodWebRequest(getServerUrl() + "img/AqijAixCpmC0");
-        WebResponse response = conversation.getResource( request);
+        WebResponse response = conversation.getResource(request);
         // Analyze response
         // Verifies the Content-Type header
-        assertEquals( "Response content type is not PNG", "image/png", response.getContentType());
+        assertEquals("Response content type is not PNG", "image/png", response.getContentType());
         // Get the image and verify its size
         InputStream responseStream = response.getInputStream();
         ByteArrayOutputStream imageStream = new ByteArrayOutputStream();
         byte[] buf = new byte[1024];
         int n = 0;
-        while( ( n = responseStream.read( buf)) != -1) {
-            imageStream.write( buf, 0, n);
+        while ((n = responseStream.read(buf)) != -1) {
+            imageStream.write(buf, 0, n);
         }
         imageStream.close();
         byte[] inMemoryImage = imageStream.toByteArray();
         int diagramLen = inMemoryImage.length;
-        assertTrue( diagramLen > 10000);
-        assertTrue( diagramLen < 20000);
+        assertTrue(diagramLen > 10000);
+        assertTrue(diagramLen < 20000);
         responseStream.close();
     }
 
@@ -45,21 +45,21 @@ public class TestImage extends WebappTestCase {
         WebConversation conversation = new WebConversation();
         // Bob -> Alice : hello
         WebRequest request = new GetMethodWebRequest(getServerUrl() + "img/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000");
-        WebResponse response = conversation.getResource( request);
+        WebResponse response = conversation.getResource(request);
         // Analyze response
         // Verifies the Content-Type header
-        assertEquals( "Response content type is not PNG", "image/png", response.getContentType());
+        assertEquals("Response content type is not PNG", "image/png", response.getContentType());
         // Verifies the availability of the Expires entry in the response header
-        assertNotNull( response.getHeaderField( "Expires"));
+        assertNotNull(response.getHeaderField("Expires"));
         // Verifies the availability of the Last-Modified entry in the response header
-        assertNotNull( response.getHeaderField( "Last-Modified"));
+        assertNotNull(response.getHeaderField("Last-Modified"));
         // Verifies the Last-Modified value is in the past
         SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss ZZZ", Locale.ENGLISH);
-        Date lastModified = format.parse( response.getHeaderField( "Last-Modified"));
-        assertTrue( "Last-Modified is not in the past", lastModified.before( new Date()));
+        Date lastModified = format.parse(response.getHeaderField("Last-Modified"));
+        assertTrue("Last-Modified is not in the past", lastModified.before(new Date()));
         // Consume the response
         InputStream responseStream = response.getInputStream();
-        while( responseStream.read() != -1) {
+        while (responseStream.read() != -1) {
             ; // Do nothing
         }
     }

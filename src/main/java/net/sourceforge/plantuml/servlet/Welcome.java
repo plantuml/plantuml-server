@@ -38,17 +38,16 @@ import javax.servlet.http.HttpServletResponse;
 @SuppressWarnings("serial")
 public class Welcome extends HttpServlet {
 
-	@Override
-	public void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws IOException, ServletException {
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
-	    // set the sample
+        // set the sample
         request.setAttribute("net.sourceforge.plantuml.servlet.decoded", "Bob -> Alice : hello");
         request.setAttribute("net.sourceforge.plantuml.servlet.encoded", "SyfFKj2rKt3CoKnELR1Io4ZDoSa70000");
-        
+
         // forward to index.jsp
         RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
         dispatcher.forward(request, response);
-	}
+    }
 
 }

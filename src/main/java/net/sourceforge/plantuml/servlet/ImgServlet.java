@@ -33,12 +33,12 @@ import net.sourceforge.plantuml.FileFormat;
 public class ImgServlet extends UmlDiagramService {
 
     @Override
-    public String getSource( String uri) {
+    public String getSource(String uri) {
         String[] result = uri.split("/img/", 2);
         if (result.length != 2) {
             return "";
         } else {
-          return result[1];
+            return result[1];
         }
     }
 

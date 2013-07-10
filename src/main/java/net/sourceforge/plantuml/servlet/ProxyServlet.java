@@ -54,10 +54,9 @@ public class ProxyServlet extends HttpServlet {
 
     private static final Pattern proxyPattern = Pattern.compile("/\\w+/proxy/((\\d+)/)?((\\w+)/)?(http://.*)");
     private String format;
-    
+
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         final String uri = request.getRequestURI();
 
@@ -76,15 +75,15 @@ public class ProxyServlet extends HttpServlet {
             dispatcher.forward(request, response);
         }
     }
-    
+
     private void handleImageProxy(HttpServletResponse response, String num, String source) throws IOException {
         SourceStringReader reader = new SourceStringReader(getSource(source));
         int n = num == null ? 0 : Integer.parseInt(num);
-        
+
         reader.generateImage(response.getOutputStream(), n, new FileFormatOption(getOutputFormat()));
     }
 
-    private String getSource( String uri) throws IOException {
+    private String getSource(String uri) throws IOException {
         CookieModule.setCookiePolicyHandler(null);
 
         final Pattern p = Pattern.compile("http://[^/]+(/?.*)");
@@ -105,7 +104,7 @@ public class ProxyServlet extends HttpServlet {
     }
 
     private FileFormat getOutputFormat() {
-        if (format==null) {
+        if (format == null) {
             return FileFormat.PNG;
         }
         if (format.equals("svg")) {
@@ -115,6 +114,6 @@ public class ProxyServlet extends HttpServlet {
             return FileFormat.ATXT;
         }
         return FileFormat.PNG;
-    }    
+    }
 
 }
