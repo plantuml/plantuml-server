@@ -13,7 +13,7 @@ public class TestSVG extends WebappTestCase {
      */
     public void testSimpleSequenceDiagram() throws Exception {
         WebConversation conversation = new WebConversation();
-        WebRequest request = new GetMethodWebRequest(getServerUrl() + "svg/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000");
+        WebRequest request = new GetMethodWebRequest(getServerUrl() + "svg/" + TestUtils.SEQBOB);
         WebResponse response = conversation.getResource(request);
         // Analyze response
         // Verifies the Content-Type header
@@ -30,7 +30,7 @@ public class TestSVG extends WebappTestCase {
      */
     public void testSequenceDiagramContent() throws Exception {
         WebConversation conversation = new WebConversation();
-        WebRequest request = new GetMethodWebRequest(getServerUrl() + "svg/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000");
+        WebRequest request = new GetMethodWebRequest(getServerUrl() + "svg/" + TestUtils.SEQBOB);
         WebResponse response = conversation.getResource(request);
         // Analyze response
         // Get the data contained in the XML

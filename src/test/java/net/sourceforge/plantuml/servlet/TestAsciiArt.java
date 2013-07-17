@@ -12,7 +12,7 @@ public class TestAsciiArt extends WebappTestCase {
      */
     public void testSimpleSequenceDiagram() throws Exception {
         WebConversation conversation = new WebConversation();
-        WebRequest request = new GetMethodWebRequest(getServerUrl() + "txt/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000");
+        WebRequest request = new GetMethodWebRequest(getServerUrl() + "txt/" + TestUtils.SEQBOB);
         WebResponse response = conversation.getResource(request);
         // Analyze response
         // Verifies the Content-Type header

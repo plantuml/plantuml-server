@@ -1,29 +1,23 @@
 package net.sourceforge.plantuml.servlet;
 
-import com.meterware.httpunit.*;
 
 /**
- * Utility class for HttpUnit conversations
+ * Utility class for the unit tests
  */
 public class TestUtils {
 
-    /**
-     * Try getting a response for the given Conversation and Request show an error message if a 404 error appears
-     * 
-     * @param conversation The conversation to use
-     * @param request
-     * @return The response
-     * @throws nfe If getting the response fails
+    /*
+     * Theses strings are the compressed form of a PlantUML diagram.
      */
-    public static WebResponse tryGetResponse(WebConversation conversation, WebRequest request) throws Exception {
-        WebResponse response = null;
-        try {
-            response = conversation.getResponse(request);
-        } catch (HttpNotFoundException nfe) {
-            System.err.println("The URL '" + request.getURL() + "' is no more active");
-            throw nfe;
-        }
-        return response;
-    }
+    
+    /*
+     * version
+     */
+    public static final String VERSION = "AqijAixCpmC0";
+    
+    /*
+     * Bob -> Alice : hello
+     */
+    public static final String SEQBOB = "SyfFKj2rKt3CoKnELR1Io4ZDoSa70000";
 
 }

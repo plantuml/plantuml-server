@@ -14,12 +14,12 @@ public class TestForm extends WebappTestCase {
     public void testWelcomePage() throws Exception {
         WebConversation conversation = new WebConversation();
         WebRequest request = new GetMethodWebRequest(getServerUrl());
-        WebResponse response = TestUtils.tryGetResponse(conversation, request);
+        WebResponse response = conversation.getResponse(request);
         // Analyze response
         WebForm forms[] = response.getForms();
         assertEquals(2, forms.length);
         assertEquals("url", forms[1].getParameterNames()[0]);
-        assertTrue(forms[1].getParameterValue("url").endsWith("/img/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000"));
+        assertTrue(forms[1].getParameterValue("url").endsWith("/img/" + TestUtils.SEQBOB));
         // Ensure the generated image is present
         assertEquals(1, response.getImages().length);
 
@@ -32,7 +32,7 @@ public class TestForm extends WebappTestCase {
         WebConversation conversation = new WebConversation();
         // Fill the form and submit it
         WebRequest request = new GetMethodWebRequest(getServerUrl());
-        WebResponse response = TestUtils.tryGetResponse(conversation, request);
+        WebResponse response = conversation.getResponse(request);
         WebForm formUMLText = response.getForms()[0];
         formUMLText.setParameter("text", "version");
         response = formUMLText.submit();
@@ -42,7 +42,7 @@ public class TestForm extends WebappTestCase {
         // Ensure the Text field is correct
         assertEquals("version", forms[0].getParameterValue("text"));
         // Ensure the URL field is correct
-        assertTrue(forms[1].getParameterValue("url").endsWith("/img/AqijAixCpmC0"));
+        assertTrue(forms[1].getParameterValue("url").endsWith("/img/" + TestUtils.VERSION));
         // Ensure the image is present
         assertEquals(1, response.getImages().length);
     }
@@ -54,7 +54,7 @@ public class TestForm extends WebappTestCase {
         WebConversation conversation = new WebConversation();
         // Fill the form and submit it
         WebRequest request = new GetMethodWebRequest(getServerUrl());
-        WebResponse response = TestUtils.tryGetResponse(conversation, request);
+        WebResponse response = conversation.getResponse(request);
         WebForm formUMLText = response.getForms()[0];
         formUMLText.setParameter("text", "");
         response = formUMLText.submit();
@@ -76,7 +76,7 @@ public class TestForm extends WebappTestCase {
         WebConversation conversation = new WebConversation();
         // Fill the form and submit it
         WebRequest request = new GetMethodWebRequest(getServerUrl());
-        WebResponse response = TestUtils.tryGetResponse(conversation, request);
+        WebResponse response = conversation.getResponse(request);
         WebForm formUrl = response.getForms()[1];
         formUrl.setParameter("url", "");
         response = formUrl.submit();
@@ -98,7 +98,7 @@ public class TestForm extends WebappTestCase {
         WebConversation conversation = new WebConversation();
         // Fill the form and submit it
         WebRequest request = new GetMethodWebRequest(getServerUrl());
-        WebResponse response = TestUtils.tryGetResponse(conversation, request);
+        WebResponse response = conversation.getResponse(request);
         WebForm formDitaaText = response.getForms()[0];
         formDitaaText.setParameter("text", "@startditaa \n*--> \n@endditaa");
         response = formDitaaText.submit();

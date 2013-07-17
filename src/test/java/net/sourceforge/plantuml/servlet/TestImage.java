@@ -17,7 +17,7 @@ public class TestImage extends WebappTestCase {
      */
     public void testVersionImage() throws Exception {
         WebConversation conversation = new WebConversation();
-        WebRequest request = new GetMethodWebRequest(getServerUrl() + "img/AqijAixCpmC0");
+        WebRequest request = new GetMethodWebRequest(getServerUrl() + "img/" + TestUtils.VERSION);
         WebResponse response = conversation.getResource(request);
         // Analyze response
         // Verifies the Content-Type header
@@ -44,7 +44,7 @@ public class TestImage extends WebappTestCase {
     public void testDiagramHttpHeader() throws Exception {
         WebConversation conversation = new WebConversation();
         // Bob -> Alice : hello
-        WebRequest request = new GetMethodWebRequest(getServerUrl() + "img/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000");
+        WebRequest request = new GetMethodWebRequest(getServerUrl() + "img/" + TestUtils.SEQBOB);
         WebResponse response = conversation.getResource(request);
         // Analyze response
         // Verifies the Content-Type header
