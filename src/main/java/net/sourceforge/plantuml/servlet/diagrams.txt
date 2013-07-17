@@ -1,0 +1,36 @@
+## Class diagram ##
+###################
+
+@startuml
+hide empty members
+hide empty methods
+hide empty fields
+abstract class UmlDiagramService {
+  public void doGet(HttpServletRequest rq, HttpServletResponse rsp)
+  abstract public ResponseSender getSender()
+  abstract public String getSource( String uri)
+  abstract public FileFormat getOutputFormat()
+}
+interface ResponseSender {
+  ResponseSender( HttpServletResponse r, FileFormat f)
+  void sendDiagram( String uml, int n)
+}
+abstract HttpServlet <|-- UmlDiagramService
+abstract HttpServlet <|-- ProxyServlet
+UmlDiagramService <|-- PngServlet
+UmlDiagramService <|-- SvgServlet
+UmlDiagramService <|-- AsciiServlet
+UmlDiagramService <|-- MapServlet
+UmlDiagramService o- ResponseSender
+ResponseSender <|-- DiagramResponse
+ResponseSender <|-- MapResponse
+ResponseSender <|-- ProxyResponse
+ProxyResponse -o ProxyServlet
+@enduml
+
+## Sequence diagram ##
+######################
+
+@startuml
+TODO
+@enduml
