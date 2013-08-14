@@ -25,16 +25,13 @@ package net.sourceforge.plantuml.servlet;
 
 import java.io.IOException;
 import javax.imageio.IIOException;
-import java.net.URLDecoder;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sourceforge.plantuml.FileFormat;
-import net.sourceforge.plantuml.code.Transcoder;
-import net.sourceforge.plantuml.code.TranscoderUtil;
+import net.sourceforge.plantuml.servlet.utility.UmlExtractor;
 
 /**
  * Common service servlet to produce diagram from compressed UML source contained in the end part of the requested URI.
@@ -46,24 +43,7 @@ public abstract class UmlDiagramService extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         // build the UML source from the compressed request parameter
-        String text = URLDecoder.decode(getSource(request.getRequestURI()), "UTF-8");
-        Transcoder transcoder = getTranscoder();
-        text = transcoder.decode(text);
-
-        // encapsulate the UML syntax if necessary
-        String uml;
-        if (text.startsWith("@start")) {
-            uml = text;
-        } else {
-            StringBuilder plantUmlSource = new StringBuilder();
-            plantUmlSource.append("@startuml\n");
-            plantUmlSource.append(text);
-            if (text.endsWith("\n") == false) {
-                plantUmlSource.append("\n");
-            }
-            plantUmlSource.append("@enduml");
-            uml = plantUmlSource.toString();
-        }
+        String uml = UmlExtractor.getUmlSource(getSource(request.getRequestURI()));
 
         // generate the response
         DiagramResponse dr = new DiagramResponse(response, getOutputFormat());
@@ -91,7 +71,4 @@ public abstract class UmlDiagramService extends HttpServlet {
      */
     abstract public FileFormat getOutputFormat();
 
-    private Transcoder getTranscoder() {
-        return TranscoderUtil.getDefaultTranscoder();
-    }
 }
