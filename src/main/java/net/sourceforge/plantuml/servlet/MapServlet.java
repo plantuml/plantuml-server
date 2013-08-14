@@ -23,27 +23,50 @@
  */
 package net.sourceforge.plantuml.servlet;
 
+import java.io.IOException;
+
+import javax.imageio.IIOException;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import net.sourceforge.plantuml.FileFormat;
+
+import net.sourceforge.plantuml.servlet.utility.UmlExtractor;
 
 /* 
  * MAP servlet of the webapp.
  * This servlet produces the image map of the diagram in HTML format.
  */
 @SuppressWarnings("serial")
-public class MapServlet extends UmlDiagramService {
+public class MapServlet extends HttpServlet {
 
     @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+
+        // build the UML source from the compressed request parameter
+        String uml = UmlExtractor.getUmlSource(getSource(request.getRequestURI()));
+
+        // generate the response
+        DiagramResponse dr = new DiagramResponse(response, getOutputFormat());
+        try {
+            dr.sendMap(uml);
+        } catch (IIOException iioe) {
+            // Browser has closed the connection, do nothing
+        }
+        dr = null;
+    }
+    
     public String getSource(String uri) {
         String[] result = uri.split("/map/", 2);
         if (result.length != 2) {
             return "";
         } else {
-            //return result[1];
-            return "";
+            return result[1];
         }
     }
 
-    @Override
     public FileFormat getOutputFormat() {
         return FileFormat.ATXT;
     }

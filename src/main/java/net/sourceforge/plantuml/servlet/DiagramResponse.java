@@ -57,21 +57,36 @@ class DiagramResponse {
     }
 
     void sendDiagram(String uml) throws IOException {
-        long today = System.currentTimeMillis();
         if (StringUtils.isDiagramCacheable(uml)) {
-            // Add http headers to force the browser to cache the image
-            response.addDateHeader("Expires", today + 31536000000L);
-            // today + 1 year
-            response.addDateHeader("Last-Modified", 1261440000000L);
-            // 2009 dec 22 constant date in the past
-            response.addHeader("Cache-Control", "public");
+            addHeaderForCache();
         }
         response.setContentType(getContentType());
         SourceStringReader reader = new SourceStringReader(uml);
         reader.generateImage(response.getOutputStream(), new FileFormatOption(format));
         response.flushBuffer();
     }
-
+    
+    void sendMap(String uml) throws IOException {
+        /* SourceStringReader reader = new SourceStringReader(uml);
+        String map = reader.generateImage(response.getOutputStream(), new FileFormatOption(FileFormat.PNG));
+        response.flushBuffer();
+        System.out.println( "map !!!" + map + "!!!");
+        String[] mapLines = map.split("[\\r\\n]");
+        for (int i=2; (i+1)<mapLines.length; i++)
+            System.out.println("map"+i+" !!!"+mapLines[i]+"!!!");
+        */
+   }
+    
+    private void addHeaderForCache() {
+        long today = System.currentTimeMillis();
+        // Add http headers to force the browser to cache the image
+        response.addDateHeader("Expires", today + 31536000000L);
+        // today + 1 year
+        response.addDateHeader("Last-Modified", 1261440000000L);
+        // 2009 dec 22 constant date in the past
+        response.addHeader("Cache-Control", "public");
+    }
+    
     private String getContentType() {
         return contentType.get(format);
     }

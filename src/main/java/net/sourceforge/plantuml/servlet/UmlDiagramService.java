@@ -50,7 +50,8 @@ public abstract class UmlDiagramService extends HttpServlet {
         try {
             dr.sendDiagram(uml);
         } catch (IIOException iioe) {
-            // Browser has closed the connection, do nothing
+            // Browser has closed the connection, so the HTTP OutputStream is closed
+            // Silently catch the exception to avoid annoying log 
         }
         dr = null;
     }
