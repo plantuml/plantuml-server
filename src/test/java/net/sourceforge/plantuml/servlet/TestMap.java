@@ -18,7 +18,8 @@ public class TestMap extends WebappTestCase {
         WebResponse response = conversation.getResource(request);
         // Analyze response
         // Verifies the Content-Type header
-        assertEquals("Response content type is not TEXT PLAIN", "text/plain", response.getContentType());
+        assertEquals("Response content type is not TEXT PLAIN", "text/plain", response.getContentType()); 
+        assertEquals("Response character set is not ISO-8859-1", "ISO-8859-1", response.getCharacterSet());
         // Get the content, check its first characters and verify its size
         String diagram = response.getText();
         assertTrue("Response content is not starting with <area", diagram.startsWith("<area"));
@@ -38,8 +39,8 @@ public class TestMap extends WebappTestCase {
         // Analyze response
         // Get the data contained in the XML
         String map = response.getText();
-        assertTrue(map.matches("(<([^<>]+)>)+")); // list of tags
-        assertTrue(map.matches(".*(area shape=\".+\" id=\".+\" href=\".+\").*")); // area structure 
+        assertTrue("Response is not a list of tags", map.matches("(<([^<>]+)>)+"));
+        assertTrue("Response doesn't contain the area structure", map.matches(".*(area shape=\".+\" id=\".+\" href=\".+\").*")); 
     }
     
     /**

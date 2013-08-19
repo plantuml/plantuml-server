@@ -7,30 +7,37 @@ hide empty methods
 hide empty fields
 abstract class UmlDiagramService {
   public void doGet(HttpServletRequest rq, HttpServletResponse rsp)
-  abstract public ResponseSender getSender()
   abstract public String getSource( String uri)
-  abstract public FileFormat getOutputFormat()
+  abstract FileFormat getOutputFormat()
 }
-interface ResponseSender {
-  ResponseSender( HttpServletResponse r, FileFormat f)
-  void sendDiagram( String uml, int n)
+class DiagramResponse {
+  DiagramResponse( HttpServletResponse r, FileFormat f)
+  void sendDiagram( String uml)
+  void sendMap( String uml)
 }
 abstract HttpServlet <|-- UmlDiagramService
+abstract HttpServlet <|-- MapServlet
 abstract HttpServlet <|-- ProxyServlet
 UmlDiagramService <|-- PngServlet
 UmlDiagramService <|-- SvgServlet
 UmlDiagramService <|-- AsciiServlet
-UmlDiagramService <|-- MapServlet
-UmlDiagramService o- ResponseSender
-ResponseSender <|-- DiagramResponse
-ResponseSender <|-- MapResponse
-ResponseSender <|-- ProxyResponse
-ProxyResponse -o ProxyServlet
+UmlDiagramService o- DiagramResponse
+MapServlet o- DiagramResponse
 @enduml
 
 ## Sequence diagram ##
 ######################
 
 @startuml
-TODO
+title Generation of a PNG image illustrated
+PngServlet -> PngServlet : getSource()
+PngServlet -> UmlExtractor : getUmlSource()
+UmlExtractor --> PngServlet
+PngServlet -> PngServlet : getOutputFormat()
+PngServlet -> DiagramResponse : <<create>>
+PngServlet -> DiagramResponse : sendDiagram()
+participant "PlantUML library" as Lib #99FF99
+DiagramResponse -> Lib : generateImage()
+Lib --> DiagramResponse
+DiagramResponse --> PngServlet
 @enduml

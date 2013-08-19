@@ -28,12 +28,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
 import net.sourceforge.plantuml.StringUtils;
+import net.sourceforge.plantuml.servlet.utility.NullOutputStream;
 
 /**
  * Delegates the diagram generation from the UML source and the filling of the HTTP response with the diagram in the
@@ -47,7 +49,7 @@ class DiagramResponse {
         Map<FileFormat, String> map = new HashMap<FileFormat, String>();
         map.put(FileFormat.PNG, "image/png");
         map.put(FileFormat.SVG, "image/svg+xml");
-        map.put(FileFormat.ATXT, "text/plain");
+        map.put(FileFormat.ATXT, "text/plain;charset=ISO-8859-1");
         contentType = Collections.unmodifiableMap(map);
     }
 
@@ -67,14 +69,18 @@ class DiagramResponse {
     }
     
     void sendMap(String uml) throws IOException {
-        /* SourceStringReader reader = new SourceStringReader(uml);
-        String map = reader.generateImage(response.getOutputStream(), new FileFormatOption(FileFormat.PNG));
-        response.flushBuffer();
-        System.out.println( "map !!!" + map + "!!!");
+        if (StringUtils.isDiagramCacheable(uml)) {
+            addHeaderForCache();
+        }
+        response.setContentType(getContentType());
+        SourceStringReader reader = new SourceStringReader(uml);
+        String map = reader.generateImage(new NullOutputStream(), new FileFormatOption(FileFormat.PNG));
         String[] mapLines = map.split("[\\r\\n]");
-        for (int i=2; (i+1)<mapLines.length; i++)
-            System.out.println("map"+i+" !!!"+mapLines[i]+"!!!");
-        */
+        ServletOutputStream httpOut = response.getOutputStream();
+        for (int i=2; (i+1)<mapLines.length; i++) {
+            httpOut.print(mapLines[i]);
+        }
+        response.flushBuffer();
    }
     
     private void addHeaderForCache() {
