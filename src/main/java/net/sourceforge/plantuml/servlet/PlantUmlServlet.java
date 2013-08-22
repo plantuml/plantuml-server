@@ -42,6 +42,7 @@ import net.sourceforge.plantuml.SourceStringReader;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.code.Transcoder;
 import net.sourceforge.plantuml.code.TranscoderUtil;
+import net.sourceforge.plantuml.servlet.utility.SourceInformation;
 import HTTPClient.CookieModule;
 import HTTPClient.HTTPConnection;
 import HTTPClient.HTTPResponse;
@@ -141,6 +142,11 @@ public class PlantUmlServlet extends HttpServlet {
 
         request.setAttribute("net.sourceforge.plantuml.servlet.decoded", text);
         request.setAttribute("net.sourceforge.plantuml.servlet.encoded", encoded);
+        
+        // check if an image map is necessary
+        if (text != null && SourceInformation.containsLink(text)) {
+            request.setAttribute("net.sourceforge.plantuml.servlet.mapneeded", Boolean.TRUE);
+        }    
 
         // forward to index.jsp
         RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");

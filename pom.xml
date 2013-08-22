@@ -76,6 +76,11 @@
       <version>LATEST</version>
     </dependency>
     <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jstl</artifactId>
+      <version>1.2</version>
+    </dependency>
+    <dependency>
       <groupId>HTTPClient</groupId>
       <artifactId>HTTPClient</artifactId>
       <version>0.3-3</version>

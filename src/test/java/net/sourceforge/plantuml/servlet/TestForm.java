@@ -1,6 +1,7 @@
 package net.sourceforge.plantuml.servlet;
 
 import com.meterware.httpunit.GetMethodWebRequest;
+import com.meterware.httpunit.HTMLElement;
 import com.meterware.httpunit.WebConversation;
 import com.meterware.httpunit.WebForm;
 import com.meterware.httpunit.WebRequest;
@@ -111,6 +112,25 @@ public class TestForm extends WebappTestCase {
         assertTrue(forms[1].getParameterValue("url").endsWith("/img/SoWkIImgISaiIKnKuDBIrRLJu798pKi12m00"));
         // Ensure the image is present
         assertEquals(1, response.getImages().length);
+    }
+
+    /**
+     * Verifies that an image map is produced if the diagram contains a link
+     */
+    public void testImageMap() throws Exception {
+        WebConversation conversation = new WebConversation();
+        // Fill the form and submit it
+        WebRequest request = new GetMethodWebRequest(getServerUrl());
+        WebResponse response = conversation.getResponse(request);
+        WebForm formText = response.getForms()[0];
+        formText.setParameter("text", "@startuml \nBob -> Alice : [[http://yahoo.com]] Hello \n@enduml");
+        response = formText.submit();
+        // Analyze response
+        // Ensure the generated image is present
+        assertEquals(1, response.getImages().length);
+        // Ensure the image map is present
+        HTMLElement maps[] = response.getElementsByTagName("map");
+        assertEquals(1, maps.length);
     }
 
 }
