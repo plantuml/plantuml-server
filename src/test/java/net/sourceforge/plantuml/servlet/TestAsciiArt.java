@@ -17,6 +17,7 @@ public class TestAsciiArt extends WebappTestCase {
         // Analyze response
         // Verifies the Content-Type header
         assertEquals("Response content type is not TEXT PLAIN", "text/plain", response.getContentType());
+        assertEquals("Response character set is not UTF-8", "UTF-8", response.getCharacterSet());
         // Get the content and verify its size
         String diagram = response.getText();
         int diagramLen = diagram.length();

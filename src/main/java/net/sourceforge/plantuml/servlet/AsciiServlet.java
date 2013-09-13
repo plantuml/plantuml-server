@@ -44,7 +44,7 @@ public class AsciiServlet extends UmlDiagramService {
 
     @Override
     public FileFormat getOutputFormat() {
-        return FileFormat.ATXT;
+        return FileFormat.UTXT;
     }
 
 }

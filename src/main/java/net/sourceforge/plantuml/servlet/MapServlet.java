@@ -68,7 +68,7 @@ public class MapServlet extends HttpServlet {
     }
 
     public FileFormat getOutputFormat() {
-        return FileFormat.ATXT;
+        return FileFormat.UTXT;
     }
 
 }

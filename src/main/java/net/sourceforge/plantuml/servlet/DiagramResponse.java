@@ -24,11 +24,11 @@
 package net.sourceforge.plantuml.servlet;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sourceforge.plantuml.FileFormat;
@@ -49,7 +49,7 @@ class DiagramResponse {
         Map<FileFormat, String> map = new HashMap<FileFormat, String>();
         map.put(FileFormat.PNG, "image/png");
         map.put(FileFormat.SVG, "image/svg+xml");
-        map.put(FileFormat.ATXT, "text/plain;charset=ISO-8859-1");
+        map.put(FileFormat.UTXT, "text/plain;charset=UTF-8");
         contentType = Collections.unmodifiableMap(map);
     }
 
@@ -76,7 +76,7 @@ class DiagramResponse {
         SourceStringReader reader = new SourceStringReader(uml);
         String map = reader.generateImage(new NullOutputStream(), new FileFormatOption(FileFormat.PNG));
         String[] mapLines = map.split("[\\r\\n]");
-        ServletOutputStream httpOut = response.getOutputStream();
+        PrintWriter httpOut = response.getWriter();
         for (int i=2; (i+1)<mapLines.length; i++) {
             httpOut.print(mapLines[i]);
         }

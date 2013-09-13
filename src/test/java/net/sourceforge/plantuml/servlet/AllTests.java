@@ -14,6 +14,7 @@ public class AllTests extends TestSuite {
         suite.addTestSuite(TestSVG.class);
         suite.addTestSuite(TestProxy.class);
         suite.addTestSuite(TestMap.class);
+        suite.addTestSuite(TestCharset.class);
         // $JUnit-END$
         return suite;
     }
