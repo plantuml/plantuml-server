@@ -121,18 +121,18 @@ public class PlantUmlServlet extends HttpServlet {
         Transcoder transcoder = getTranscoder();
         // the URL form has been submitted
         if (url != null && !url.trim().isEmpty()) {
-            // Catch the last part of the URL
+            // Catch the last part of the URL if necessary
             Matcher m1 = urlPattern.matcher(url);
             if (m1.find()) {
-                // Check it's a valid compressed text
                 url = m1.group(1);
-                Matcher m2 = encodedPattern.matcher(url);
-                if (m2.find()) {
+            }
+            // Check it's a valid compressed text
+            Matcher m2 = encodedPattern.matcher(url);
+            if (m2.find()) {
                     url = m2.group(0);
                     text = transcoder.decode(url);
-                } else {
-                    System.out.println("PlantUML ERROR Not a valid compressed string : " + url);
-                }
+            } else {
+                System.out.println("PlantUML ERROR Not a valid compressed string : " + url);
             }
         }
         // the Text form has been submitted
