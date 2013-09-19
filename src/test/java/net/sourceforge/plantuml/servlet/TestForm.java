@@ -133,4 +133,24 @@ public class TestForm extends WebappTestCase {
         assertEquals(1, maps.length);
     }
 
+    /**
+     * Verifies that when the encoded source is specified as an URL parameter
+     * the diagram is displayed and the source is decoded
+     */
+    public void testUrlParameter() throws Exception {
+        WebConversation conversation = new WebConversation();
+        // Submit the request with a url parameter
+        WebRequest request = new GetMethodWebRequest(getServerUrl() + "form?url=" + TestUtils.SEQBOB);
+        WebResponse response = conversation.getResponse(request);
+        // Analyze response
+        WebForm forms[] = response.getForms();
+        assertEquals(2, forms.length);
+        // Ensure the Text field is filled
+        assertEquals(forms[0].getParameterValue("text"), "@startuml\nBob -> Alice : hello\n@enduml");
+        // Ensure the URL field is filled
+        assertEquals(forms[1].getParameterValue("url"), getServerUrl() + "img/" + TestUtils.SEQBOB);
+        // Ensure the the image is present
+        assertEquals(1, response.getImages().length);
+    }
+
 }
