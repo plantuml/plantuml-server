@@ -67,7 +67,10 @@ if (decodedAttribute != null) {
     <% if (!imgurl.isEmpty()) { %>
     <hr/>
     <a href="<%=svgurl%>">View as SVG</a>&nbsp;
-    <a href="<%=txturl%>">View as ASCII Art</a>
+    <a href="<%=txturl%>">View as ASCII Art</a>&nbsp;
+    <% if (mapNeeded != null) { %>
+    <a href="<%=mapurl%>">View Map Data</a>
+    <% } //endif %>
     <p id="diagram">
         <% if (mapNeeded != null) { %>
         <img src="<%=imgurl %>" alt="PlantUML diagram" usemap="#umlmap" />
