@@ -65,7 +65,6 @@ class DiagramResponse {
         response.setContentType(getContentType());
         SourceStringReader reader = new SourceStringReader(uml);
         reader.generateImage(response.getOutputStream(), new FileFormatOption(format));
-        response.flushBuffer();
     }
     
     void sendMap(String uml) throws IOException {
@@ -80,7 +79,6 @@ class DiagramResponse {
         for (int i=2; (i+1)<mapLines.length; i++) {
             httpOut.print(mapLines[i]);
         }
-        response.flushBuffer();
    }
     
     private void addHeaderForCache() {

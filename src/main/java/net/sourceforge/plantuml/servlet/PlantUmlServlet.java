@@ -226,7 +226,6 @@ public class PlantUmlServlet extends HttpServlet {
         response.setContentType("image/png");
         SourceStringReader reader = new SourceStringReader(uml);
         reader.generateImage(response.getOutputStream(), new FileFormatOption(FileFormat.PNG));
-        response.flushBuffer();
     }
 
     private String getContent(String adress) throws IOException {
