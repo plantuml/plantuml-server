@@ -1,5 +1,5 @@
 <%@ page info="index" contentType="text/html; charset=utf-8" pageEncoding="utf-8" session="false" %>
-<%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%
 String contextRoot = request.getContextPath();
 String host = "http://" + request.getServerName() + ":" + request.getServerPort();
@@ -8,7 +8,6 @@ String umltext = "";
 String imgurl = "";
 String svgurl = "";
 String txturl = "";
-String mapurl = "";
 Object mapNeeded = request.getAttribute("net.sourceforge.plantuml.servlet.mapneeded");
 Object encodedAttribute = request.getAttribute("net.sourceforge.plantuml.servlet.encoded");
 if (encodedAttribute != null) {
@@ -18,7 +17,7 @@ if (encodedAttribute != null) {
 	    svgurl = host + contextRoot + "/svg/" + encoded;
 	    txturl = host + contextRoot + "/txt/" + encoded;
         if (mapNeeded != null) {
-            mapurl = host + contextRoot + "/map/" + encoded;
+            pageContext.setAttribute("mapurl", host + contextRoot + "/map/" + encoded);
         }
 	}
 }
@@ -69,13 +68,13 @@ if (decodedAttribute != null) {
     <a href="<%=svgurl%>">View as SVG</a>&nbsp;
     <a href="<%=txturl%>">View as ASCII Art</a>&nbsp;
     <% if (mapNeeded != null) { %>
-    <a href="<%=mapurl%>">View Map Data</a>
+    <a href="<c:out value="${mapurl}"/>">View Map Data</a>
     <% } //endif %>
     <p id="diagram">
         <% if (mapNeeded != null) { %>
         <img src="<%=imgurl %>" alt="PlantUML diagram" usemap="#umlmap" />
         <map name="umlmap">
-            <c:import url="<%=mapurl %>" />
+            <c:import url="${mapurl}" />
         </map>
         <% } else { %>
         <img src="<%=imgurl %>" alt="PlantUML diagram" />
