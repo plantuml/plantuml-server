@@ -1,7 +1,9 @@
-PlantUMLServlet description 
-===========================
 
-PlantUMLServlet is a PlantUML extension to generate images on-the-fly.
+PlantUML Server 
+===============
+[![Build Status](https://travis-ci.org/arnaudroques/plantumlservlet.png?branch=master)](https://travis-ci.org/arnaudroques/plantumlservlet)
+
+PlantUML Server is a web application to generate UML diagrams on-the-fly.
  
 To know more about PlantUML, please visit http://plantuml.sourceforge.net/.
 
