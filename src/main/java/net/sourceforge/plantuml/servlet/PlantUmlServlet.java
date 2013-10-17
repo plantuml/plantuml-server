@@ -140,12 +140,12 @@ public class PlantUmlServlet extends HttpServlet {
             encoded = transcoder.encode(text);
         }
 
-        request.setAttribute("net.sourceforge.plantuml.servlet.decoded", text);
-        request.setAttribute("net.sourceforge.plantuml.servlet.encoded", encoded);
+        request.setAttribute("decoded", text);
+        request.setAttribute("encoded", encoded);
         
         // check if an image map is necessary
         if (text != null && PlantumlUtils.hasCMapData(text)) {
-            request.setAttribute("net.sourceforge.plantuml.servlet.mapneeded", Boolean.TRUE);
+            request.setAttribute("mapneeded", Boolean.TRUE);
         }    
 
         // forward to index.jsp
