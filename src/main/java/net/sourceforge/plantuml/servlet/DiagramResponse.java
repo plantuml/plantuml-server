@@ -64,7 +64,7 @@ class DiagramResponse {
         }
         response.setContentType(getContentType());
         SourceStringReader reader = new SourceStringReader(uml);
-        reader.generateImage(response.getOutputStream(), new FileFormatOption(format));
+        reader.generateImage(response.getOutputStream(), new FileFormatOption(format, false));
     }
     
     void sendMap(String uml) throws IOException {
@@ -73,7 +73,7 @@ class DiagramResponse {
         }
         response.setContentType(getContentType());
         SourceStringReader reader = new SourceStringReader(uml);
-        String map = reader.generateImage(new NullOutputStream(), new FileFormatOption(FileFormat.PNG));
+        String map = reader.generateImage(new NullOutputStream(), new FileFormatOption(FileFormat.PNG, false));
         String[] mapLines = map.split("[\\r\\n]");
         PrintWriter httpOut = response.getWriter();
         for (int i=2; (i+1)<mapLines.length; i++) {

@@ -80,7 +80,7 @@ public class ProxyServlet extends HttpServlet {
         SourceStringReader reader = new SourceStringReader(getSource(source));
         int n = num == null ? 0 : Integer.parseInt(num);
 
-        reader.generateImage(response.getOutputStream(), n, new FileFormatOption(getOutputFormat()));
+        reader.generateImage(response.getOutputStream(), n, new FileFormatOption(getOutputFormat(), false));
     }
 
     private String getSource(String uri) throws IOException {
