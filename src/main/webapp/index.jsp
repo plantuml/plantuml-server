@@ -3,6 +3,9 @@
 
 <c:set var="contextroot" value="${pageContext.request.contextPath}" />
 <c:set var="hostpath" value="http://${pageContext.request.serverName}:${pageContext.request.serverPort}${contextroot}" />
+<c:if test="${pageContext.request.serverPort == 80 }">
+    <c:set var="hostpath" value="http://${pageContext.request.serverName}${contextroot}" />
+</c:if>
 <c:if test="${!empty encoded}">
     <c:set var="imgurl" value="${hostpath}/img/${encoded}" />
     <c:set var="svgurl" value="${hostpath}/svg/${encoded}" />
