@@ -5,17 +5,17 @@ import java.io.InputStream;
 
 import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.WebConversation;
+import com.meterware.httpunit.WebForm;
 import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
 
-public class TestProxy extends WebappTestCase {
+public class TestOldProxy extends WebappTestCase {
     /**
      * Verifies the proxified reception of the default Bob and Alice diagram
      */
     public void testDefaultProxy() throws Exception {
         WebConversation conversation = new WebConversation();
-		WebRequest request = new GetMethodWebRequest(getServerUrl()
-				+ "proxy?src=" + getServerUrl() + "resource/test2diagrams.txt");
+        WebRequest request = new GetMethodWebRequest(getServerUrl() + "proxy/" + getServerUrl() + "welcome");
         WebResponse response = conversation.getResource(request);
         // Analyze response
         // Verifies the Content-Type header
@@ -35,15 +35,14 @@ public class TestProxy extends WebappTestCase {
         assertTrue(diagramLen > 1500);
         assertTrue(diagramLen < 2500);
     }
-/*
+
     public void testProxyWithFormat() throws Exception {
         WebConversation conversation = new WebConversation();
-		WebRequest request = new GetMethodWebRequest(getServerUrl()
-				+ "proxy?format=svg&src=" + getServerUrl() + "resource/test2diagrams.txt");
+        WebRequest request = new GetMethodWebRequest(getServerUrl() + "proxy/svg/" + getServerUrl() + "welcome");
         WebResponse response = conversation.getResource(request);
         // Analyze response
         // Verifies the Content-Type header
-        assertEquals( "Response content type is not SVG", "image/svg+xml", response.getContentType());
+        // TODO assertEquals( "Response content type is not SVG", "image/svg+xml", response.getContentType());
         // Get the content and verify its size
         String diagram = response.getText();
         int diagramLen = diagram.length();
@@ -57,9 +56,12 @@ public class TestProxy extends WebappTestCase {
     public void testInvalidUrl() throws Exception {
         WebConversation conversation = new WebConversation();
         // Try to proxify an invalid address
-        WebRequest request = new GetMethodWebRequest(getServerUrl() + "proxy?src=invalidURL");
+        WebRequest request = new GetMethodWebRequest(getServerUrl() + "proxy/invalidURL");
         WebResponse response = conversation.getResource(request);
-        // Analyze response, it must be HTTP error 500
-        assertEquals("Response HTTP status is not 500", response.getResponseCode(), 500);
+        // Analyze response, it must be the empty form
+        // Verifies the Content-Type header
+        assertEquals("Response content type is not HTML", "text/html", response.getContentType());
+        WebForm forms[] = response.getForms();
+        assertEquals(2, forms.length);
     }
 }

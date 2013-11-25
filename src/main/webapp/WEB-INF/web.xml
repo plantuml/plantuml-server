@@ -32,6 +32,10 @@
         <servlet-class>net.sourceforge.plantuml.servlet.ProxyServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>oldproxyservlet</servlet-name>
+        <servlet-class>net.sourceforge.plantuml.servlet.OldProxyServlet</servlet-class>
+    </servlet>    
+    <servlet>
         <servlet-name>mapservlet</servlet-name>
         <servlet-class>net.sourceforge.plantuml.servlet.MapServlet</servlet-class>
     </servlet>
@@ -69,8 +73,12 @@
 		<url-pattern>/start/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>proxyservlet</servlet-name>
+		<servlet-name>oldproxyservlet</servlet-name>
 		<url-pattern>/proxy/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>proxyservlet</servlet-name>
+		<url-pattern>/proxy</url-pattern>
 	</servlet-mapping>
 	<error-page>
 		<exception-type>java.lang.Throwable</exception-type>

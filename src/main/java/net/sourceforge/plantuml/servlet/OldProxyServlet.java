@@ -28,6 +28,7 @@ import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -49,21 +50,36 @@ import net.sourceforge.plantuml.SourceStringReader;
  * and renders it.
  */
 @SuppressWarnings("serial")
-public class ProxyServlet extends HttpServlet {
+public class OldProxyServlet extends HttpServlet {
 
+    private static final Pattern proxyPattern = Pattern.compile("/\\w+/proxy/((\\d+)/)?((\\w+)/)?(http://.*)");
     private String format;
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
-        final String source = request.getParameter("src");
-        final String index = request.getParameter("idx");
-        
-        // TODO Check if the src URL is valid
-        
-        // generate the response
+    	final String uri = request.getRequestURI();
+
+        Matcher proxyMatcher = proxyPattern.matcher(uri);
+        if (proxyMatcher.matches()) {
+            String num = proxyMatcher.group(2); // Optional number of the diagram source
+            format = proxyMatcher.group(4); // Expected format of the generated diagram
+            String sourceURL = proxyMatcher.group(5);
+            handleImageProxy(response, num, sourceURL);
+        } else {
+            request.setAttribute("net.sourceforge.plantuml.servlet.decoded", "ERROR Invalid proxy syntax : " + uri);
+            request.removeAttribute("net.sourceforge.plantuml.servlet.encoded");
+
+            // forward to index.jsp
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
+            dispatcher.forward(request, response);
+        }
+    }
+
+    private void handleImageProxy(HttpServletResponse response, String num, String source) throws IOException {
         SourceStringReader reader = new SourceStringReader(getSource(source));
-        int n = index == null ? 0 : Integer.parseInt(index);
+        int n = num == null ? 0 : Integer.parseInt(num);
+
         reader.generateImage(response.getOutputStream(), n, new FileFormatOption(getOutputFormat(), false));
     }
 
@@ -95,7 +111,7 @@ public class ProxyServlet extends HttpServlet {
             return FileFormat.SVG;
         }
         if (format.equals("txt")) {
-            return FileFormat.UTXT;
+            return FileFormat.ATXT;
         }
         return FileFormat.PNG;
     }
