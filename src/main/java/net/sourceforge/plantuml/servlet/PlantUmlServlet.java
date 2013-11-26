@@ -69,6 +69,7 @@ public class PlantUmlServlet extends HttpServlet {
         final String uri = request.getRequestURI();
         Matcher startumlMatcher = startumlPattern.matcher(uri);
         if (startumlMatcher.matches()) {
+            System.out.println("PlantUML WARNING This syntax is deprecated.");
             String source = startumlMatcher.group(1);
             handleImage(response, source, uri);
         } else {
@@ -125,6 +126,7 @@ public class PlantUmlServlet extends HttpServlet {
         return TranscoderUtil.getDefaultTranscoder();
     }
 
+    // This method will be removed in a near future, please don't use it.
     private void handleImage(HttpServletResponse response, String source, String uri) throws IOException {
         source = URLDecoder.decode(source, "UTF-8");
         StringBuilder plantUmlSource = new StringBuilder();
@@ -138,6 +140,7 @@ public class PlantUmlServlet extends HttpServlet {
 
     }
 
+    // This method will be removed in a near future, please don't use it.
     private void sendImage(HttpServletResponse response, String text, String uri) throws IOException {
         final String uml;
         if (text.startsWith("@startuml")) {
