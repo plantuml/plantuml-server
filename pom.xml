@@ -73,7 +73,7 @@
     <dependency>
       <groupId>net.sourceforge.plantuml</groupId>
       <artifactId>plantuml</artifactId>
-      <version>LATEST</version>
+      <version>RELEASE</version>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
