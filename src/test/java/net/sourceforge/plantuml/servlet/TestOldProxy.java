@@ -15,7 +15,7 @@ public class TestOldProxy extends WebappTestCase {
      */
     public void testDefaultProxy() throws Exception {
         WebConversation conversation = new WebConversation();
-        WebRequest request = new GetMethodWebRequest(getServerUrl() + "proxy/" + getServerUrl() + "welcome");
+        WebRequest request = new GetMethodWebRequest(getServerUrl() + "proxy/" + getServerUrl() + "resource/test2diagrams.txt");
         WebResponse response = conversation.getResource(request);
         // Analyze response
         // Verifies the Content-Type header
@@ -38,7 +38,7 @@ public class TestOldProxy extends WebappTestCase {
 
     public void testProxyWithFormat() throws Exception {
         WebConversation conversation = new WebConversation();
-        WebRequest request = new GetMethodWebRequest(getServerUrl() + "proxy/svg/" + getServerUrl() + "welcome");
+        WebRequest request = new GetMethodWebRequest(getServerUrl() + "proxy/svg/" + getServerUrl() + "resource/test2diagrams.txt");
         WebResponse response = conversation.getResource(request);
         // Analyze response
         // Verifies the Content-Type header
