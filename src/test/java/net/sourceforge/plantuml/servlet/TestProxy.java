@@ -19,7 +19,7 @@ public class TestProxy extends WebappTestCase {
         WebResponse response = conversation.getResource(request);
         // Analyze response
         // Verifies the Content-Type header
-        // assertEquals( "Response content type is not PNG", "image/png", response.getContentType());
+        assertEquals( "Response content type is not PNG", "image/png", response.getContentType());
         // Get the image and verify its size (~2000 bytes)
         InputStream responseStream = response.getInputStream();
         ByteArrayOutputStream imageStream = new ByteArrayOutputStream();

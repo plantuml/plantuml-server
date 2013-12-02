@@ -35,12 +35,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sourceforge.plantuml.BlockUml;
 import net.sourceforge.plantuml.FileFormat;
-import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
+import net.sourceforge.plantuml.core.Diagram;
+import net.sourceforge.plantuml.core.UmlSource;
 
 import java.security.cert.Certificate;
+import java.util.List;
 
+import javax.imageio.IIOException;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLPeerUnverifiedException;
 
@@ -73,8 +77,22 @@ public class ProxyServlet extends HttpServlet {
         System.out.println("getSource=>" + diagmarkup);
         SourceStringReader reader = new SourceStringReader(diagmarkup);
         int n = index == null ? 0 : Integer.parseInt(index);
-
-        reader.generateImage(response.getOutputStream(), n, new FileFormatOption(getOutputFormat(), false));
+        List<BlockUml> blocks = reader.getBlocks();
+        BlockUml block = blocks.get(n);
+        Diagram diagram = block.getDiagram();
+        UmlSource umlSrc = diagram.getSource();
+        String uml = umlSrc.getPlainString();
+        System.out.println("uml="+uml);
+        
+        // generate the response
+        DiagramResponse dr = new DiagramResponse(response, getOutputFormat());
+        try {
+            dr.sendDiagram(uml);
+        } catch (IIOException iioe) {
+            // Browser has closed the connection, so the HTTP OutputStream is closed
+            // Silently catch the exception to avoid annoying log 
+        }
+        dr = null;        
     }
 
     private String getSource(URL url) throws IOException {
