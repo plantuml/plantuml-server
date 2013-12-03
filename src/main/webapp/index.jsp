@@ -73,11 +73,6 @@
         </p>
     </c:if>
 </div>
-<!-- This comment is used by the TestProxy class  
-@startuml
-Bob -> Alice : hello
-@enduml
--->
 <%-- FOOTER --%>
 <%@ include file="footer.jspf" %> 
 </body>

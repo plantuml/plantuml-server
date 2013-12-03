@@ -23,26 +23,30 @@
  */
 package net.sourceforge.plantuml.servlet;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import HTTPClient.CookieModule;
-import HTTPClient.HTTPConnection;
-import HTTPClient.HTTPResponse;
-import HTTPClient.ModuleException;
-import HTTPClient.ParseException;
-
+import net.sourceforge.plantuml.BlockUml;
 import net.sourceforge.plantuml.FileFormat;
-import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
+import net.sourceforge.plantuml.core.Diagram;
+import net.sourceforge.plantuml.core.UmlSource;
+
+import java.security.cert.Certificate;
+import java.util.List;
+
+import javax.imageio.IIOException;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLPeerUnverifiedException;
 
 /* 
  * Proxy servlet of the webapp.
@@ -52,55 +56,65 @@ import net.sourceforge.plantuml.SourceStringReader;
 @SuppressWarnings("serial")
 public class ProxyServlet extends HttpServlet {
 
-    private static final Pattern proxyPattern = Pattern.compile("/\\w+/proxy/((\\d+)/)?((\\w+)/)?(http://.*)");
     private String format;
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
-        final String uri = request.getRequestURI();
-
-        Matcher proxyMatcher = proxyPattern.matcher(uri);
-        if (proxyMatcher.matches()) {
-            String num = proxyMatcher.group(2); // Optional number of the diagram source
-            format = proxyMatcher.group(4); // Expected format of the generated diagram
-            String sourceURL = proxyMatcher.group(5);
-            handleImageProxy(response, num, sourceURL);
-        } else {
-            request.setAttribute("net.sourceforge.plantuml.servlet.decoded", "ERROR Invalid proxy syntax : " + uri);
-            request.removeAttribute("net.sourceforge.plantuml.servlet.encoded");
-
-            // forward to index.jsp
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
-            dispatcher.forward(request, response);
-        }
-    }
-
-    private void handleImageProxy(HttpServletResponse response, String num, String source) throws IOException {
-        SourceStringReader reader = new SourceStringReader(getSource(source));
-        int n = num == null ? 0 : Integer.parseInt(num);
-
-        reader.generateImage(response.getOutputStream(), n, new FileFormatOption(getOutputFormat(), false));
-    }
-
-    private String getSource(String uri) throws IOException {
-        CookieModule.setCookiePolicyHandler(null);
-
-        final Pattern p = Pattern.compile("http://[^/]+(/?.*)");
-        final Matcher m = p.matcher(uri);
-        if (m.find() == false) {
-            throw new IOException(uri);
-        }
-        final URL url = new URL(uri);
-        final HTTPConnection httpConnection = new HTTPConnection(url);
+        final String source = request.getParameter("src");
+        final String index = request.getParameter("idx");
+        final URL srcUrl;
+        // Check if the src URL is valid
         try {
-            final HTTPResponse resp = httpConnection.Get(m.group(1));
-            return resp.getText();
-        } catch (ModuleException e) {
-            throw new IOException(e.toString());
-        } catch (ParseException e) {
-            throw new IOException(e.toString());
+            srcUrl = new URL(source);
+        } catch (MalformedURLException mue) {
+            mue.printStackTrace();
+            return;
+        } 
+
+        // generate the response
+        String diagmarkup = getSource(srcUrl);
+        System.out.println("getSource=>" + diagmarkup);
+        SourceStringReader reader = new SourceStringReader(diagmarkup);
+        int n = index == null ? 0 : Integer.parseInt(index);
+        List<BlockUml> blocks = reader.getBlocks();
+        BlockUml block = blocks.get(n);
+        Diagram diagram = block.getDiagram();
+        UmlSource umlSrc = diagram.getSource();
+        String uml = umlSrc.getPlainString();
+        System.out.println("uml="+uml);
+        
+        // generate the response
+        DiagramResponse dr = new DiagramResponse(response, getOutputFormat());
+        try {
+            dr.sendDiagram(uml);
+        } catch (IIOException iioe) {
+            // Browser has closed the connection, so the HTTP OutputStream is closed
+            // Silently catch the exception to avoid annoying log 
         }
+        dr = null;        
+    }
+
+    private String getSource(URL url) throws IOException {
+        String line;
+        BufferedReader rd;
+        StringBuilder sb;
+        try {
+            HttpURLConnection con = getConnection(url);
+            rd = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            sb = new StringBuilder();
+
+            while ((line = rd.readLine()) != null) {
+                sb.append(line + '\n');
+            }
+            rd.close();
+            return sb.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally{
+            rd = null;
+        }
+        return "";
     }
 
     private FileFormat getOutputFormat() {
@@ -111,9 +125,53 @@ public class ProxyServlet extends HttpServlet {
             return FileFormat.SVG;
         }
         if (format.equals("txt")) {
-            return FileFormat.ATXT;
+            return FileFormat.UTXT;
         }
         return FileFormat.PNG;
     }
 
+    private HttpURLConnection getConnection(URL url) throws IOException {
+        if (url.getProtocol().startsWith("https")) {
+            HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            con.setReadTimeout(10000); // 10 seconds
+            // printHttpsCert(con);
+            con.connect();
+            return con;
+        } else {
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            con.setReadTimeout(10000); // 10 seconds
+            con.connect();
+            return con;
+        }
+    }
+    
+    /**
+     * Debug method used to dump the certificate info 
+     * @param con the https connection
+     */
+    private void printHttpsCert(HttpsURLConnection con) {
+        if (con != null) {
+            try {
+                System.out.println("Response Code : " + con.getResponseCode());
+                System.out.println("Cipher Suite : " + con.getCipherSuite());
+                System.out.println("\n");
+
+                Certificate[] certs = con.getServerCertificates();
+                for (Certificate cert : certs) {
+                    System.out.println("Cert Type : " + cert.getType());
+                    System.out.println("Cert Hash Code : " + cert.hashCode());
+                    System.out.println("Cert Public Key Algorithm : " + cert.getPublicKey().getAlgorithm());
+                    System.out.println("Cert Public Key Format : " + cert.getPublicKey().getFormat());
+                    System.out.println("\n");
+                }
+
+            } catch (SSLPeerUnverifiedException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

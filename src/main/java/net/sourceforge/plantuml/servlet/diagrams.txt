@@ -22,7 +22,8 @@ UmlDiagramService <|-- PngServlet
 UmlDiagramService <|-- SvgServlet
 UmlDiagramService <|-- AsciiServlet
 UmlDiagramService o- DiagramResponse
-MapServlet o- DiagramResponse
+MapServlet o-- DiagramResponse
+ProxyServlet o-- DiagramResponse
 @enduml
 
 ## Sequence diagram ##
