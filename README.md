@@ -1,7 +1,6 @@
-
 PlantUML Server 
 ===============
-[![Build Status](https://travis-ci.org/arnaudroques/plantumlservlet.png?branch=master)](https://travis-ci.org/arnaudroques/plantumlservlet)
+[![Build Status](https://travis-ci.org/plantuml/plantuml-server.png?branch=master)](https://travis-ci.org/plantuml/plantuml-server)
 
 PlantUML Server is a web application to generate UML diagrams on-the-fly.
  
