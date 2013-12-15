@@ -29,12 +29,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
 import net.sourceforge.plantuml.StringUtils;
+import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.servlet.utility.NullOutputStream;
 
 /**
@@ -44,6 +46,7 @@ import net.sourceforge.plantuml.servlet.utility.NullOutputStream;
 class DiagramResponse {
     private HttpServletResponse response;
     private FileFormat format;
+	private HttpServletRequest request;
     private static final Map<FileFormat, String> contentType;
     static {
         Map<FileFormat, String> map = new HashMap<FileFormat, String>();
@@ -53,9 +56,10 @@ class DiagramResponse {
         contentType = Collections.unmodifiableMap(map);
     }
 
-    DiagramResponse(HttpServletResponse r, FileFormat f) {
+    DiagramResponse(HttpServletResponse r, FileFormat f, HttpServletRequest q) {
         response = r;
         format = f;
+		request = q;
     }
 
     void sendDiagram(String uml) throws IOException {
@@ -65,21 +69,24 @@ class DiagramResponse {
         response.setContentType(getContentType());
         SourceStringReader reader = new SourceStringReader(uml);
         reader.generateImage(response.getOutputStream(), new FileFormatOption(format, false));
+		// Stats.getInstance().logImageGeneration(request, now, System.currentTimeMillis(), result.getType());
     }
     
-    void sendMap(String uml) throws IOException {
-        if (StringUtils.isDiagramCacheable(uml)) {
-            addHeaderForCache();
-        }
-        response.setContentType(getContentType());
-        SourceStringReader reader = new SourceStringReader(uml);
-        String map = reader.generateImage(new NullOutputStream(), new FileFormatOption(FileFormat.PNG, false));
-        String[] mapLines = map.split("[\\r\\n]");
-        PrintWriter httpOut = response.getWriter();
-        for (int i=2; (i+1)<mapLines.length; i++) {
-            httpOut.print(mapLines[i]);
-        }
-   }
+	void sendMap(String uml) throws IOException {
+		long now = System.currentTimeMillis();
+		if (StringUtils.isDiagramCacheable(uml)) {
+			addHeaderForCache();
+		}
+		response.setContentType(getContentType());
+		SourceStringReader reader = new SourceStringReader(uml);
+		DiagramDescription map = reader.generateDiagramDescription(new NullOutputStream(), new FileFormatOption(FileFormat.PNG,
+				false));
+		if (map.getCmapData() != null) {
+			PrintWriter httpOut = response.getWriter();
+			httpOut.print(map.getCmapData());
+		}
+		// Stats.getInstance().logImageGeneration(request, now, System.currentTimeMillis(), map.getType());
+	}
     
     private void addHeaderForCache() {
         long today = System.currentTimeMillis();

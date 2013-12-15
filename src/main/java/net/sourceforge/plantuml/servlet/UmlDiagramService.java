@@ -46,7 +46,7 @@ public abstract class UmlDiagramService extends HttpServlet {
         String uml = UmlExtractor.getUmlSource(getSource(request.getRequestURI()));
 
         // generate the response
-        DiagramResponse dr = new DiagramResponse(response, getOutputFormat());
+        DiagramResponse dr = new DiagramResponse(response, getOutputFormat(), request);
         try {
             dr.sendDiagram(uml);
         } catch (IIOException iioe) {

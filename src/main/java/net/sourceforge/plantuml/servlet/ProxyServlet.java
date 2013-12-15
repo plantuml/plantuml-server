@@ -85,7 +85,7 @@ public class ProxyServlet extends HttpServlet {
         System.out.println("uml="+uml);
         
         // generate the response
-        DiagramResponse dr = new DiagramResponse(response, getOutputFormat());
+        DiagramResponse dr = new DiagramResponse(response, getOutputFormat(), request);
         try {
             dr.sendDiagram(uml);
         } catch (IIOException iioe) {
