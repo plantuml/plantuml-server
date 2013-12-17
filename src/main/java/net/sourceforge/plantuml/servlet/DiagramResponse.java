@@ -69,24 +69,24 @@ class DiagramResponse {
         response.setContentType(getContentType());
         SourceStringReader reader = new SourceStringReader(uml);
         reader.generateImage(response.getOutputStream(), new FileFormatOption(format, false));
-		// Stats.getInstance().logImageGeneration(request, now, System.currentTimeMillis(), result.getType());
+        // Stats.getInstance().logImageGeneration(request, now, System.currentTimeMillis(), result.getType());
     }
     
-	void sendMap(String uml) throws IOException {
-		long now = System.currentTimeMillis();
-		if (StringUtils.isDiagramCacheable(uml)) {
-			addHeaderForCache();
-		}
-		response.setContentType(getContentType());
-		SourceStringReader reader = new SourceStringReader(uml);
-		DiagramDescription map = reader.generateDiagramDescription(new NullOutputStream(), new FileFormatOption(FileFormat.PNG,
-				false));
-		if (map.getCmapData() != null) {
-			PrintWriter httpOut = response.getWriter();
-			httpOut.print(map.getCmapData());
-		}
-		// Stats.getInstance().logImageGeneration(request, now, System.currentTimeMillis(), map.getType());
-	}
+    void sendMap(String uml) throws IOException {
+        long now = System.currentTimeMillis();
+        if (StringUtils.isDiagramCacheable(uml)) {
+            addHeaderForCache();
+        }
+        response.setContentType(getContentType());
+        SourceStringReader reader = new SourceStringReader(uml);
+        DiagramDescription map = reader.generateDiagramDescription(new NullOutputStream(), new FileFormatOption(
+                FileFormat.PNG, false));
+        if (map.getCmapData() != null) {
+            PrintWriter httpOut = response.getWriter();
+            httpOut.print(map.getCmapData());
+        }
+        // Stats.getInstance().logImageGeneration(request, now, System.currentTimeMillis(), map.getType());
+    }
     
     private void addHeaderForCache() {
         long today = System.currentTimeMillis();
