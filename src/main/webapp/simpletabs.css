@@ -1,0 +1,16 @@
+/**
+ * @version		1.3
+ * @package		SimpleTabs
+ * @author    Fotis Evangelou - http://nuevvo.com/labs/simpletabs
+ * @copyright	Copyright (c) 2009-2011 Fotis Evangelou / Nuevvo Webware Ltd. All rights reserved.
+ * @license		GNU/GPL license: http://www.gnu.org/copyleft/gpl.html
+ */
+ 
+div.simpleTabs { padding:10px; }
+ul.simpleTabsNavigation { margin:0 10px; padding:0; text-align:left; }
+ul.simpleTabsNavigation li { list-style:none; display:inline; margin:0; padding:0; }
+ul.simpleTabsNavigation li a { border:1px solid #E0E0E0; padding:3px 6px; background:#F0F0F0; font-size:14px; text-decoration:none; font-family:Georgia, "Times New Roman", Times, serif; }
+ul.simpleTabsNavigation li a:hover { background-color:#F6F6F6; }
+ul.simpleTabsNavigation li a.current { background:#fff; color:#222; border-bottom:1px solid #fff; }
+div.simpleTabsContent { border:1px solid #E0E0E0; padding:5px 15px 15px; margin-top:3px; display:none; }
+div.simpleTabsContent.currentTab { display:block; }
