@@ -17,7 +17,7 @@ public class TestImage extends WebappTestCase {
      */
     public void testVersionImage() throws Exception {
         WebConversation conversation = new WebConversation();
-        WebRequest request = new GetMethodWebRequest(getServerUrl() + "img/" + TestUtils.VERSION);
+        WebRequest request = new GetMethodWebRequest(getServerUrl() + "png/" + TestUtils.VERSION);
         WebResponse response = conversation.getResource(request);
         // Analyze response
         // Verifies the Content-Type header
@@ -44,7 +44,7 @@ public class TestImage extends WebappTestCase {
     public void testDiagramHttpHeader() throws Exception {
         WebConversation conversation = new WebConversation();
         // Bob -> Alice : hello
-        WebRequest request = new GetMethodWebRequest(getServerUrl() + "img/" + TestUtils.SEQBOB);
+        WebRequest request = new GetMethodWebRequest(getServerUrl() + "png/" + TestUtils.SEQBOB);
         WebResponse response = conversation.getResource(request);
         // Analyze response
         // Verifies the Content-Type header
@@ -63,4 +63,22 @@ public class TestImage extends WebappTestCase {
             ; // Do nothing
         }
     }
+    
+    /**
+     * Verifies that the HTTP header of a diagram incites the browser to cache it.
+     */
+    public void testOldImgURL() throws Exception {
+        WebConversation conversation = new WebConversation();
+        // Bob -> Alice : hello
+        WebRequest request = new GetMethodWebRequest(getServerUrl() + "img/" + TestUtils.SEQBOB);
+        WebResponse response = conversation.getResource(request);
+        // Analyze response
+        // Verifies the Content-Type header
+        assertEquals("Response content type is not PNG", "image/png", response.getContentType());
+        // Consume the response
+        InputStream responseStream = response.getInputStream();
+        while (responseStream.read() != -1) {
+            ; // Do nothing
+        }
+    }    
 }

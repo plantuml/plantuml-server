@@ -52,6 +52,10 @@
 		<servlet-name>plantumlservlet</servlet-name>
 		<url-pattern>/form</url-pattern>
 	</servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>imgservlet</servlet-name>
+        <url-pattern>/png/*</url-pattern>
+    </servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>imgservlet</servlet-name>
 		<url-pattern>/img/*</url-pattern>

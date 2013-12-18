@@ -7,7 +7,7 @@
     <c:set var="hostpath" value="http://${pageContext.request.serverName}${contextroot}" />
 </c:if>
 <c:if test="${!empty encoded}">
-    <c:set var="imgurl" value="${hostpath}/img/${encoded}" />
+    <c:set var="imgurl" value="${hostpath}/png/${encoded}" />
     <c:set var="svgurl" value="${hostpath}/svg/${encoded}" />
     <c:set var="txturl" value="${hostpath}/txt/${encoded}" />
     <c:if test="${!empty mapneeded}">

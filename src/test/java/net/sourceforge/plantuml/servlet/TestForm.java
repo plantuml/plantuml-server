@@ -20,7 +20,7 @@ public class TestForm extends WebappTestCase {
         WebForm forms[] = response.getForms();
         assertEquals(2, forms.length);
         assertEquals("url", forms[1].getParameterNames()[0]);
-        assertTrue(forms[1].getParameterValue("url").endsWith("/img/" + TestUtils.SEQBOB));
+        assertTrue(forms[1].getParameterValue("url").endsWith("/png/" + TestUtils.SEQBOB));
         // Ensure the generated image is present
         assertEquals(1, response.getImages().length);
 
@@ -43,7 +43,7 @@ public class TestForm extends WebappTestCase {
         // Ensure the Text field is correct
         assertEquals("version", forms[0].getParameterValue("text"));
         // Ensure the URL field is correct
-        assertTrue(forms[1].getParameterValue("url").endsWith("/img/" + TestUtils.VERSION));
+        assertTrue(forms[1].getParameterValue("url").endsWith("/png/" + TestUtils.VERSION));
         // Ensure the image is present
         assertEquals(1, response.getImages().length);
     }
@@ -109,7 +109,7 @@ public class TestForm extends WebappTestCase {
         // Ensure the Text field is correct
         assertTrue(forms[0].getParameterValue("text").startsWith("@startditaa"));
         // Ensure the URL field is correct
-        assertTrue(forms[1].getParameterValue("url").endsWith("/img/SoWkIImgISaiIKnKuDBIrRLJu798pKi12m00"));
+        assertTrue(forms[1].getParameterValue("url").endsWith("/png/SoWkIImgISaiIKnKuDBIrRLJu798pKi12m00"));
         // Ensure the image is present
         assertEquals(1, response.getImages().length);
     }
@@ -148,7 +148,7 @@ public class TestForm extends WebappTestCase {
         // Ensure the Text field is filled
         assertEquals(forms[0].getParameterValue("text"), "@startuml\nBob -> Alice : hello\n@enduml");
         // Ensure the URL field is filled
-        assertEquals(forms[1].getParameterValue("url"), getServerUrl() + "img/" + TestUtils.SEQBOB);
+        assertEquals(forms[1].getParameterValue("url"), getServerUrl() + "png/" + TestUtils.SEQBOB);
         // Ensure the the image is present
         assertEquals(1, response.getImages().length);
     }

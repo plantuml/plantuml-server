@@ -34,7 +34,7 @@ public class ImgServlet extends UmlDiagramService {
 
     @Override
     public String getSource(String uri) {
-        String[] result = uri.split("/img/", 2);
+        String[] result = uri.split("/img/|/png/", 2);
         if (result.length != 2) {
             return "";
         } else {
