@@ -1,6 +1,7 @@
 <%@ page info="index" contentType="text/html; charset=utf-8" pageEncoding="utf-8" session="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
+<c:set var="cfg" value="${applicationScope['cfg']}" />
 <c:set var="contextroot" value="${pageContext.request.contextPath}" />
 <c:set var="hostpath" value="http://${pageContext.request.serverName}:${pageContext.request.serverPort}${contextroot}" />
 <c:if test="${pageContext.request.serverPort == 80 }">
@@ -32,6 +33,9 @@
     <%-- PAGE TITLE --%>
     <h1>PlantUML Server</h1>
     <p>This application provides a servlet which serves images created by <a href="http://plantuml.sourceforge.net">PlantUML</a>.</p>
+    <c:if test="${cfg['SHOW_SOCIAL_BUTTONS'] == 'on' }">
+        <p>SOCIAL BUTTONS</p>
+    </c:if>
 </div>
 <div id="content">
     <%-- CONTENT --%>

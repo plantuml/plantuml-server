@@ -30,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -41,6 +42,7 @@ import net.sourceforge.plantuml.SourceStringReader;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.code.Transcoder;
 import net.sourceforge.plantuml.code.TranscoderUtil;
+import net.sourceforge.plantuml.servlet.utility.Configuration;
 import net.sourceforge.plantuml.api.PlantumlUtils;
 
 /*
@@ -121,7 +123,11 @@ public class PlantUmlServlet extends HttpServlet {
         dispatcher.forward(request, response);
         return;
     }
-
+    
+	public void init(ServletConfig config) throws ServletException {
+		config.getServletContext().setAttribute("cfg", Configuration.get());
+	}
+    
     private Transcoder getTranscoder() {
         return TranscoderUtil.getDefaultTranscoder();
     }
