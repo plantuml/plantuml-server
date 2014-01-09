@@ -30,55 +30,54 @@ import java.util.Properties;
 
 public class Configuration {
 
-	private static Configuration instance;
-	private Properties config;
+    private static Configuration instance;
+    private Properties config;
 
-	/**
-	 * Singleton constructor
-	 */
-	private Configuration() {
-		Properties config = new Properties();
-		
-		// Default values
-		config.setProperty("SHOW_SOCIAL_BUTTONS", "off");
-		config.setProperty("USE_GOOGLE_TRACKER", "off");
-		// End of default values
-		
-		try {
-			InputStream is = Thread.currentThread().getContextClassLoader().
-	            getResourceAsStream("config.properties");
-			if (is != null) {
-			    config.load(is);
-				is.close();
-			}
-		} catch (IOException e) {
-			// Just log a warning
-			e.printStackTrace();
-		}
-	}
+    /**
+     * Singleton constructor
+     */
+    private Configuration() {
+        config = new Properties();
 
-	/**
-	 * Get the configuration
-	 * 
-	 * @return the complete configuration
-	 */
-	public static Properties get() {
-		if (instance == null) {
-			instance = new Configuration();
-		}
-		return instance.config;
-	}
-	
-	/**
-	 * Get a boolean configuration value
-	 * 
-	 * @return true if the value is "on"
-	 */
-	public static boolean get(String key) {
-		if (instance.config.getProperty(key) == null) {
-			return false;
-		}
-		return instance.config.getProperty(key).startsWith("on");
-	}
+        // Default values
+        config.setProperty("SHOW_SOCIAL_BUTTONS", "off");
+        config.setProperty("USE_GOOGLE_TRACKER", "off");
+        // End of default values
+
+        try {
+            InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("config.properties");
+            if (is != null) {
+                config.load(is);
+                is.close();
+            }
+        } catch (IOException e) {
+            // Just log a warning
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Get the configuration
+     * 
+     * @return the complete configuration
+     */
+    public static Properties get() {
+        if (instance == null) {
+            instance = new Configuration();
+        }
+        return instance.config;
+    }
+
+    /**
+     * Get a boolean configuration value
+     * 
+     * @return true if the value is "on"
+     */
+    public static boolean get(String key) {
+        if (instance.config.getProperty(key) == null) {
+            return false;
+        }
+        return instance.config.getProperty(key).startsWith("on");
+    }
 
 }
