@@ -124,9 +124,9 @@ public class PlantUmlServlet extends HttpServlet {
         return;
     }
     
-	public void init(ServletConfig config) throws ServletException {
-		config.getServletContext().setAttribute("cfg", Configuration.get());
-	}
+    public void init(ServletConfig config) throws ServletException {
+        config.getServletContext().setAttribute("cfg", Configuration.get());
+    }
     
     private Transcoder getTranscoder() {
         return TranscoderUtil.getDefaultTranscoder();

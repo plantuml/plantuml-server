@@ -32,10 +32,10 @@
 <div id="header">
     <%-- PAGE TITLE --%>
     <h1>PlantUML Server</h1>
-    <p>This application provides a servlet which serves images created by <a href="http://plantuml.sourceforge.net">PlantUML</a>.</p>
-    <c:if test="${cfg['SHOW_SOCIAL_BUTTONS'] == 'on' }">
-        <p>SOCIAL BUTTONS</p>
+    <c:if test="${cfg['SHOW_SOCIAL_BUTTONS'] eq 'on' }">
+        <%@ include file="resource/socialbuttons1.html" %>
     </c:if>
+    <p>This application provides a servlet which serves images created by <a href="http://plantuml.sourceforge.net">PlantUML</a>.</p>
 </div>
 <div id="content">
     <%-- CONTENT --%>
@@ -61,6 +61,9 @@
         <a href="${txturl}">View as ASCII Art</a>&nbsp;
         <c:if test="${!empty mapurl}">
             <a href="${mapurl}">View Map Data</a>
+        </c:if>
+        <c:if test="${cfg['SHOW_SOCIAL_BUTTONS'] == 'on' }">
+            <%@ include file="resource/socialbuttons2.jspf" %>
         </c:if>
         <p id="diagram">
             <c:choose>
