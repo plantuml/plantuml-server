@@ -35,6 +35,7 @@ import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
 import net.sourceforge.plantuml.StringUtils;
+import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.servlet.utility.NullOutputStream;
 
 /**
@@ -81,6 +82,14 @@ class DiagramResponse {
         }
    }
 
+    void sendCheck(String uml) throws IOException {
+        response.setContentType(getContentType());
+        SourceStringReader reader = new SourceStringReader(uml);
+        DiagramDescription desc = reader.generateDiagramDescription(
+            new NullOutputStream(), new FileFormatOption(FileFormat.PNG, false));
+        PrintWriter httpOut = response.getWriter();
+        httpOut.print(desc.getDescription());
+ }
     private void addHeaderForCache() {
         long today = System.currentTimeMillis();
         // Add http headers to force the browser to cache the image
