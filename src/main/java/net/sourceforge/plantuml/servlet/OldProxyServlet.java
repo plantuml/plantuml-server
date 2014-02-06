@@ -3,7 +3,7 @@
  * ========================================================================
  *
  * Project Info:  http://plantuml.sourceforge.net
- * 
+ *
  * This file is part of PlantUML.
  *
  * PlantUML is free software; you can redistribute it and/or modify it
@@ -44,7 +44,7 @@ import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
 
-/* 
+/*
  * Proxy servlet of the webapp.
  * This servlet retrieves the diagram source of a web resource (web html page)
  * and renders it.
@@ -58,7 +58,7 @@ public class OldProxyServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
-    	final String uri = request.getRequestURI();
+        final String uri = request.getRequestURI();
 
         Matcher proxyMatcher = proxyPattern.matcher(uri);
         if (proxyMatcher.matches()) {

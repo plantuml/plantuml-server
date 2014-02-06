@@ -60,10 +60,10 @@ public class TestImage extends WebappTestCase {
         // Consume the response
         InputStream responseStream = response.getInputStream();
         while (responseStream.read() != -1) {
-            ; // Do nothing
+            // Do nothing
         }
     }
-    
+
     /**
      * Verifies that the HTTP header of a diagram incites the browser to cache it.
      */
@@ -78,7 +78,7 @@ public class TestImage extends WebappTestCase {
         // Consume the response
         InputStream responseStream = response.getInputStream();
         while (responseStream.read() != -1) {
-            ; // Do nothing
+            // Do nothing
         }
-    }    
+    }
 }

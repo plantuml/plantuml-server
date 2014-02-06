@@ -3,7 +3,7 @@
  * ========================================================================
  *
  * Project Info:  http://plantuml.sourceforge.net
- * 
+ *
  * This file is part of PlantUML.
  *
  * PlantUML is free software; you can redistribute it and/or modify it
@@ -51,14 +51,14 @@ public abstract class UmlDiagramService extends HttpServlet {
             dr.sendDiagram(uml);
         } catch (IIOException iioe) {
             // Browser has closed the connection, so the HTTP OutputStream is closed
-            // Silently catch the exception to avoid annoying log 
+            // Silently catch the exception to avoid annoying log
         }
         dr = null;
     }
 
     /**
      * Extracts the compressed UML source from the HTTP URI.
-     * 
+     *
      * @param uri
      *            the complete URI as returned by request.getRequestURI()
      * @return the compressed UML source
@@ -67,7 +67,7 @@ public abstract class UmlDiagramService extends HttpServlet {
 
     /**
      * Gives the wished output format of the diagram. This value is used by the DiagramResponse class.
-     * 
+     *
      * @return the format
      */
     abstract public FileFormat getOutputFormat();

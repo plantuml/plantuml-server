@@ -14,12 +14,12 @@ public class TestProxy extends WebappTestCase {
      */
     public void testDefaultProxy() throws Exception {
         WebConversation conversation = new WebConversation();
-		WebRequest request = new GetMethodWebRequest(getServerUrl()
-				+ "proxy?src=" + getServerUrl() + "resource/test2diagrams.txt");
+        WebRequest request = new GetMethodWebRequest(getServerUrl()
+            + "proxy?src=" + getServerUrl() + "resource/test2diagrams.txt");
         WebResponse response = conversation.getResource(request);
         // Analyze response
         // Verifies the Content-Type header
-        assertEquals( "Response content type is not PNG", "image/png", response.getContentType());
+        assertEquals("Response content type is not PNG", "image/png", response.getContentType());
         // Get the image and verify its size (~2000 bytes)
         InputStream responseStream = response.getInputStream();
         ByteArrayOutputStream imageStream = new ByteArrayOutputStream();
@@ -38,8 +38,8 @@ public class TestProxy extends WebappTestCase {
 /*
     public void testProxyWithFormat() throws Exception {
         WebConversation conversation = new WebConversation();
-		WebRequest request = new GetMethodWebRequest(getServerUrl()
-				+ "proxy?format=svg&src=" + getServerUrl() + "resource/test2diagrams.txt");
+        WebRequest request = new GetMethodWebRequest(getServerUrl()
+            + "proxy?format=svg&src=" + getServerUrl() + "resource/test2diagrams.txt");
         WebResponse response = conversation.getResource(request);
         // Analyze response
         // Verifies the Content-Type header

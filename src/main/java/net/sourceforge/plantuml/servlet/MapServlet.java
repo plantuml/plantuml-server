@@ -3,7 +3,7 @@
  * ========================================================================
  *
  * Project Info:  http://plantuml.sourceforge.net
- * 
+ *
  * This file is part of PlantUML.
  *
  * PlantUML is free software; you can redistribute it and/or modify it
@@ -35,7 +35,7 @@ import net.sourceforge.plantuml.FileFormat;
 
 import net.sourceforge.plantuml.servlet.utility.UmlExtractor;
 
-/* 
+/*
  * MAP servlet of the webapp.
  * This servlet produces the image map of the diagram in HTML format.
  */
@@ -57,7 +57,7 @@ public class MapServlet extends HttpServlet {
         }
         dr = null;
     }
-    
+
     public String getSource(String uri) {
         String[] result = uri.split("/map/", 2);
         if (result.length != 2) {

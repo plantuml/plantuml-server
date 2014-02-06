@@ -9,12 +9,12 @@ public class TestUtils {
     /*
      * Theses strings are the compressed form of a PlantUML diagram.
      */
-    
+
     /*
      * version
      */
     public static final String VERSION = "AqijAixCpmC0";
-    
+
     /*
      * Bob -> Alice : hello
      */

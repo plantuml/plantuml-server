@@ -51,7 +51,7 @@ import net.sourceforge.plantuml.api.PlantumlUtils;
  *
  * This class is the old all-in-one historic implementation of the PlantUml server.
  * See package.html for the new design. It's a work in progress.
- * 
+ *
  * Modified by Arnaud Roques
  * Modified by Pablo Lalloni
  * Modified by Maxime Sinclair
@@ -112,22 +112,22 @@ public class PlantUmlServlet extends HttpServlet {
 
         request.setAttribute("decoded", text);
         request.setAttribute("encoded", encoded);
-        
+
         // check if an image map is necessary
         if (text != null && PlantumlUtils.hasCMapData(text)) {
             request.setAttribute("mapneeded", Boolean.TRUE);
-        }    
+        }
 
         // forward to index.jsp
         RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
         dispatcher.forward(request, response);
         return;
     }
-    
+
     public void init(ServletConfig config) throws ServletException {
         config.getServletContext().setAttribute("cfg", Configuration.get());
     }
-    
+
     private Transcoder getTranscoder() {
         return TranscoderUtil.getDefaultTranscoder();
     }

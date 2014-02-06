@@ -3,7 +3,7 @@
  * ========================================================================
  *
  * Project Info:  http://plantuml.sourceforge.net
- * 
+ *
  * This file is part of PlantUML.
  *
  * PlantUML is free software; you can redistribute it and/or modify it
@@ -40,7 +40,7 @@ public class NullOutputStream extends OutputStream {
      * Overridden for performance reason
      */
     @Override
-    public void write(byte b[]) throws IOException {
+    public void write(byte[] b) throws IOException {
         // Do nothing silently
     }
 
@@ -48,7 +48,7 @@ public class NullOutputStream extends OutputStream {
      * Overridden for performance reason
      */
     @Override
-    public void write(byte b[], int off, int len) throws IOException {
+    public void write(byte[] b, int off, int len) throws IOException {
         // Do nothing silently
     }
 }

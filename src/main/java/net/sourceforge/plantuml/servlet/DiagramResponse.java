@@ -3,7 +3,7 @@
  * ========================================================================
  *
  * Project Info:  http://plantuml.sourceforge.net
- * 
+ *
  * This file is part of PlantUML.
  *
  * PlantUML is free software; you can redistribute it and/or modify it
@@ -66,7 +66,7 @@ class DiagramResponse {
         SourceStringReader reader = new SourceStringReader(uml);
         reader.generateImage(response.getOutputStream(), new FileFormatOption(format, false));
     }
-    
+
     void sendMap(String uml) throws IOException {
         if (StringUtils.isDiagramCacheable(uml)) {
             addHeaderForCache();
@@ -76,11 +76,11 @@ class DiagramResponse {
         String map = reader.generateImage(new NullOutputStream(), new FileFormatOption(FileFormat.PNG, false));
         String[] mapLines = map.split("[\\r\\n]");
         PrintWriter httpOut = response.getWriter();
-        for (int i=2; (i+1)<mapLines.length; i++) {
+        for (int i = 2; (i + 1) < mapLines.length; i++) {
             httpOut.print(mapLines[i]);
         }
    }
-    
+
     private void addHeaderForCache() {
         long today = System.currentTimeMillis();
         // Add http headers to force the browser to cache the image
@@ -90,7 +90,7 @@ class DiagramResponse {
         // 2009 dec 22 constant date in the past
         response.addHeader("Cache-Control", "public");
     }
-    
+
     private String getContentType() {
         return contentType.get(format);
     }

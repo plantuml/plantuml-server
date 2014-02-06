@@ -17,7 +17,7 @@ public class TestForm extends WebappTestCase {
         WebRequest request = new GetMethodWebRequest(getServerUrl());
         WebResponse response = conversation.getResponse(request);
         // Analyze response
-        WebForm forms[] = response.getForms();
+        WebForm[] forms = response.getForms();
         assertEquals(2, forms.length);
         assertEquals("url", forms[1].getParameterNames()[0]);
         assertTrue(forms[1].getParameterValue("url").endsWith("/png/" + TestUtils.SEQBOB));
@@ -38,7 +38,7 @@ public class TestForm extends WebappTestCase {
         formUMLText.setParameter("text", "version");
         response = formUMLText.submit();
         // Analyze response
-        WebForm forms[] = response.getForms();
+        WebForm[] forms = response.getForms();
         assertEquals(2, forms.length);
         // Ensure the Text field is correct
         assertEquals("version", forms[0].getParameterValue("text"));
@@ -60,7 +60,7 @@ public class TestForm extends WebappTestCase {
         formUMLText.setParameter("text", "");
         response = formUMLText.submit();
         // Analyze response
-        WebForm forms[] = response.getForms();
+        WebForm[] forms = response.getForms();
         assertEquals(2, forms.length);
         // Ensure the Text field is empty
         assertNull(forms[0].getParameterValue("text"));
@@ -82,7 +82,7 @@ public class TestForm extends WebappTestCase {
         formUrl.setParameter("url", "");
         response = formUrl.submit();
         // Analyze response
-        WebForm forms[] = response.getForms();
+        WebForm[] forms = response.getForms();
         assertEquals(2, forms.length);
         // Ensure the Text field is empty
         assertNull(forms[0].getParameterValue("text"));
@@ -104,7 +104,7 @@ public class TestForm extends WebappTestCase {
         formDitaaText.setParameter("text", "@startditaa \n*--> \n@endditaa");
         response = formDitaaText.submit();
         // Analyze response
-        WebForm forms[] = response.getForms();
+        WebForm[] forms = response.getForms();
         assertEquals(2, forms.length);
         // Ensure the Text field is correct
         assertTrue(forms[0].getParameterValue("text").startsWith("@startditaa"));
@@ -129,7 +129,7 @@ public class TestForm extends WebappTestCase {
         // Ensure the generated image is present
         assertEquals(1, response.getImages().length);
         // Ensure the image map is present
-        HTMLElement maps[] = response.getElementsByTagName("map");
+        HTMLElement[] maps = response.getElementsByTagName("map");
         assertEquals(1, maps.length);
     }
 
@@ -143,7 +143,7 @@ public class TestForm extends WebappTestCase {
         WebRequest request = new GetMethodWebRequest(getServerUrl() + "form?url=" + TestUtils.SEQBOB);
         WebResponse response = conversation.getResponse(request);
         // Analyze response
-        WebForm forms[] = response.getForms();
+        WebForm[] forms = response.getForms();
         assertEquals(2, forms.length);
         // Ensure the Text field is filled
         assertEquals(forms[0].getParameterValue("text"), "@startuml\nBob -> Alice : hello\n@enduml");

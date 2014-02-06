@@ -21,13 +21,15 @@ public class TestCharset extends WebappTestCase {
         String diagram = response.getText();
         assertTrue("Interrobang unicode character is not preserved", diagram.contains("‽"));
     }
-    
+
     /**
-     * Verifies the preservation of unicode characters for the "participant Bob [[http://www.snow.com/❄]]\nBob -> Alice" sample
+     * Verifies the preservation of unicode characters for the
+     * "participant Bob [[http://www.snow.com/❄]]\nBob -> Alice" sample
      */
     public void testUnicodeInCMap() throws Exception {
         WebConversation conversation = new WebConversation();
-        WebRequest request = new GetMethodWebRequest(getServerUrl() + "map/AqWiAibCpYn8p2jHSCfFKeYEpYWfAR3IroylBzShpiilrqlEpzL_DBSbDfOB9Azhf-2OavcS2W00");
+        WebRequest request = new GetMethodWebRequest(getServerUrl()
+                + "map/AqWiAibCpYn8p2jHSCfFKeYEpYWfAR3IroylBzShpiilrqlEpzL_DBSbDfOB9Azhf-2OavcS2W00");
         WebResponse response = conversation.getResource(request);
         // Analyze response
         // Verifies the Content-Type header

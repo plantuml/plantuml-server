@@ -3,7 +3,7 @@
  * ========================================================================
  *
  * Project Info:  http://plantuml.sourceforge.net
- * 
+ *
  * This file is part of PlantUML.
  *
  * PlantUML is free software; you can redistribute it and/or modify it
@@ -28,7 +28,7 @@ import java.io.InputStream;
 
 import java.util.Properties;
 
-public class Configuration {
+public final class Configuration {
 
     private static Configuration instance;
     private Properties config;
@@ -58,7 +58,7 @@ public class Configuration {
 
     /**
      * Get the configuration
-     * 
+     *
      * @return the complete configuration
      */
     public static Properties get() {
@@ -70,10 +70,10 @@ public class Configuration {
 
     /**
      * Get a boolean configuration value
-     * 
+     *
      * @return true if the value is "on"
      */
-    public static boolean get(String key) {
+    public static boolean get(final String key) {
         if (instance.config.getProperty(key) == null) {
             return false;
         }

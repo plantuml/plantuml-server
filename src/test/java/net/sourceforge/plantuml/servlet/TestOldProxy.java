@@ -15,7 +15,8 @@ public class TestOldProxy extends WebappTestCase {
      */
     public void testDefaultProxy() throws Exception {
         WebConversation conversation = new WebConversation();
-        WebRequest request = new GetMethodWebRequest(getServerUrl() + "proxy/" + getServerUrl() + "resource/test2diagrams.txt");
+        WebRequest request = new GetMethodWebRequest(getServerUrl() + "proxy/" + getServerUrl()
+                + "resource/test2diagrams.txt");
         WebResponse response = conversation.getResource(request);
         // Analyze response
         // Verifies the Content-Type header
@@ -38,7 +39,8 @@ public class TestOldProxy extends WebappTestCase {
 
     public void testProxyWithFormat() throws Exception {
         WebConversation conversation = new WebConversation();
-        WebRequest request = new GetMethodWebRequest(getServerUrl() + "proxy/svg/" + getServerUrl() + "resource/test2diagrams.txt");
+        WebRequest request = new GetMethodWebRequest(getServerUrl() + "proxy/svg/" + getServerUrl()
+                + "resource/test2diagrams.txt");
         WebResponse response = conversation.getResource(request);
         // Analyze response
         // Verifies the Content-Type header
@@ -61,7 +63,7 @@ public class TestOldProxy extends WebappTestCase {
         // Analyze response, it must be the empty form
         // Verifies the Content-Type header
         assertEquals("Response content type is not HTML", "text/html", response.getContentType());
-        WebForm forms[] = response.getForms();
+        WebForm[] forms = response.getForms();
         assertEquals(2, forms.length);
     }
 }

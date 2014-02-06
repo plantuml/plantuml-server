@@ -3,7 +3,7 @@
  * ========================================================================
  *
  * Project Info:  http://plantuml.sourceforge.net
- * 
+ *
  * This file is part of PlantUML.
  *
  * PlantUML is free software; you can redistribute it and/or modify it
@@ -48,7 +48,7 @@ import javax.imageio.IIOException;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLPeerUnverifiedException;
 
-/* 
+/*
  * Proxy servlet of the webapp.
  * This servlet retrieves the diagram source of a web resource (web html page)
  * and renders it.
@@ -70,7 +70,7 @@ public class ProxyServlet extends HttpServlet {
         } catch (MalformedURLException mue) {
             mue.printStackTrace();
             return;
-        } 
+        }
 
         // generate the response
         String diagmarkup = getSource(srcUrl);
@@ -82,20 +82,20 @@ public class ProxyServlet extends HttpServlet {
         Diagram diagram = block.getDiagram();
         UmlSource umlSrc = diagram.getSource();
         String uml = umlSrc.getPlainString();
-        System.out.println("uml="+uml);
-        
+        System.out.println("uml=" + uml);
+
         // generate the response
         DiagramResponse dr = new DiagramResponse(response, getOutputFormat());
         try {
             dr.sendDiagram(uml);
         } catch (IIOException iioe) {
             // Browser has closed the connection, so the HTTP OutputStream is closed
-            // Silently catch the exception to avoid annoying log 
+            // Silently catch the exception to avoid annoying log
         }
-        dr = null;        
+        dr = null;
     }
 
-    private String getSource(URL url) throws IOException {
+    private String getSource(final URL url) throws IOException {
         String line;
         BufferedReader rd;
         StringBuilder sb;
@@ -111,7 +111,7 @@ public class ProxyServlet extends HttpServlet {
             return sb.toString();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally{
+        } finally {
             rd = null;
         }
         return "";
@@ -130,7 +130,7 @@ public class ProxyServlet extends HttpServlet {
         return FileFormat.PNG;
     }
 
-    private HttpURLConnection getConnection(URL url) throws IOException {
+    private HttpURLConnection getConnection(final URL url) throws IOException {
         if (url.getProtocol().startsWith("https")) {
             HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
             con.setRequestMethod("GET");
@@ -146,12 +146,13 @@ public class ProxyServlet extends HttpServlet {
             return con;
         }
     }
-    
+
     /**
-     * Debug method used to dump the certificate info 
+     * Debug method used to dump the certificate info
      * @param con the https connection
      */
-    private void printHttpsCert(HttpsURLConnection con) {
+    @SuppressWarnings("unused")
+    private void printHttpsCert(final HttpsURLConnection con) {
         if (con != null) {
             try {
                 System.out.println("Response Code : " + con.getResponseCode());

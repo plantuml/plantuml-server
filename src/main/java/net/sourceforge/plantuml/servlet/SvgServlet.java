@@ -3,7 +3,7 @@
  * ========================================================================
  *
  * Project Info:  http://plantuml.sourceforge.net
- * 
+ *
  * This file is part of PlantUML.
  *
  * PlantUML is free software; you can redistribute it and/or modify it
@@ -25,7 +25,7 @@ package net.sourceforge.plantuml.servlet;
 
 import net.sourceforge.plantuml.FileFormat;
 
-/* 
+/*
  * SVG servlet of the webapp.
  * This servlet produces the UML diagram in SVG format.
  */
