@@ -60,16 +60,16 @@ import net.sourceforge.plantuml.api.PlantumlUtils;
 @SuppressWarnings("serial")
 public class PlantUmlServlet extends HttpServlet {
 
-    private static final Pattern urlPattern = Pattern.compile(".*/(.*)"); // Last part of the URL
-    private static final Pattern encodedPattern = Pattern.compile("^[a-zA-Z0-9\\-\\_]+$"); // Format of a compressed
+    private static final Pattern URL_PATTERN = Pattern.compile(".*/(.*)"); // Last part of the URL
+    private static final Pattern ENCODED_PATTERN = Pattern.compile("^[a-zA-Z0-9\\-\\_]+$"); // Format of a compressed
                                                                                            // diagram
-    private static final Pattern startumlPattern = Pattern.compile("/\\w+/start/(.*)");
+    private static final Pattern START_PATTERN = Pattern.compile("/\\w+/start/(.*)");
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         final String uri = request.getRequestURI();
-        Matcher startumlMatcher = startumlPattern.matcher(uri);
+        Matcher startumlMatcher = START_PATTERN.matcher(uri);
         if (startumlMatcher.matches()) {
             System.out.println("PlantUML WARNING This syntax is deprecated.");
             String source = startumlMatcher.group(1);
@@ -92,12 +92,12 @@ public class PlantUmlServlet extends HttpServlet {
         // the URL form has been submitted
         if (url != null && !url.trim().isEmpty()) {
             // Catch the last part of the URL if necessary
-            Matcher m1 = urlPattern.matcher(url);
+            Matcher m1 = URL_PATTERN.matcher(url);
             if (m1.find()) {
                 url = m1.group(1);
             }
             // Check it's a valid compressed text
-            Matcher m2 = encodedPattern.matcher(url);
+            Matcher m2 = ENCODED_PATTERN.matcher(url);
             if (m2.find()) {
                     url = m2.group(0);
                     text = transcoder.decode(url);

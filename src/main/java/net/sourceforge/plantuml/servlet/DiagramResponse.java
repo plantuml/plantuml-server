@@ -44,13 +44,13 @@ import net.sourceforge.plantuml.servlet.utility.NullOutputStream;
 class DiagramResponse {
     private HttpServletResponse response;
     private FileFormat format;
-    private static final Map<FileFormat, String> contentType;
+    private static final Map<FileFormat, String> CONTENT_TYPE;
     static {
         Map<FileFormat, String> map = new HashMap<FileFormat, String>();
         map.put(FileFormat.PNG, "image/png");
         map.put(FileFormat.SVG, "image/svg+xml");
         map.put(FileFormat.UTXT, "text/plain;charset=UTF-8");
-        contentType = Collections.unmodifiableMap(map);
+        CONTENT_TYPE = Collections.unmodifiableMap(map);
     }
 
     DiagramResponse(HttpServletResponse r, FileFormat f) {
@@ -92,7 +92,7 @@ class DiagramResponse {
     }
 
     private String getContentType() {
-        return contentType.get(format);
+        return CONTENT_TYPE.get(format);
     }
 
 }

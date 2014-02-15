@@ -76,4 +76,9 @@ public class UmlExtractor {
         return uml;
     }
 
+    protected UmlExtractor() {
+        // prevents calls from subclass
+        throw new UnsupportedOperationException();
+    }
+
 }

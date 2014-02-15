@@ -52,7 +52,7 @@ import net.sourceforge.plantuml.SourceStringReader;
 @SuppressWarnings("serial")
 public class OldProxyServlet extends HttpServlet {
 
-    private static final Pattern proxyPattern = Pattern.compile("/\\w+/proxy/((\\d+)/)?((\\w+)/)?(http://.*)");
+    private static final Pattern PROXY_PATTERN = Pattern.compile("/\\w+/proxy/((\\d+)/)?((\\w+)/)?(http://.*)");
     private String format;
 
     @Override
@@ -60,7 +60,7 @@ public class OldProxyServlet extends HttpServlet {
 
         final String uri = request.getRequestURI();
 
-        Matcher proxyMatcher = proxyPattern.matcher(uri);
+        Matcher proxyMatcher = PROXY_PATTERN.matcher(uri);
         if (proxyMatcher.matches()) {
             String num = proxyMatcher.group(2); // Optional number of the diagram source
             format = proxyMatcher.group(4); // Expected format of the generated diagram

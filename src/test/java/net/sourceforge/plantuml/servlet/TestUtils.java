@@ -20,4 +20,8 @@ public class TestUtils {
      */
     public static final String SEQBOB = "SyfFKj2rKt3CoKnELR1Io4ZDoSa70000";
 
+    protected TestUtils() {
+        // prevents calls from subclass
+        throw new UnsupportedOperationException();
+    }
 }
