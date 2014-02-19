@@ -23,9 +23,11 @@
     <meta http-equiv="expires" content="0" />
     <meta http-equiv="pragma" content="no-cache" />
     <meta http-equiv="cache-control" content="no-cache, must-revalidate" />
-    <link rel="stylesheet" href="${contextroot}/plantuml.css" type="text/css"/>
     <link rel="icon" href="${contextroot}/favicon.ico" type="image/x-icon"/> 
     <link rel="shortcut icon" href="${contextroot}/favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="${contextroot}/plantuml.css" />
+    <link rel="stylesheet" href="webjars/codemirror/3.21/lib/codemirror.css" />
+    <script src="webjars/codemirror/3.21/lib/codemirror.js"></script>
     <title>PlantUMLServer</title>
 </head>
 <body>
@@ -41,7 +43,7 @@
     <%-- CONTENT --%>
     <form method="post" accept-charset="UTF-8"  action="${contextroot}/form">
         <p>
-            <textarea name="text" cols="120" rows="10"><c:out value="${decoded}"/></textarea>
+            <textarea id="diagtext" name="text" cols="120" rows="10"><c:out value="${decoded}"/></textarea>
             <br/>
             <input type="submit" />
         </p>
@@ -82,5 +84,8 @@
 </div>
 <%-- FOOTER --%>
 <%@ include file="footer.jspf" %> 
+<script>
+    var myCodeMirror = CodeMirror.fromTextArea(document.getElementById("diagtext"), {lineNumbers: true});
+</script>
 </body>
 </html>

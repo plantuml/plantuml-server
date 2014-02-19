@@ -158,6 +158,11 @@
       <version>1.2</version>
     </dependency>
     <dependency>
+      <groupId>org.webjars</groupId>
+      <artifactId>codemirror</artifactId>
+      <version>3.21</version>
+    </dependency>
+    <dependency>
       <groupId>HTTPClient</groupId>
       <artifactId>HTTPClient</artifactId>
       <version>0.3-3</version>
