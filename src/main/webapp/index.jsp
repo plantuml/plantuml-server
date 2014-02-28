@@ -28,6 +28,15 @@
     <link rel="stylesheet" href="${contextroot}/plantuml.css" />
     <link rel="stylesheet" href="webjars/codemirror/3.21/lib/codemirror.css" />
     <script src="webjars/codemirror/3.21/lib/codemirror.js"></script>
+    <script src="mode/plantuml.js"></script>
+    <script>
+        window.onload = function() {
+            var myCodeMirror = CodeMirror.fromTextArea(
+                document.getElementById("text"), 
+                {lineNumbers: true}
+            );
+        };
+    </script>
     <title>PlantUMLServer</title>
 </head>
 <body>
@@ -43,13 +52,12 @@
     <%-- CONTENT --%>
     <form method="post" accept-charset="UTF-8"  action="${contextroot}/form">
         <p>
-            <textarea id="diagtext" name="text" cols="120" rows="10"><c:out value="${decoded}"/></textarea>
-            <br/>
+            <textarea id="text" name="text" cols="120" rows="10"><c:out value="${decoded}"/></textarea>
             <input type="submit" />
         </p>
     </form>
     <hr/>
-    You can enter here a previously generated URL:
+    <p>You can enter here a previously generated URL:</p>
     <form method="post" action="${contextroot}/form">
         <p>
             <input name="url" type="text" size="150" value="${imgurl}" />
@@ -84,8 +92,5 @@
 </div>
 <%-- FOOTER --%>
 <%@ include file="footer.jspf" %> 
-<script>
-    var myCodeMirror = CodeMirror.fromTextArea(document.getElementById("diagtext"), {lineNumbers: true});
-</script>
 </body>
 </html>

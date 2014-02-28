@@ -3,8 +3,9 @@
 ******************************/
 
 /* Font */
-* {
+h1, p, #content a {
     font-family: arial,helvetica,sans-serif;
+    /* font-size: medium; */
 }
 
 /* Header */
@@ -22,16 +23,15 @@
 }
 
 /* Form inputs */
-#content textarea, #content input[type=text] {
+#content textarea, #content .CodeMirror, #content input[type=text] {
     background-color: #ffc;
     font-family: monospace;
+    font-size: medium;
     width: 100%;
 }
 
-/* XHTML tag */
-#content code {
-    font-family: 'courier new',courier,monospace;
-    letter-spacing: -1pt;
+#content input[type=text] {
+    border: 0;
 }
 
 /* Diagram */
