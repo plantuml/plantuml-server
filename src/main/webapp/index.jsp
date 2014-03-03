@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="${contextroot}/plantuml.css" />
     <link rel="stylesheet" href="webjars/codemirror/3.21/lib/codemirror.css" />
     <script src="webjars/codemirror/3.21/lib/codemirror.js"></script>
-    <script src="mode/plantuml.js"></script>
+    <!-- <script src="mode/plantuml.js"></script> -->
     <script>
         window.onload = function() {
             var myCodeMirror = CodeMirror.fromTextArea(
@@ -46,7 +46,7 @@
     <c:if test="${cfg['SHOW_SOCIAL_BUTTONS'] eq 'on' }">
         <%@ include file="resource/socialbuttons1.html" %>
     </c:if>
-    <p>This application provides a servlet which serves images created by <a href="http://plantuml.sourceforge.net">PlantUML</a>.</p>
+    <p>Create your <a href="http://plantuml.sourceforge.net">PlantUML</a> diagrams directly in your browser !</p>
 </div>
 <div id="content">
     <%-- CONTENT --%>
