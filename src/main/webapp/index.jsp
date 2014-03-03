@@ -46,6 +46,9 @@
     <c:if test="${cfg['SHOW_SOCIAL_BUTTONS'] eq 'on' }">
         <%@ include file="resource/socialbuttons1.html" %>
     </c:if>
+    <c:if test="${cfg['SHOW_GITHUB_RIBBON'] eq 'on' }">
+        <%@ include file="resource/githubribbon.html" %>
+    </c:if>
     <p>Create your <a href="http://plantuml.sourceforge.net">PlantUML</a> diagrams directly in your browser !</p>
 </div>
 <div id="content">

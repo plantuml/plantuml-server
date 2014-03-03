@@ -41,7 +41,7 @@ public final class Configuration {
 
         // Default values
         config.setProperty("SHOW_SOCIAL_BUTTONS", "off");
-        config.setProperty("USE_GOOGLE_TRACKER", "off");
+        config.setProperty("SHOW_GITHUB_RIBBON", "off");
         // End of default values
 
         try {
