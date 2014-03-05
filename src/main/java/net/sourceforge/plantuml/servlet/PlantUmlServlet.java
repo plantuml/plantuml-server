@@ -30,7 +30,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -124,8 +123,8 @@ public class PlantUmlServlet extends HttpServlet {
         return;
     }
 
-    public void init(ServletConfig config) throws ServletException {
-        config.getServletContext().setAttribute("cfg", Configuration.get());
+    public void init() throws ServletException {
+        getServletConfig().getServletContext().setAttribute("cfg", Configuration.get());
     }
 
     private Transcoder getTranscoder() {
