@@ -64,6 +64,9 @@ public class ProxyServlet extends HttpServlet {
         final String source = request.getParameter("src");
         final String index = request.getParameter("idx");
         final URL srcUrl;
+
+        System.setProperty("jsse.enableSNIExtension", "false");
+
         // Check if the src URL is valid
         try {
             srcUrl = new URL(source);
