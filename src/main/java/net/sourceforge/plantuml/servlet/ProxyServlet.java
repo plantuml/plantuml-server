@@ -65,8 +65,6 @@ public class ProxyServlet extends HttpServlet {
         final String index = request.getParameter("idx");
         final URL srcUrl;
 
-        System.setProperty("jsse.enableSNIExtension", "false");
-
         // Check if the src URL is valid
         try {
             srcUrl = new URL(source);
@@ -102,6 +100,9 @@ public class ProxyServlet extends HttpServlet {
         String line;
         BufferedReader rd;
         StringBuilder sb;
+
+        String sni = System.getProperty("jsse.enableSNIExtension", "false");
+        System.setProperty("jsse.enableSNIExtension", "false");
         try {
             HttpURLConnection con = getConnection(url);
             rd = new BufferedReader(new InputStreamReader(con.getInputStream()));
@@ -111,11 +112,13 @@ public class ProxyServlet extends HttpServlet {
                 sb.append(line + '\n');
             }
             rd.close();
+            System.setProperty("jsse.enableSNIExtension", sni);
             return sb.toString();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             rd = null;
+            System.setProperty("jsse.enableSNIExtension", sni);
         }
         return "";
     }
