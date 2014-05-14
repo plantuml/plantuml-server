@@ -22,8 +22,7 @@ public class TestForm extends WebappTestCase {
         assertEquals("url", forms[1].getParameterNames()[0]);
         assertTrue(forms[1].getParameterValue("url").endsWith("/png/" + TestUtils.SEQBOB));
         // Ensure the generated image is present
-        assertEquals(1, response.getImages().length);
-
+        assertNotNull(response.getImageWithAltText("PlantUML diagram"));
     }
 
     /**
@@ -45,7 +44,7 @@ public class TestForm extends WebappTestCase {
         // Ensure the URL field is correct
         assertTrue(forms[1].getParameterValue("url").endsWith("/png/" + TestUtils.VERSION));
         // Ensure the image is present
-        assertEquals(1, response.getImages().length);
+        assertNotNull(response.getImageWithAltText("PlantUML diagram"));
     }
 
     /**
@@ -67,7 +66,7 @@ public class TestForm extends WebappTestCase {
         // Ensure the URL field is empty
         assertTrue(forms[1].getParameterValue("url").isEmpty());
         // Ensure there is no image
-        assertEquals(0, response.getImages().length);
+        assertNull(response.getImageWithAltText("PlantUML diagram"));
     }
 
     /**
@@ -89,7 +88,7 @@ public class TestForm extends WebappTestCase {
         // Ensure the URL field is empty
         assertTrue(forms[1].getParameterValue("url").isEmpty());
         // Ensure there is no image
-        assertEquals(0, response.getImages().length);
+        assertNull(response.getImageWithAltText("PlantUML diagram"));
     }
 
     /**
@@ -111,7 +110,7 @@ public class TestForm extends WebappTestCase {
         // Ensure the URL field is correct
         assertTrue(forms[1].getParameterValue("url").endsWith("/png/SoWkIImgISaiIKnKuDBIrRLJu798pKi12m00"));
         // Ensure the image is present
-        assertEquals(1, response.getImages().length);
+        assertNotNull(response.getImageWithAltText("PlantUML diagram"));
     }
 
     /**
@@ -127,7 +126,7 @@ public class TestForm extends WebappTestCase {
         response = formText.submit();
         // Analyze response
         // Ensure the generated image is present
-        assertEquals(1, response.getImages().length);
+        assertNotNull(response.getImageWithAltText("PlantUML diagram"));
         // Ensure the image map is present
         HTMLElement[] maps = response.getElementsByTagName("map");
         assertEquals(1, maps.length);
@@ -149,8 +148,8 @@ public class TestForm extends WebappTestCase {
         assertEquals(forms[0].getParameterValue("text"), "@startuml\nBob -> Alice : hello\n@enduml");
         // Ensure the URL field is filled
         assertEquals(forms[1].getParameterValue("url"), getServerUrl() + "png/" + TestUtils.SEQBOB);
-        // Ensure the the image is present
-        assertEquals(1, response.getImages().length);
+        // Ensure the image is present
+        assertNotNull(response.getImageWithAltText("PlantUML diagram"));
     }
 
 }
