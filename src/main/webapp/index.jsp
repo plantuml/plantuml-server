@@ -3,10 +3,11 @@
 
 <c:set var="cfg" value="${applicationScope['cfg']}" />
 <c:set var="contextroot" value="${pageContext.request.contextPath}" />
-<c:set var="hostpath" value="http://${pageContext.request.serverName}:${pageContext.request.serverPort}${contextroot}" />
-<c:if test="${pageContext.request.serverPort == 80 }">
-    <c:set var="hostpath" value="http://${pageContext.request.serverName}${contextroot}" />
+<c:if test="${(pageContext.request.scheme == 'http' && pageContext.request.serverPort != 80) ||
+        (pageContext.request.scheme == 'https' && pageContext.request.serverPort != 443) }">
+    <c:set var="port" value=":${pageContext.request.serverPort}" />
 </c:if>
+<c:set var="hostpath" value="${pageContext.request.scheme}://${pageContext.request.serverName}${port}${contextroot}" />
 <c:if test="${!empty encoded}">
     <c:set var="imgurl" value="${hostpath}/png/${encoded}" />
     <c:set var="svgurl" value="${hostpath}/svg/${encoded}" />
