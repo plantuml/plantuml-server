@@ -56,6 +56,8 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 @SuppressWarnings("serial")
 public class ProxyServlet extends HttpServlet {
 
+    private static final FileFormat DEFAULT_FILE_FORMAT = FileFormat.PNG;
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
@@ -117,16 +119,26 @@ public class ProxyServlet extends HttpServlet {
     }
 
     private FileFormat getOutputFormat(final String format) {
-        if (format == null) {
-            return FileFormat.PNG;
+        //Check for empty format parameter
+        if (format == null || format.trim().isEmpty()) {
+            return DEFAULT_FILE_FORMAT;
         }
-        if (format.equals("svg")) {
-            return FileFormat.SVG;
-        }
-        if (format.equals("txt")) {
+        final String outputFormat = format.trim();
+        //Handle 'special' cases
+        if ("txt".equalsIgnoreCase(outputFormat)) {
             return FileFormat.UTXT;
         }
-        return FileFormat.PNG;
+        if ("ascii".equalsIgnoreCase(outputFormat)) {
+            return FileFormat.ATXT;
+        }
+        //Handle 'standard' FileFormats.
+        for (FileFormat fileFormat : FileFormat.values()) {
+            if (fileFormat.name().equalsIgnoreCase(outputFormat)) {
+                return fileFormat;
+            }
+        }
+        //Default fallback
+        return DEFAULT_FILE_FORMAT;
     }
 
     private HttpURLConnection getConnection(final URL url) throws IOException {
