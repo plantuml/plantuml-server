@@ -131,6 +131,9 @@ public class ProxyServlet extends HttpServlet {
         if ("ascii".equalsIgnoreCase(outputFormat)) {
             return FileFormat.ATXT;
         }
+        if ("gif".equalsIgnoreCase(outputFormat)) {
+            return FileFormat.ANIMATED_GIF;
+        }
         //Handle 'standard' FileFormats.
         for (FileFormat fileFormat : FileFormat.values()) {
             if (fileFormat.name().equalsIgnoreCase(outputFormat)) {
