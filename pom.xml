@@ -204,4 +204,59 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <profiles>
+    <profile>
+      <id>openshift-jbossews</id>
+      <activation>
+        <property>
+          <name>env.OPENSHIFT_JBOSSEWS_IDENT</name>
+        </property>
+      </activation>
+      <properties>
+        <openshift.outputDirectory>webapps</openshift.outputDirectory>
+      </properties>
+    </profile>
+    <profile>
+      <id>openshift-jbosseap</id>
+      <activation>
+        <property>
+          <name>env.OPENSHIFT_JBOSSEAP_IDENT</name>
+        </property>
+      </activation>
+      <properties>
+        <openshift.outputDirectory>deployments</openshift.outputDirectory>
+      </properties>
+    </profile>
+    <profile>
+      <id>openshift-wildfly</id>
+      <activation>
+        <property>
+          <name>env.OPENSHIFT_WILDFLY_IDENT</name>
+        </property>
+      </activation>
+      <properties>
+        <openshift.outputDirectory>deployments</openshift.outputDirectory>
+      </properties>
+    </profile>
+    <profile>
+      <!-- When built in OpenShift the 'openshift' profile will be used when invoking mvn. -->
+      <!-- Use this profile for any OpenShift specific customization your app will need. -->
+      <!-- By default that is to put the resulting archive into the '${openshift.outputDirectory}' folder. -->
+      <!-- http://maven.apache.org/guides/mini/guide-building-for-different-environments.html -->
+      <id>openshift</id>
+      <build>
+        <finalName>plantuml</finalName>
+        <plugins>
+          <plugin>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>2.1.1</version>
+            <configuration>
+              <outputDirectory>${openshift.outputDirectory}</outputDirectory>
+              <warName>ROOT</warName>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
