@@ -56,13 +56,12 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 @SuppressWarnings("serial")
 public class ProxyServlet extends HttpServlet {
 
-    private String format;
-
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         final String source = request.getParameter("src");
         final String index = request.getParameter("idx");
+        final String format = request.getParameter("fmt");
         final URL srcUrl;
         // Check if the src URL is valid
         try {
@@ -85,7 +84,7 @@ public class ProxyServlet extends HttpServlet {
         System.out.println("uml=" + uml);
 
         // generate the response
-        DiagramResponse dr = new DiagramResponse(response, getOutputFormat());
+        DiagramResponse dr = new DiagramResponse(response, getOutputFormat(format));
         try {
             dr.sendDiagram(uml);
         } catch (IIOException iioe) {
@@ -117,7 +116,7 @@ public class ProxyServlet extends HttpServlet {
         return "";
     }
 
-    private FileFormat getOutputFormat() {
+    private FileFormat getOutputFormat(final String format) {
         if (format == null) {
             return FileFormat.PNG;
         }
