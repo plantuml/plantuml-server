@@ -26,7 +26,7 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.mortbay.jetty</groupId>
+        <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <version>${jetty.version}</version>
         <configuration>
@@ -34,6 +34,7 @@
           <webApp>
             <contextPath>/plantuml</contextPath>
           </webApp>
+          <jettyXml>jetty.xml,jetty-http.xml</jettyXml>
         </configuration>
       </plugin>
       <plugin>
@@ -141,7 +142,8 @@
   </reporting>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jetty.version>8.0.4.v20111024</jetty.version>
+    <jetty.version>9.2.7.v20150116</jetty.version>
+    <jetty.port>8880</jetty.port>
     <maven.build.timestamp.format>yyyyMMdd-HHmm
     </maven.build.timestamp.format>
     <timestamp>${maven.build.timestamp}</timestamp>
