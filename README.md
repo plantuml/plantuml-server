@@ -22,4 +22,4 @@ How to testrun the project
 
 To run the application deployed on an embedded jetty server run "mvn jetty:run" 
 and go to http://localhost:8080/plantuml with your favorite web browser (after it finishes
-to start up).
+to start up). If you want to run it on some custom port run "mvn jetty:run -Djetty.port=9999".
