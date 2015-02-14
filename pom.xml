@@ -34,6 +34,12 @@
           <webApp>
             <contextPath>/plantuml</contextPath>
           </webApp>
+          <systemProperties>
+            <systemProperty>
+              <name>jetty.port</name>
+              <value>${jetty.port}</value>
+            </systemProperty>
+          </systemProperties>
         </configuration>
       </plugin>
       <plugin>
@@ -142,6 +148,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jetty.version>8.0.4.v20111024</jetty.version>
+    <jetty.port>8880</jetty.port>
     <maven.build.timestamp.format>yyyyMMdd-HHmm
     </maven.build.timestamp.format>
     <timestamp>${maven.build.timestamp}</timestamp>
