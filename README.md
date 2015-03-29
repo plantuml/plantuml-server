@@ -3,23 +3,42 @@ PlantUML Server
 [![Build Status](https://travis-ci.org/plantuml/plantuml-server.png?branch=master)](https://travis-ci.org/plantuml/plantuml-server)
 
 PlantUML Server is a web application to generate UML diagrams on-the-fly.
+
+![](https://raw.githubusercontent.com/ftomassetti/plantuml-server/readme/screenshots/screenshot.png)
  
 To know more about PlantUML, please visit http://plantuml.sourceforge.net/.
 
-How to build the project
-========================
+Requirements
+============
 
-To build the project you need to install the following components:
-
- * java jdk 1.6.0 or above
+ * jre/jdk 1.6.0 or above
  * apache maven 3.0.2 or above
 
-To build the war, just run "mvn package" at the root directory of the project to produce 
-plantuml.war in the target/ directory.
+How to run the server
+=====================
 
-How to testrun the project
-==========================
+Just run:
 
-To run the application deployed on an embedded jetty server run "mvn jetty:run" 
-and go to http://localhost:8080/plantuml with your favorite web browser (after it finishes
-to start up). If you want to run it on some custom port run "mvn jetty:run -Djetty.port=9999".
+```
+mvn jetty:run
+```
+
+The server is now listing to [http://localhost:8080/plantuml](http://localhost:8080/plantuml).
+In this way the server is run on an embedded jetty server. 
+
+You can specify the port at which it runs:
+
+```
+mvn jetty:run -Djetty.port=9999"
+```
+
+How to generate the war
+=======================
+
+To build the war, just run:
+
+```
+mvn package
+```
+
+at the root directory of the project to produce plantuml.war in the target/ directory.
