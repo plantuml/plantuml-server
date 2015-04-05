@@ -29,7 +29,7 @@
     <link rel="stylesheet" href="${contextroot}/plantuml.css" />
     <link rel="stylesheet" href="webjars/codemirror/3.21/lib/codemirror.css" />
     <script src="webjars/codemirror/3.21/lib/codemirror.js"></script>
-    <!-- <script src="mode/plantuml.js"></script> -->
+    <script src="plantuml.js">
     <script>
         window.onload = function() {
             var myCodeMirror = CodeMirror.fromTextArea(
@@ -59,6 +59,12 @@
             <textarea id="text" name="text" cols="120" rows="10"><c:out value="${decoded}"/></textarea>
             <input type="submit" />
         </p>
+        <script>
+          var myTextarea = document.getElementById("text");
+          var editor = CodeMirror.fromTextArea(myTextarea, {
+            lineNumbers: true
+          });
+        </script>
     </form>
     <hr/>
     <p>You can enter here a previously generated URL:</p>
