@@ -29,7 +29,7 @@
     <link rel="stylesheet" href="${contextroot}/plantuml.css" />
     <link rel="stylesheet" href="webjars/codemirror/3.21/lib/codemirror.css" />
     <script src="webjars/codemirror/3.21/lib/codemirror.js"></script>
-    <script src="plantuml.js">
+    <script src="mode/plantuml.js">
     <script>
         window.onload = function() {
             var myCodeMirror = CodeMirror.fromTextArea(
