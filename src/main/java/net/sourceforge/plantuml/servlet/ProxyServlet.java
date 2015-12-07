@@ -61,6 +61,7 @@ public class ProxyServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
+        final String fmt = request.getParameter("format");
         final String source = request.getParameter("src");
         final String index = request.getParameter("idx");
         final URL srcUrl;
@@ -70,6 +71,10 @@ public class ProxyServlet extends HttpServlet {
         } catch (MalformedURLException mue) {
             mue.printStackTrace();
             return;
+        }
+
+        if (fmt != "") {
+            format = fmt;
         }
 
         // generate the response
