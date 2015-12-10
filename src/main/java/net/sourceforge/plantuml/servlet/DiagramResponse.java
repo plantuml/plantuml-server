@@ -50,7 +50,22 @@ class DiagramResponse {
         Map<FileFormat, String> map = new HashMap<FileFormat, String>();
         map.put(FileFormat.PNG, "image/png");
         map.put(FileFormat.SVG, "image/svg+xml");
+        map.put(FileFormat.EPS, "application/postscript");
+        map.put(FileFormat.EPS_TEXT, "application/postscript");
+        map.put(FileFormat.ATXT, "text/plain");
         map.put(FileFormat.UTXT, "text/plain;charset=UTF-8");
+        map.put(FileFormat.XMI_STANDARD, "text/x-xmi+xml");
+        map.put(FileFormat.XMI_STAR, "text/x-xmi+xml");
+        map.put(FileFormat.XMI_ARGO, "text/x-xmi+xml");
+        map.put(FileFormat.PDF, "application/pdf");
+        map.put(FileFormat.ANIMATED_GIF, "image/gif");
+        map.put(FileFormat.MJPEG, "video/x-motion-jpeg");
+        map.put(FileFormat.HTML, "text/html");
+        map.put(FileFormat.HTML5, "text/html");
+        map.put(FileFormat.VDX, "application/vnd.visio");
+        map.put(FileFormat.LATEX, "application/x-latex");
+        map.put(FileFormat.VDX, "application/vnd.visio");
+        map.put(FileFormat.BASE64, "text/plain");
         CONTENT_TYPE = Collections.unmodifiableMap(map);
     }
 
