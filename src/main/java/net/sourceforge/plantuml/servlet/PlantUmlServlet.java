@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -157,7 +156,7 @@ public class PlantUmlServlet extends HttpServlet {
     private Transcoder getTranscoder() {
         return TranscoderUtil.getDefaultTranscoder();
     }
-    
+
     static private HttpURLConnection getConnection(URL url) throws IOException {
         if (url.getProtocol().startsWith("https")) {
             HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
