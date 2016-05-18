@@ -49,7 +49,7 @@ import net.sourceforge.plantuml.png.MetadataTag;
  *
  * This class is the old all-in-one historic implementation of the PlantUml server.
  * See package.html for the new design. It's a work in progress.
- * 
+ *
  * Modified by Arnaud Roques
  * Modified by Pablo Lalloni
  * Modified by Maxime Sinclair
@@ -61,12 +61,9 @@ public class PlantUmlServlet extends HttpServlet {
     private static final String DEFAULT_ENCODED_TEXT = "SyfFKj2rKt3CoKnELR1Io4ZDoSa70000";
 
     // Last part of the URL
-    public static final Pattern urlPattern = Pattern.compile("^.*[^a-zA-Z0-9\\-\\_]([a-zA-Z0-9\\-\\_]+)");
+    public static final Pattern URL_PATTERN = Pattern.compile("^.*[^a-zA-Z0-9\\-\\_]([a-zA-Z0-9\\-\\_]+)");
 
-    // Format of a compressed diagram
-    public static final Pattern encodedPattern = Pattern.compile("^[a-zA-Z0-9\\-\\_]+$");
-
-    private static final Pattern recoverUmlPattern = Pattern.compile("/\\w+/uml/(.*)");
+    private static final Pattern RECOVER_UML_PATTERN = Pattern.compile("/\\w+/uml/(.*)");
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -135,14 +132,14 @@ public class PlantUmlServlet extends HttpServlet {
 
     private String getTextFromUrl(HttpServletRequest request, String text) throws IOException {
         String url = request.getParameter("url");
-        final Matcher recoverUml = recoverUmlPattern.matcher(request.getRequestURI());
+        final Matcher recoverUml = RECOVER_UML_PATTERN.matcher(request.getRequestURI());
         // the URL form has been submitted
         if (recoverUml.matches()) {
             final String data = recoverUml.group(1);
             text = getTranscoder().decode(data);
         } else if (url != null && !url.trim().isEmpty()) {
             // Catch the last part of the URL if necessary
-            final Matcher m1 = urlPattern.matcher(url);
+            final Matcher m1 = URL_PATTERN.matcher(url);
             if (m1.find()) {
                 url = m1.group(1);
             }
