@@ -58,132 +58,132 @@ import net.sourceforge.plantuml.png.MetadataTag;
 @SuppressWarnings("serial")
 public class PlantUmlServlet extends HttpServlet {
 
-	private static final String DEFAULT_ENCODED_TEXT = "SyfFKj2rKt3CoKnELR1Io4ZDoSa70000";
+    private static final String DEFAULT_ENCODED_TEXT = "SyfFKj2rKt3CoKnELR1Io4ZDoSa70000";
 
-	// Last part of the URL
-	public static final Pattern urlPattern = Pattern.compile("^.*[^a-zA-Z0-9\\-\\_]([a-zA-Z0-9\\-\\_]+)");
+    // Last part of the URL
+    public static final Pattern urlPattern = Pattern.compile("^.*[^a-zA-Z0-9\\-\\_]([a-zA-Z0-9\\-\\_]+)");
 
-	// Format of a compressed diagram
-	public static final Pattern encodedPattern = Pattern.compile("^[a-zA-Z0-9\\-\\_]+$");
+    // Format of a compressed diagram
+    public static final Pattern encodedPattern = Pattern.compile("^[a-zA-Z0-9\\-\\_]+$");
 
-	private static final Pattern recoverUmlPattern = Pattern.compile("/\\w+/uml/(.*)");
+    private static final Pattern recoverUmlPattern = Pattern.compile("/\\w+/uml/(.*)");
 
-	@Override
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		request.setCharacterEncoding("UTF-8");
-		String text = request.getParameter("text");
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        request.setCharacterEncoding("UTF-8");
+        String text = request.getParameter("text");
 
-		String metadata = request.getParameter("metadata");
-		if (metadata != null) {
-			InputStream img = null;
-			try {
-				img = getImage(new URL(metadata));
-				MetadataTag metadataTag = new MetadataTag(img, "plantuml");
-				String data = metadataTag.getData();
-				if (data != null) {
-					text = data;
-				}
-			} finally {
-				if (img != null) {
-					img.close();
-				}
-			}
-		}
-		try {
-			text = getTextFromUrl(request, text);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        String metadata = request.getParameter("metadata");
+        if (metadata != null) {
+            InputStream img = null;
+            try {
+                img = getImage(new URL(metadata));
+                MetadataTag metadataTag = new MetadataTag(img, "plantuml");
+                String data = metadataTag.getData();
+                if (data != null) {
+                    text = data;
+                }
+            } finally {
+                if (img != null) {
+                    img.close();
+                }
+            }
+        }
+        try {
+            text = getTextFromUrl(request, text);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-		// no Text form has been submitted
-		if (text == null || text.trim().isEmpty()) {
-			redirectNow(request, response, DEFAULT_ENCODED_TEXT);
-			return;
-		}
+        // no Text form has been submitted
+        if (text == null || text.trim().isEmpty()) {
+            redirectNow(request, response, DEFAULT_ENCODED_TEXT);
+            return;
+        }
 
-		final String encoded = getTranscoder().encode(text);
-		request.setAttribute("decoded", text);
-		request.setAttribute("encoded", encoded);
+        final String encoded = getTranscoder().encode(text);
+        request.setAttribute("decoded", text);
+        request.setAttribute("encoded", encoded);
 
-		// check if an image map is necessary
-		if (text != null && PlantumlUtils.hasCMapData(text)) {
-			request.setAttribute("mapneeded", Boolean.TRUE);
-		}
-		// forward to index.jsp
-		final RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
-		dispatcher.forward(request, response);
+        // check if an image map is necessary
+        if (text != null && PlantumlUtils.hasCMapData(text)) {
+            request.setAttribute("mapneeded", Boolean.TRUE);
+        }
+        // forward to index.jsp
+        final RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
+        dispatcher.forward(request, response);
 
-	}
+    }
 
-	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException,
-			IOException {
-		request.setCharacterEncoding("UTF-8");
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException,
+            IOException {
+        request.setCharacterEncoding("UTF-8");
 
-		String text = request.getParameter("text");
-		String encoded = DEFAULT_ENCODED_TEXT;
+        String text = request.getParameter("text");
+        String encoded = DEFAULT_ENCODED_TEXT;
 
-		try {
-			text = getTextFromUrl(request, text);
-			encoded = getTranscoder().encode(text);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        try {
+            text = getTextFromUrl(request, text);
+            encoded = getTranscoder().encode(text);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-		redirectNow(request, response, encoded);
-	}
+        redirectNow(request, response, encoded);
+    }
 
-	private String getTextFromUrl(HttpServletRequest request, String text) throws IOException {
-		String url = request.getParameter("url");
-		final Matcher recoverUml = recoverUmlPattern.matcher(request.getRequestURI());
-		// the URL form has been submitted
-		if (recoverUml.matches()) {
-			final String data = recoverUml.group(1);
-			text = getTranscoder().decode(data);
-		} else if (url != null && !url.trim().isEmpty()) {
-			// Catch the last part of the URL if necessary
-			final Matcher m1 = urlPattern.matcher(url);
-			if (m1.find()) {
-				url = m1.group(1);
-			}
-			text = getTranscoder().decode(url);
-		}
-		return text;
-	}
+    private String getTextFromUrl(HttpServletRequest request, String text) throws IOException {
+        String url = request.getParameter("url");
+        final Matcher recoverUml = recoverUmlPattern.matcher(request.getRequestURI());
+        // the URL form has been submitted
+        if (recoverUml.matches()) {
+            final String data = recoverUml.group(1);
+            text = getTranscoder().decode(data);
+        } else if (url != null && !url.trim().isEmpty()) {
+            // Catch the last part of the URL if necessary
+            final Matcher m1 = urlPattern.matcher(url);
+            if (m1.find()) {
+                url = m1.group(1);
+            }
+            text = getTranscoder().decode(url);
+        }
+        return text;
+    }
 
-	private void redirectNow(HttpServletRequest request, HttpServletResponse response, String encoded)
-			throws IOException {
-		final String result = request.getContextPath() + "/uml/" + encoded;
-		response.sendRedirect(result);
-	}
+    private void redirectNow(HttpServletRequest request, HttpServletResponse response, String encoded)
+            throws IOException {
+        final String result = request.getContextPath() + "/uml/" + encoded;
+        response.sendRedirect(result);
+    }
 
-	private Transcoder getTranscoder() {
-		return TranscoderUtil.getDefaultTranscoder();
-	}
-	
-	static private HttpURLConnection getConnection(URL url) throws IOException {
-		if (url.getProtocol().startsWith("https")) {
-			HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
-			con.setRequestMethod("GET");
-			con.setReadTimeout(10000); // 10 seconds
-			// printHttpsCert(con);
-			con.connect();
-			return con;
-		} else {
-			HttpURLConnection con = (HttpURLConnection) url.openConnection();
-			con.setRequestMethod("GET");
-			con.setReadTimeout(10000); // 10 seconds
-			con.connect();
-			return con;
-		}
-	}
+    private Transcoder getTranscoder() {
+        return TranscoderUtil.getDefaultTranscoder();
+    }
+    
+    static private HttpURLConnection getConnection(URL url) throws IOException {
+        if (url.getProtocol().startsWith("https")) {
+            HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            con.setReadTimeout(10000); // 10 seconds
+            // printHttpsCert(con);
+            con.connect();
+            return con;
+        } else {
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            con.setReadTimeout(10000); // 10 seconds
+            con.connect();
+            return con;
+        }
+    }
 
-	static public InputStream getImage(URL url) throws IOException {
-		InputStream is = null;
-		HttpURLConnection con = getConnection(url);
-		is = con.getInputStream();
-		return is;
-	}
+    static public InputStream getImage(URL url) throws IOException {
+        InputStream is = null;
+        HttpURLConnection con = getConnection(url);
+        is = con.getInputStream();
+        return is;
+    }
 
 
 
