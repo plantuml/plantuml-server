@@ -24,25 +24,23 @@
 package net.sourceforge.plantuml.servlet;
 
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.util.StringTokenizer;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sourceforge.plantuml.FileFormat;
-import net.sourceforge.plantuml.FileFormatOption;
-import net.sourceforge.plantuml.SourceStringReader;
-import net.sourceforge.plantuml.StringUtils;
+import net.sourceforge.plantuml.api.PlantumlUtils;
 import net.sourceforge.plantuml.code.Transcoder;
 import net.sourceforge.plantuml.code.TranscoderUtil;
-import net.sourceforge.plantuml.servlet.utility.Configuration;
-import net.sourceforge.plantuml.api.PlantumlUtils;
+import net.sourceforge.plantuml.png.MetadataTag;
 
 /*
  * Original idea from Achim Abeling for Confluence macro
@@ -59,56 +57,47 @@ import net.sourceforge.plantuml.api.PlantumlUtils;
 @SuppressWarnings("serial")
 public class PlantUmlServlet extends HttpServlet {
 
-    private static final Pattern URL_PATTERN = Pattern.compile(".*/(.*)"); // Last part of the URL
-    private static final Pattern ENCODED_PATTERN = Pattern.compile("^[a-zA-Z0-9\\-\\_]+$"); // Format of a compressed
-                                                                                           // diagram
-    private static final Pattern START_PATTERN = Pattern.compile("/\\w+/start/(.*)");
+    private static final String DEFAULT_ENCODED_TEXT = "SyfFKj2rKt3CoKnELR1Io4ZDoSa70000";
+
+    // Last part of the URL
+    public static final Pattern URL_PATTERN = Pattern.compile("^.*[^a-zA-Z0-9\\-\\_]([a-zA-Z0-9\\-\\_]+)");
+
+    private static final Pattern RECOVER_UML_PATTERN = Pattern.compile("/\\w+/uml/(.*)");
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-
-        final String uri = request.getRequestURI();
-        Matcher startumlMatcher = START_PATTERN.matcher(uri);
-        if (startumlMatcher.matches()) {
-            System.out.println("PlantUML WARNING This syntax is deprecated.");
-            String source = startumlMatcher.group(1);
-            handleImage(response, source, uri);
-        } else {
-            doPost(request, response);
-        }
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException,
-            IOException {
-
         request.setCharacterEncoding("UTF-8");
         String text = request.getParameter("text");
-        String url = request.getParameter("url");
-        String encoded = "";
 
-        Transcoder transcoder = getTranscoder();
-        // the URL form has been submitted
-        if (url != null && !url.trim().isEmpty()) {
-            // Catch the last part of the URL if necessary
-            Matcher m1 = URL_PATTERN.matcher(url);
-            if (m1.find()) {
-                url = m1.group(1);
-            }
-            // Check it's a valid compressed text
-            Matcher m2 = ENCODED_PATTERN.matcher(url);
-            if (m2.find()) {
-                    url = m2.group(0);
-                    text = transcoder.decode(url);
-            } else {
-                System.out.println("PlantUML ERROR Not a valid compressed string : " + url);
+        String metadata = request.getParameter("metadata");
+        if (metadata != null) {
+            InputStream img = null;
+            try {
+                img = getImage(new URL(metadata));
+                MetadataTag metadataTag = new MetadataTag(img, "plantuml");
+                String data = metadataTag.getData();
+                if (data != null) {
+                    text = data;
+                }
+            } finally {
+                if (img != null) {
+                    img.close();
+                }
             }
         }
-        // the Text form has been submitted
-        if (text != null && !text.trim().isEmpty()) {
-            encoded = transcoder.encode(text);
+        try {
+            text = getTextFromUrl(request, text);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
+        // no Text form has been submitted
+        if (text == null || text.trim().isEmpty()) {
+            redirectNow(request, response, DEFAULT_ENCODED_TEXT);
+            return;
+        }
+
+        final String encoded = getTranscoder().encode(text);
         request.setAttribute("decoded", text);
         request.setAttribute("encoded", encoded);
 
@@ -116,63 +105,82 @@ public class PlantUmlServlet extends HttpServlet {
         if (text != null && PlantumlUtils.hasCMapData(text)) {
             request.setAttribute("mapneeded", Boolean.TRUE);
         }
-
         // forward to index.jsp
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
+        final RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
         dispatcher.forward(request, response);
-        return;
+
     }
 
-    public void init() throws ServletException {
-        getServletConfig().getServletContext().setAttribute("cfg", Configuration.get());
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException,
+            IOException {
+        request.setCharacterEncoding("UTF-8");
+
+        String text = request.getParameter("text");
+        String encoded = DEFAULT_ENCODED_TEXT;
+
+        try {
+            text = getTextFromUrl(request, text);
+            encoded = getTranscoder().encode(text);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        redirectNow(request, response, encoded);
+    }
+
+    private String getTextFromUrl(HttpServletRequest request, String text) throws IOException {
+        String url = request.getParameter("url");
+        final Matcher recoverUml = RECOVER_UML_PATTERN.matcher(request.getRequestURI());
+        // the URL form has been submitted
+        if (recoverUml.matches()) {
+            final String data = recoverUml.group(1);
+            text = getTranscoder().decode(data);
+        } else if (url != null && !url.trim().isEmpty()) {
+            // Catch the last part of the URL if necessary
+            final Matcher m1 = URL_PATTERN.matcher(url);
+            if (m1.find()) {
+                url = m1.group(1);
+            }
+            text = getTranscoder().decode(url);
+        }
+        return text;
+    }
+
+    private void redirectNow(HttpServletRequest request, HttpServletResponse response, String encoded)
+            throws IOException {
+        final String result = request.getContextPath() + "/uml/" + encoded;
+        response.sendRedirect(result);
     }
 
     private Transcoder getTranscoder() {
         return TranscoderUtil.getDefaultTranscoder();
     }
 
-    // This method will be removed in a near future, please don't use it.
-    private void handleImage(HttpServletResponse response, String source, String uri) throws IOException {
-        source = URLDecoder.decode(source, "UTF-8");
-        StringBuilder plantUmlSource = new StringBuilder();
-
-        StringTokenizer tokenizer = new StringTokenizer(source, "/@");
-        while (tokenizer.hasMoreTokens()) {
-            String token = tokenizer.nextToken();
-            plantUmlSource.append(token).append("\n");
-        }
-        sendImage(response, plantUmlSource.toString(), uri);
-
-    }
-
-    // This method will be removed in a near future, please don't use it.
-    private void sendImage(HttpServletResponse response, String text, String uri) throws IOException {
-        final String uml;
-        if (text.startsWith("@startuml")) {
-            uml = text;
+    static private HttpURLConnection getConnection(URL url) throws IOException {
+        if (url.getProtocol().startsWith("https")) {
+            HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            con.setReadTimeout(10000); // 10 seconds
+            // printHttpsCert(con);
+            con.connect();
+            return con;
         } else {
-            StringBuilder plantUmlSource = new StringBuilder();
-            plantUmlSource.append("@startuml\n");
-            plantUmlSource.append(text);
-            if (text.endsWith("\n") == false) {
-                plantUmlSource.append("\n");
-            }
-            plantUmlSource.append("@enduml");
-            uml = plantUmlSource.toString();
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            con.setReadTimeout(10000); // 10 seconds
+            con.connect();
+            return con;
         }
-        // Write the first image to "os"
-        long today = System.currentTimeMillis();
-        if (StringUtils.isDiagramCacheable(uml)) {
-            // Add http headers to force the browser to cache the image
-            response.addDateHeader("Expires", today + 31536000000L);
-            // today + 1 year
-            response.addDateHeader("Last-Modified", 1261440000000L);
-            // 2009 dec 22 constant date in the past
-            response.addHeader("Cache-Control", "public");
-        }
-        response.setContentType("image/png");
-        SourceStringReader reader = new SourceStringReader(uml);
-        reader.generateImage(response.getOutputStream(), new FileFormatOption(FileFormat.PNG, false));
     }
+
+    static public InputStream getImage(URL url) throws IOException {
+        InputStream is = null;
+        HttpURLConnection con = getConnection(url);
+        is = con.getInputStream();
+        return is;
+    }
+
+
 
 }

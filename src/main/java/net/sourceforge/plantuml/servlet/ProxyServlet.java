@@ -56,11 +56,10 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 @SuppressWarnings("serial")
 public class ProxyServlet extends HttpServlet {
 
-    private String format;
-
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
+        final String fmt = request.getParameter("fmt");
         final String source = request.getParameter("src");
         final String index = request.getParameter("idx");
         final URL srcUrl;
@@ -74,7 +73,6 @@ public class ProxyServlet extends HttpServlet {
 
         // generate the response
         String diagmarkup = getSource(srcUrl);
-        System.out.println("getSource=>" + diagmarkup);
         SourceStringReader reader = new SourceStringReader(diagmarkup);
         int n = index == null ? 0 : Integer.parseInt(index);
         List<BlockUml> blocks = reader.getBlocks();
@@ -82,10 +80,10 @@ public class ProxyServlet extends HttpServlet {
         Diagram diagram = block.getDiagram();
         UmlSource umlSrc = diagram.getSource();
         String uml = umlSrc.getPlainString();
-        System.out.println("uml=" + uml);
+        //System.out.println("uml=" + uml);
 
         // generate the response
-        DiagramResponse dr = new DiagramResponse(response, getOutputFormat());
+        DiagramResponse dr = new DiagramResponse(response, getOutputFormat(fmt));
         try {
             dr.sendDiagram(uml);
         } catch (IIOException iioe) {
@@ -117,7 +115,7 @@ public class ProxyServlet extends HttpServlet {
         return "";
     }
 
-    private FileFormat getOutputFormat() {
+    private FileFormat getOutputFormat(String format) {
         if (format == null) {
             return FileFormat.PNG;
         }
