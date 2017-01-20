@@ -27,8 +27,8 @@
     <link rel="icon" href="${contextroot}/favicon.ico" type="image/x-icon"/> 
     <link rel="shortcut icon" href="${contextroot}/favicon.ico" type="image/x-icon"/>
     <link rel="stylesheet" href="${contextroot}/plantuml.css" />
-    <link rel="stylesheet" href="webjars/codemirror/3.21/lib/codemirror.css" />
-    <script src="webjars/codemirror/3.21/lib/codemirror.js"></script>
+    <link rel="stylesheet" href="${contextroot}/webjars/codemirror/3.21/lib/codemirror.css" />
+    <script src="${contextroot}/webjars/codemirror/3.21/lib/codemirror.js"></script>
     <!-- <script src="mode/plantuml.js"></script> -->
     <script>
         window.onload = function() {
