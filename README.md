@@ -32,6 +32,19 @@ You can specify the port at which it runs:
 mvn jetty:run -Djetty.port=9999"
 ```
 
+How to run the server with Docker
+=================================
+
+```
+docker build -t plantuml-server .
+docker run -d -p 8080:8080 plantuml-server
+```
+
+The server is now listing to [http://localhost:8080/plantuml](http://localhost:8080/plantuml).
+
+You may specity the port in `-p` Docker command line argument.
+
+
 How to generate the war
 =======================
 
