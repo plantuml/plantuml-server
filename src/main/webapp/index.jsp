@@ -7,7 +7,8 @@
         (pageContext.request.scheme == 'https' && pageContext.request.serverPort != 443) }">
     <c:set var="port" value=":${pageContext.request.serverPort}" />
 </c:if>
-<c:set var="hostpath" value="${pageContext.request.scheme}://${pageContext.request.serverName}${port}${contextroot}" />
+<c:set var="scheme" value="${(not empty header['x-forwarded-proto']) ? header['x-forwarded-proto'] : pageContext.request.scheme}" />
+<c:set var="hostpath" value="${scheme}://${pageContext.request.serverName}${port}${contextroot}" />
 <c:if test="${!empty encoded}">
     <c:set var="imgurl" value="${hostpath}/png/${encoded}" />
     <c:set var="svgurl" value="${hostpath}/svg/${encoded}" />
