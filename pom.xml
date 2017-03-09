@@ -32,7 +32,7 @@
         <configuration>
           <scanIntervalSeconds>5</scanIntervalSeconds>
           <webApp>
-            <contextPath>/plantuml</contextPath>
+            <contextPath>${jetty.contextpath}</contextPath>
           </webApp>
           <systemProperties>
             <systemProperty>
@@ -42,6 +42,27 @@
           </systemProperties>
         </configuration>
       </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>2.3</version>
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals><goal>copy</goal></goals>
+                    <configuration>
+                        <artifactItems>
+                            <artifactItem>
+                                <groupId>org.mortbay.jetty</groupId>
+                                <artifactId>jetty-runner</artifactId>
+                                <version>8.1.9.v20130131</version>
+                                <destFileName>jetty-runner.jar</destFileName>
+                            </artifactItem>
+                        </artifactItems>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
@@ -149,6 +170,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jetty.version>8.0.4.v20111024</jetty.version>
     <jetty.port>8080</jetty.port>
+    <jetty.contextpath>/plantuml</jetty.contextpath>
     <maven.build.timestamp.format>yyyyMMdd-HHmm
     </maven.build.timestamp.format>
     <timestamp>${maven.build.timestamp}</timestamp>
