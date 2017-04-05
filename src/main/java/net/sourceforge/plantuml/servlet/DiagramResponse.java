@@ -30,21 +30,32 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
+import net.sourceforge.plantuml.BlockUml;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.core.DiagramDescription;
+import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.servlet.utility.NullOutputStream;
+import net.sourceforge.plantuml.version.Version;
+import net.sourceforge.plantuml.PSystemError;
+import net.sourceforge.plantuml.ErrorUml;
+
 
 /**
  * Delegates the diagram generation from the UML source and the filling of the HTTP response with the diagram in the
  * right format. Its own responsibility is to produce the right HTTP headers.
  */
 class DiagramResponse {
+
+    private static final String POWERED_BY = "PlantUML Version " + Version.versionString();
+
     private HttpServletResponse response;
     private FileFormat format;
+    private HttpServletRequest request;
     private static final Map<FileFormat, String> CONTENT_TYPE;
     static {
         Map<FileFormat, String> map = new HashMap<FileFormat, String>();
@@ -54,27 +65,50 @@ class DiagramResponse {
         CONTENT_TYPE = Collections.unmodifiableMap(map);
     }
 
-    DiagramResponse(HttpServletResponse r, FileFormat f) {
+    DiagramResponse(HttpServletResponse r, FileFormat f, HttpServletRequest rq) {
         response = r;
         format = f;
+        request = rq;
     }
 
-    void sendDiagram(String uml) throws IOException {
-        if (StringUtils.isDiagramCacheable(uml)) {
-            addHeaderForCache();
-        }
+    void sendDiagram(String uml, int idx) throws IOException {
         response.setContentType(getContentType());
         SourceStringReader reader = new SourceStringReader(uml);
+        final BlockUml blockUml = reader.getBlocks().get(0);
+        if (notModified(blockUml)) {
+            addHeaderForCache(blockUml);
+            response.sendError(HttpServletResponse.SC_NOT_MODIFIED);
+            return;
+        }
+        if (StringUtils.isDiagramCacheable(uml)) {
+            addHeaderForCache(blockUml);
+        }
         reader.generateImage(response.getOutputStream(), new FileFormatOption(format, false));
     }
 
-    void sendMap(String uml) throws IOException {
-        if (StringUtils.isDiagramCacheable(uml)) {
-            addHeaderForCache();
+    private boolean notModified(BlockUml blockUml) {
+        final String ifNoneMatch = request.getHeader("If-None-Match");
+        final long ifModifiedSince = request.getDateHeader("If-Modified-Since");
+        if (ifModifiedSince != -1 && ifModifiedSince != blockUml.lastModified()) {
+            return false;
         }
+        final String etag = blockUml.etag();
+        if (ifNoneMatch == null) {
+            return false;
+        }
+        return ifNoneMatch.contains(etag);
+    }
+
+
+    void sendMap(String uml) throws IOException {
         response.setContentType(getContentType());
         SourceStringReader reader = new SourceStringReader(uml);
-        String map = reader.generateImage(new NullOutputStream(), new FileFormatOption(FileFormat.PNG, false));
+        final BlockUml blockUml = reader.getBlocks().get(0);
+        if (StringUtils.isDiagramCacheable(uml)) {
+            addHeaderForCache(blockUml);
+        }
+        String map = reader.generateImage(new NullOutputStream(),
+           new FileFormatOption(FileFormat.PNG, false)).getDescription();
         String[] mapLines = map.split("[\\r\\n]");
         PrintWriter httpOut = response.getWriter();
         for (int i = 2; (i + 1) < mapLines.length; i++) {
@@ -85,20 +119,40 @@ class DiagramResponse {
     void sendCheck(String uml) throws IOException {
         response.setContentType(getContentType());
         SourceStringReader reader = new SourceStringReader(uml);
-        DiagramDescription desc = reader.generateDiagramDescription(
+        DiagramDescription desc = reader.generateImage(
             new NullOutputStream(), new FileFormatOption(FileFormat.PNG, false));
         PrintWriter httpOut = response.getWriter();
         httpOut.print(desc.getDescription());
  }
-    private void addHeaderForCache() {
+    private void addHeaderForCache(BlockUml blockUml) {
         long today = System.currentTimeMillis();
         // Add http headers to force the browser to cache the image
-        response.addDateHeader("Expires", today + 31536000000L);
-        // today + 1 year
-        response.addDateHeader("Last-Modified", 1261440000000L);
-        // 2009 dec 22 constant date in the past
-        response.addHeader("Cache-Control", "public");
+        final int maxAge = 3600 * 24 * 5;
+        response.addDateHeader("Expires", today + 1000L * maxAge);
+        response.addDateHeader("Date", today);
+
+        response.addDateHeader("Last-Modified", blockUml.lastModified());
+        response.addHeader("Cache-Control", "public, max-age=" + maxAge);
+        // response.addHeader("Cache-Control", "max-age=864000");
+        response.addHeader("Etag", "\"" + blockUml.etag() + "\"");
+        final Diagram diagram = blockUml.getDiagram();
+        response.addHeader("X-PlantUML-Diagram-Description", diagram.getDescription().getDescription());
+        if (diagram instanceof PSystemError) {
+            final PSystemError error = (PSystemError) diagram;
+            for (ErrorUml err : error.getErrorsUml()) {
+                response.addHeader("X-PlantUML-Diagram-Error", err.getError());
+                response.addHeader("X-PlantUML-Diagram-Error-Line", "" + err.getPosition());
+            }
+        }
+        addHeaders(response);
     }
+
+    public static void addHeaders(HttpServletResponse response) {
+        response.addHeader("X-Powered-By", POWERED_BY);
+        response.addHeader("X-Patreon", "Support us on http://plantuml.com/patreon");
+        response.addHeader("X-Donate", "http://plantuml.com/paypal");
+    }
+
 
     private String getContentType() {
         return CONTENT_TYPE.get(format);

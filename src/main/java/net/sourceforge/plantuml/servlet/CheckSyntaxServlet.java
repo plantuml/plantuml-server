@@ -49,7 +49,7 @@ public class CheckSyntaxServlet extends HttpServlet {
         String uml = UmlExtractor.getUmlSource(getSource(request.getRequestURI()));
 
         // generate the response
-        DiagramResponse dr = new DiagramResponse(response, getOutputFormat());
+        DiagramResponse dr = new DiagramResponse(response, getOutputFormat(), request);
         try {
             dr.sendCheck(uml);
         } catch (IIOException iioe) {

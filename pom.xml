@@ -157,7 +157,7 @@
     <dependency>
       <groupId>net.sourceforge.plantuml</groupId>
       <artifactId>plantuml</artifactId>
-      <version>RELEASE</version>
+      <version>2017.09</version>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>

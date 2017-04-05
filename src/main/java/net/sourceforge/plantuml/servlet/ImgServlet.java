@@ -33,16 +33,6 @@ import net.sourceforge.plantuml.FileFormat;
 public class ImgServlet extends UmlDiagramService {
 
     @Override
-    public String getSource(String uri) {
-        String[] result = uri.split("/img/|/png/", 2);
-        if (result.length != 2) {
-            return "";
-        } else {
-            return result[1];
-        }
-    }
-
-    @Override
     public FileFormat getOutputFormat() {
         return FileFormat.PNG;
     }
