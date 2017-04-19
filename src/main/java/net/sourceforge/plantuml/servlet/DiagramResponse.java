@@ -83,7 +83,7 @@ class DiagramResponse {
         if (StringUtils.isDiagramCacheable(uml)) {
             addHeaderForCache(blockUml);
         }
-        reader.generateImage(response.getOutputStream(), new FileFormatOption(format, false));
+        reader.outputImage(response.getOutputStream(), new FileFormatOption(format, false));
     }
 
     private boolean notModified(BlockUml blockUml) {
@@ -107,7 +107,7 @@ class DiagramResponse {
         if (StringUtils.isDiagramCacheable(uml)) {
             addHeaderForCache(blockUml);
         }
-        String map = reader.generateImage(new NullOutputStream(),
+        String map = reader.outputImage(new NullOutputStream(),
            new FileFormatOption(FileFormat.PNG, false)).getDescription();
         String[] mapLines = map.split("[\\r\\n]");
         PrintWriter httpOut = response.getWriter();
@@ -119,7 +119,7 @@ class DiagramResponse {
     void sendCheck(String uml) throws IOException {
         response.setContentType(getContentType());
         SourceStringReader reader = new SourceStringReader(uml);
-        DiagramDescription desc = reader.generateImage(
+        DiagramDescription desc = reader.outputImage(
             new NullOutputStream(), new FileFormatOption(FileFormat.PNG, false));
         PrintWriter httpOut = response.getWriter();
         httpOut.print(desc.getDescription());
