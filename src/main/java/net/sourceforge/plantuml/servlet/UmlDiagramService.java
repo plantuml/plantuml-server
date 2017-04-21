@@ -45,7 +45,7 @@ public abstract class UmlDiagramService extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         // build the UML source from the compressed request parameter
-        final String[] sourceAndIdx = getSourceAndIdx(request.getRequestURI());
+        final String[] sourceAndIdx = getSourceAndIdx(request);
         final String uml;
         try {
             uml = UmlExtractor.getUmlSource(sourceAndIdx[0]);
@@ -67,7 +67,7 @@ public abstract class UmlDiagramService extends HttpServlet {
         dr = null;
     }
 
-    private static final Pattern RECOVER_UML_PATTERN = Pattern.compile("/\\w+/\\w+/(\\d+/)?(.*)");
+    private static final Pattern RECOVER_UML_PATTERN = Pattern.compile("/\\w+/(\\d+/)?(.*)");
 
     /**
      * Extracts the compressed UML source from the HTTP URI.
@@ -76,8 +76,10 @@ public abstract class UmlDiagramService extends HttpServlet {
      *            the complete URI as returned by request.getRequestURI()
      * @return the compressed UML source
      */
-    public final String[] getSourceAndIdx(String uri) {
-        final Matcher recoverUml = RECOVER_UML_PATTERN.matcher(uri);
+    public final String[] getSourceAndIdx(HttpServletRequest request) {
+        final Matcher recoverUml = RECOVER_UML_PATTERN.matcher(
+            request.getRequestURI().substring(
+            request.getContextPath().length()));
         // the URL form has been submitted
         if (recoverUml.matches()) {
             final String data = recoverUml.group(2);

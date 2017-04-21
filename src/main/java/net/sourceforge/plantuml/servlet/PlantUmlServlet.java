@@ -62,7 +62,7 @@ public class PlantUmlServlet extends HttpServlet {
     // Last part of the URL
     public static final Pattern URL_PATTERN = Pattern.compile("^.*[^a-zA-Z0-9\\-\\_]([a-zA-Z0-9\\-\\_]+)");
 
-    private static final Pattern RECOVER_UML_PATTERN = Pattern.compile("/\\w+/uml/(.*)");
+    private static final Pattern RECOVER_UML_PATTERN = Pattern.compile("/uml/(.*)");
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -131,7 +131,8 @@ public class PlantUmlServlet extends HttpServlet {
 
     private String getTextFromUrl(HttpServletRequest request, String text) throws IOException {
         String url = request.getParameter("url");
-        final Matcher recoverUml = RECOVER_UML_PATTERN.matcher(request.getRequestURI());
+        final Matcher recoverUml = RECOVER_UML_PATTERN.matcher(request.getRequestURI().substring(
+                request.getContextPath().length()));
         // the URL form has been submitted
         if (recoverUml.matches()) {
             final String data = recoverUml.group(1);
