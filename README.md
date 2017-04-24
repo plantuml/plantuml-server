@@ -49,8 +49,10 @@ Alternate: How to run the server with Tomcat + Docker?
 
 Above method uses maven to run the application. That requires internet connectivity. That is undesireable in a corporate environment with firewalls. So, you can use following command to create a self-contained docker image that will "just-work". 
 
+*Note: Generate the WAR (instructions further below) prior to running "docker build"*
+
 ```
-docker build -t platuml-server:tomcat8 -f Dockerfile.tomcat8 . 
+docker build -t plantuml-server:tomcat8 -f Dockerfile.tomcat8 . 
 docker run -d -p 8080:8080 plantuml-server:tomcat8
 ```
 The server is now listing to [http://localhost:8080/plantuml](http://localhost:8080/plantuml).
