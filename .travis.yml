@@ -1,1 +1,16 @@
 language: java
+
+sudo: required
+
+services:
+    - docker
+
+script:
+    - mvn package
+
+after_success:
+  - docker login  -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+    docker build -t plantuml/plantuml-server:latest . ;
+    docker push plantuml/plantuml-server:latest;
+    fi
