@@ -1,7 +1,4 @@
-FROM maven:3-jdk-8
+FROM jetty
+MAINTAINER D.Ducatel
 
-RUN apt-get update && apt-get install -y --no-install-recommends graphviz fonts-wqy-zenhei && rm -rf /var/lib/apt/lists/*
-ADD . /app
-WORKDIR /app
-EXPOSE 8080
-CMD ["mvn", "jetty:run"]
+ADD target/plantuml.war /var/lib/jetty/webapps/ROOT.war
