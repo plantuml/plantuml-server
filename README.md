@@ -6,7 +6,7 @@ PlantUML Server is a web application to generate UML diagrams on-the-fly.
 
 ![](https://raw.githubusercontent.com/ftomassetti/plantuml-server/readme/screenshots/screenshot.png)
  
-To know more about PlantUML, please visit http://plantuml.sourceforge.net/.
+To know more about PlantUML, please visit http://plantuml.com/.
 
 Requirements
 ============
@@ -29,7 +29,7 @@ In this way the server is run on an embedded jetty server.
 You can specify the port at which it runs:
 
 ```
-mvn jetty:run -Djetty.port=9999"
+mvn jetty:run -Djetty.port=9999
 ```
 
 How to run the server with Docker
