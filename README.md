@@ -36,13 +36,10 @@ How to run the server with Docker
 =================================
 
 ```
-docker build -t plantuml-server .
-docker run -d -p 8080:8080 plantuml-server
+docker run -d -p 8080:8080 plantuml/plantuml-server
 ```
 
-The server is now listing to [http://localhost:8080/plantuml](http://localhost:8080/plantuml).
-
-You may specity the port in `-p` Docker command line argument.
+The server is now listing to [http://localhost:8080](http://localhost:8080).
 
 Alternate: How to run the server with Tomcat + Docker?
 ======================================================
