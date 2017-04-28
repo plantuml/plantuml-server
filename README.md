@@ -1,7 +1,8 @@
 PlantUML Server 
 ===============
 [![Build Status](https://travis-ci.org/plantuml/plantuml-server.png?branch=master)](https://travis-ci.org/plantuml/plantuml-server)
-
+[![](https://images.microbadger.com/badges/image/plantuml/plantuml-server.svg)](https://microbadger.com/images/plantuml/plantuml-server "Get your own image badge on microbadger.com") 
+[![Docker Pull](https://img.shields.io/docker/pulls/plantuml/plantuml-server.svg)](https://hub.docker.com/r/plantuml/plantuml-server/)
 PlantUML Server is a web application to generate UML diagrams on-the-fly.
 
 ![](https://raw.githubusercontent.com/ftomassetti/plantuml-server/readme/screenshots/screenshot.png)
