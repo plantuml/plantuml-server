@@ -36,22 +36,25 @@ mvn jetty:run -Djetty.port=9999"
 How to run the server with Docker
 =================================
 
+You can run Plantuml with jetty or tomcat container
 ```
-docker run -d -p 8080:8080 plantuml/plantuml-server
+docker run -d -p 8080:8080 plantuml/plantuml-server:jetty
+docker run -d -p 8080:8080 plantuml/plantuml-server:tomcat
 ```
 
 The server is now listing to [http://localhost:8080](http://localhost:8080).
 
-Alternate: How to run the server with Tomcat + Docker?
+Alternate: How to build your docker image
 ======================================================
 
-Above method uses maven to run the application. That requires internet connectivity. That is undesireable in a corporate environment with firewalls. So, you can use following command to create a self-contained docker image that will "just-work". 
+This method uses maven to run the application. That requires internet connectivity. 
+So, you can use following command to create a self-contained docker image that will "just-work". 
 
 *Note: Generate the WAR (instructions further below) prior to running "docker build"*
 
 ```
-docker build -t plantuml-server:tomcat8 -f Dockerfile.tomcat8 . 
-docker run -d -p 8080:8080 plantuml-server:tomcat8
+docker image build -t plantuml-server . 
+docker run -d -p 8080:8080 plantuml-server
 ```
 The server is now listing to [http://localhost:8080/plantuml](http://localhost:8080/plantuml).
 
