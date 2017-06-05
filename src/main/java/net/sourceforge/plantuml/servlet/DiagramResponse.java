@@ -141,7 +141,7 @@ class DiagramResponse {
             final PSystemError error = (PSystemError) diagram;
             for (ErrorUml err : error.getErrorsUml()) {
                 response.addHeader("X-PlantUML-Diagram-Error", err.getError());
-                response.addHeader("X-PlantUML-Diagram-Error-Line", "" + err.getPosition());
+                response.addHeader("X-PlantUML-Diagram-Error-Line", "" + err.getLineLocation().getPosition());
             }
         }
         addHeaders(response);
