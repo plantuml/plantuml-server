@@ -83,10 +83,7 @@
         <p id="diagram">
             <c:choose>
             <c:when test="${!empty mapurl}">
-                <img src="${imgurl}" alt="PlantUML diagram" usemap="#umlmap" />
-                <map name="umlmap">
-                    <c:import url="${mapurl}" />
-                </map>
+                <img src="${imgurl}" alt="PlantUML diagram" />
             </c:when>
             <c:otherwise>
                 <img src="${imgurl}" alt="PlantUML diagram" />
