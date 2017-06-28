@@ -12,6 +12,7 @@ public class AllTests extends TestSuite {
         suite.addTestSuite(TestImage.class);
         suite.addTestSuite(TestAsciiArt.class);
         suite.addTestSuite(TestSVG.class);
+        suite.addTestSuite(TestEPS.class);
         suite.addTestSuite(TestProxy.class);
         suite.addTestSuite(TestMap.class);
         suite.addTestSuite(TestCharset.class);

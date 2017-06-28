@@ -24,6 +24,14 @@
 		<servlet-class>net.sourceforge.plantuml.servlet.SvgServlet</servlet-class>
 	</servlet>
 	<servlet>
+		<servlet-name>epsservlet</servlet-name>
+		<servlet-class>net.sourceforge.plantuml.servlet.EpsServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>epstextservlet</servlet-name>
+		<servlet-class>net.sourceforge.plantuml.servlet.EpsTextServlet</servlet-class>
+	</servlet>
+	<servlet>
 		<servlet-name>asciiservlet</servlet-name>
 		<servlet-class>net.sourceforge.plantuml.servlet.AsciiServlet</servlet-class>
 	</servlet>
@@ -34,7 +42,7 @@
     <servlet>
         <servlet-name>oldproxyservlet</servlet-name>
         <servlet-class>net.sourceforge.plantuml.servlet.OldProxyServlet</servlet-class>
-    </servlet>    
+    </servlet>
     <servlet>
         <servlet-name>mapservlet</servlet-name>
         <servlet-class>net.sourceforge.plantuml.servlet.MapServlet</servlet-class>
@@ -67,6 +75,14 @@
 	<servlet-mapping>
 		<servlet-name>svgservlet</servlet-name>
 		<url-pattern>/svg/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>epsservlet</servlet-name>
+		<url-pattern>/eps/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>epstextservlet</servlet-name>
+		<url-pattern>/epstext/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>asciiservlet</servlet-name>

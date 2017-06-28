@@ -61,6 +61,7 @@ class DiagramResponse {
         Map<FileFormat, String> map = new HashMap<FileFormat, String>();
         map.put(FileFormat.PNG, "image/png");
         map.put(FileFormat.SVG, "image/svg+xml");
+        map.put(FileFormat.EPS, "application/postscript");
         map.put(FileFormat.UTXT, "text/plain;charset=UTF-8");
         CONTENT_TYPE = Collections.unmodifiableMap(map);
     }
