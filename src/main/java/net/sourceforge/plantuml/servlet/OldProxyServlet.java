@@ -110,6 +110,12 @@ public class OldProxyServlet extends HttpServlet {
         if (format.equals("svg")) {
             return FileFormat.SVG;
         }
+        if (format.equals("eps")) {
+            return FileFormat.EPS;
+        }
+        if (format.equals("epstext")) {
+            return FileFormat.EPS_TEXT;
+        }
         if (format.equals("txt")) {
             return FileFormat.ATXT;
         }
