@@ -20,6 +20,8 @@ abstract HttpServlet <|-- MapServlet
 abstract HttpServlet <|-- ProxyServlet
 UmlDiagramService <|-- PngServlet
 UmlDiagramService <|-- SvgServlet
+UmlDiagramService <|-- EpsServlet
+UmlDiagramService <|-- EpsTextServlet
 UmlDiagramService <|-- AsciiServlet
 UmlDiagramService o- DiagramResponse
 MapServlet o-- DiagramResponse
