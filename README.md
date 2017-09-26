@@ -44,6 +44,32 @@ docker run -d -p 8080:8080 plantuml/plantuml-server:tomcat
 
 The server is now listing to [http://localhost:8080](http://localhost:8080).
 
+How to set PlantUML options
+=================================
+
+You can apply some option to your PlantUML server with environement variable.
+
+If you run the directly the jar, you can pass the option with `-D` flag
+```
+java -D THE_ENV_VARIABLE=THE_ENV_VALUE -Djetty.contextpath=/ -jar target/dependency/jetty-runner.jar target/plantuml.war
+```
+or
+```
+mvn jetty:run -D THE_ENV_VARIABLE=THE_ENV_VALUE -Djetty.port=9999
+```
+
+If you use docker, you can use the `-e` flag:
+```
+docker run -d -p 8080:8080 -e THE_ENV_VARIABLE=THE_ENV_VALUE plantuml/plantuml-server:jetty
+```
+
+You can set all  the following variables:
+
+* `PLANTUML_LIMIT_SIZE`
+    * Limits image width and height
+    * Default value `4096`
+
+
 Alternate: How to build your docker image
 ======================================================
 
