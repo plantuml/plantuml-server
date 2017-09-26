@@ -68,6 +68,13 @@ You can set all  the following variables:
 * `PLANTUML_LIMIT_SIZE`
     * Limits image width and height
     * Default value `4096`
+* `GRAPHVIZ_DOT`
+    * Link to 'dot' executable
+    * Default value `/usr/local/bin/dot` or `/usr/bin/dot`
+* `PLANTUML_STATS`
+    * Set it to `on` to enable [statistics report](http://plantuml.com/statistics-report)
+    * Default value `off`
+
 
 
 Alternate: How to build your docker image
