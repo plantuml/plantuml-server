@@ -35,11 +35,12 @@ import javax.servlet.http.HttpServletRequest;
 import net.sourceforge.plantuml.BlockUml;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
+import net.sourceforge.plantuml.NullOutputStream;
 import net.sourceforge.plantuml.SourceStringReader;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.Diagram;
-import net.sourceforge.plantuml.servlet.utility.NullOutputStream;
+import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.version.Version;
 import net.sourceforge.plantuml.PSystemError;
 import net.sourceforge.plantuml.ErrorUml;
@@ -108,12 +109,13 @@ class DiagramResponse {
         if (StringUtils.isDiagramCacheable(uml)) {
             addHeaderForCache(blockUml);
         }
-        String map = reader.outputImage(new NullOutputStream(),
-           new FileFormatOption(FileFormat.PNG, false)).getDescription();
-        String[] mapLines = map.split("[\\r\\n]");
-        PrintWriter httpOut = response.getWriter();
-        for (int i = 2; (i + 1) < mapLines.length; i++) {
-            httpOut.print(mapLines[i]);
+        final Diagram diagram = blockUml.getDiagram();
+        ImageData map = diagram.exportDiagram(new NullOutputStream(), 0,
+                new FileFormatOption(FileFormat.PNG, false));
+        if (map.containsCMapData()) {
+            PrintWriter httpOut = response.getWriter();
+            final String cmap = map.getCMapData("plantuml");
+            httpOut.print(cmap);
         }
    }
 
