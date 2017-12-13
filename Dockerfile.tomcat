@@ -1,6 +1,8 @@
 FROM maven:3-jdk-8 AS builder
 
-RUN apt-get update && apt-get install -y --no-install-recommends graphviz fonts-wqy-zenhei && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends graphviz fonts-wqy-zenhei && \
+    apt-get clean
 
 COPY pom.xml /app/
 COPY src /app/src/
@@ -16,7 +18,7 @@ MAINTAINER D.Ducatel
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends graphviz fonts-wqy-zenhei && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get clean
 
 RUN rm -rf /usr/local/tomcat/webapps/ROOT
 COPY --from=builder /app/target/plantuml.war /usr/local/tomcat/webapps/ROOT.war
