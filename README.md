@@ -91,7 +91,7 @@ docker run -d -p 8080:8080 plantuml-server
 ```
 The server is now listing to [http://localhost:8080/plantuml](http://localhost:8080/plantuml).
 
-You may specity the port in `-p` Docker command line argument.
+You may specify the port in `-p` Docker command line argument.
  
 
 How to generate the war
