@@ -9,15 +9,15 @@ after_success:
   - docker login  -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
 
-    docker build -t plantuml/plantuml-server:jetty -f Dockerfile.jetty . ;
-    docker build -t plantuml/plantuml-server:tomcat -f Dockerfile.tomcat . ;
+    docker build --pull -t plantuml/plantuml-server:jetty -f Dockerfile.jetty . ;
+    docker build --pull -t plantuml/plantuml-server:tomcat -f Dockerfile.tomcat . ;
     docker tag plantuml/plantuml-server:jetty plantuml/plantuml-server:latest ;
 
     docker push plantuml/plantuml-server:tomcat;
     docker push plantuml/plantuml-server:jetty;
     docker push plantuml/plantuml-server:latest;
 
-    docker build -t plantuml/plantuml-server:armv8a -f Dockerfile.armv8a . ;
+    docker build --pull -t plantuml/plantuml-server:armv8a -f Dockerfile.armv8a . ;
     docker push plantuml/plantuml-server:armv8a;
 
     fi
