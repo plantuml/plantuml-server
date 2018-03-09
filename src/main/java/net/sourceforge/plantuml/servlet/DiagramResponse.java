@@ -85,7 +85,8 @@ class DiagramResponse {
         if (StringUtils.isDiagramCacheable(uml)) {
             addHeaderForCache(blockUml);
         }
-        reader.outputImage(response.getOutputStream(), new FileFormatOption(format, false));
+        final Diagram diagram = blockUml.getDiagram();
+        final ImageData result = diagram.exportDiagram(response.getOutputStream(), idx, new FileFormatOption(format));
     }
 
     private boolean notModified(BlockUml blockUml) {
