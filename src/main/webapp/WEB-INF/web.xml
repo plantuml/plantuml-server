@@ -51,6 +51,10 @@
         <servlet-name>checkservlet</servlet-name>
         <servlet-class>net.sourceforge.plantuml.servlet.CheckSyntaxServlet</servlet-class>
     </servlet>
+	<servlet>
+		<servlet-name>formatservlet</servlet-name>
+		<servlet-class>net.sourceforge.plantuml.servlet.FormatServlet</servlet-class>
+	</servlet>
 	<!-- Patterns of the servlet -->
 	<servlet-mapping>
 		<servlet-name>plantumlservlet</servlet-name>
@@ -99,6 +103,10 @@
 	<servlet-mapping>
 		<servlet-name>plantumlservlet</servlet-name>
 		<url-pattern>/start/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>formatservlet</servlet-name>
+		<url-pattern>/format</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>oldproxyservlet</servlet-name>
