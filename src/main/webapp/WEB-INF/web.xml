@@ -31,6 +31,10 @@
 		<servlet-name>epstextservlet</servlet-name>
 		<servlet-class>net.sourceforge.plantuml.servlet.EpsTextServlet</servlet-class>
 	</servlet>
+    <servlet>
+        <servlet-name>base64servlet</servlet-name>
+        <servlet-class>net.sourceforge.plantuml.servlet.Base64Servlet</servlet-class>
+    </servlet>
 	<servlet>
 		<servlet-name>asciiservlet</servlet-name>
 		<servlet-class>net.sourceforge.plantuml.servlet.AsciiServlet</servlet-class>
@@ -84,6 +88,10 @@
 		<servlet-name>epstextservlet</servlet-name>
 		<url-pattern>/epstext/*</url-pattern>
 	</servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>base64servlet</servlet-name>
+        <url-pattern>/base64/*</url-pattern>
+    </servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>asciiservlet</servlet-name>
 		<url-pattern>/txt/*</url-pattern>
