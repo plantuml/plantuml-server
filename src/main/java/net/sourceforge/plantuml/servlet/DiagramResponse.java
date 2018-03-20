@@ -77,6 +77,7 @@ class DiagramResponse {
     }
 
     void sendDiagram(String uml, int idx) throws IOException {
+        response.addHeader("Access-Control-Allow-Origin", "*");
         response.setContentType(getContentType());
         SourceStringReader reader = new SourceStringReader(uml);
         if (format == FileFormat.BASE64) {
