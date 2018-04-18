@@ -1,10 +1,13 @@
 package net.sourceforge.plantuml.servlet;
 
 import com.meterware.httpunit.GetMethodWebRequest;
+import com.meterware.httpunit.PostMethodWebRequest;
 import com.meterware.httpunit.WebConversation;
 import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.Charset;
 import java.util.Scanner;
 
 public class TestSVG extends WebappTestCase {
@@ -23,6 +26,47 @@ public class TestSVG extends WebappTestCase {
         int diagramLen = diagram.length();
         assertTrue(diagramLen > 1000);
         assertTrue(diagramLen < 3000);
+    }
+
+    /**
+     * Verifies the generation of the SVG for the Bob -> Alice sample
+     */
+    public void testPostedSequenceDiagram() throws Exception {
+        WebConversation conversation = new WebConversation();
+        PostMethodWebRequest request = new PostMethodWebRequest(
+                getServerUrl() + "svg/",
+                new ByteArrayInputStream("@startuml\nBob -> Alice\n@enduml".getBytes(Charset.defaultCharset())),
+                "text/plain");
+
+        WebResponse response = conversation.getResource(request);
+
+        assertEquals(200, response.getResponseCode());
+
+        // Analyze response
+        // Verifies the Content-Type header
+        assertEquals("Response content type is not SVG", "image/svg+xml", response.getContentType());
+        // Get the content and verify its size
+
+        String diagram = response.getText();
+
+        int diagramLen = diagram.length();
+        assertTrue(diagramLen > 1000);
+        assertTrue(diagramLen < 3000);
+    }
+
+    /**
+     * Verifies the generation of the SVG for the Bob -> Alice sample
+     */
+    public void testPostedInvalidSequenceDiagram() throws Exception {
+        WebConversation conversation = new WebConversation();
+        PostMethodWebRequest request = new PostMethodWebRequest(
+                getServerUrl() + "svg/",
+                new ByteArrayInputStream("@startuml\n[Bob\n@enduml".getBytes(Charset.defaultCharset())),
+                "text/plain");
+
+        WebResponse response = conversation.getResource(request);
+
+        assertEquals(400, response.getResponseCode());
     }
 
     /**

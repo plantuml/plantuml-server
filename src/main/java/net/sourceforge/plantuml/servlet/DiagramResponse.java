@@ -76,7 +76,7 @@ class DiagramResponse {
         request = rq;
     }
 
-    void sendDiagram(String uml, int idx) throws IOException {
+    void sendDiagram(String uml, int idx, boolean badRequestOnError) throws IOException {
         response.addHeader("Access-Control-Allow-Origin", "*");
         response.setContentType(getContentType());
         SourceStringReader reader = new SourceStringReader(uml);
@@ -99,6 +99,9 @@ class DiagramResponse {
             addHeaderForCache(blockUml);
         }
         final Diagram diagram = blockUml.getDiagram();
+        if (diagram instanceof PSystemError) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        }
         final ImageData result = diagram.exportDiagram(response.getOutputStream(), idx, new FileFormatOption(format));
     }
 
