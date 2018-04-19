@@ -23,17 +23,18 @@
  */
 package net.sourceforge.plantuml.servlet;
 
-import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import net.sourceforge.plantuml.FileFormat;
+import net.sourceforge.plantuml.servlet.utility.UmlExtractor;
+
 import javax.imageio.IIOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import net.sourceforge.plantuml.FileFormat;
-import net.sourceforge.plantuml.servlet.utility.UmlExtractor;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Common service servlet to produce diagram from compressed UML source contained in the end part of the requested URI.
@@ -46,6 +47,7 @@ public abstract class UmlDiagramService extends HttpServlet {
 
         // build the UML source from the compressed request parameter
         final String[] sourceAndIdx = getSourceAndIdx(request);
+        final int idx = Integer.parseInt(sourceAndIdx[1]);
         final String uml;
         try {
             uml = UmlExtractor.getUmlSource(sourceAndIdx[0]);
@@ -55,9 +57,38 @@ public abstract class UmlDiagramService extends HttpServlet {
             return;
         }
 
+        doDiagramResponse(request, response, uml, idx);
+    }
+
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        // build the UML source from the compressed request parameter
+        final String[] sourceAndIdx = getSourceAndIdx(request);
+        final int idx = Integer.parseInt(sourceAndIdx[1]);
+
+        final StringBuilder uml = new StringBuilder();
+        final BufferedReader in = request.getReader();
+        while (true) {
+            final String line = in.readLine();
+            if (line == null) {
+                break;
+            }
+            uml.append(line).append('\n');
+        }
+
+        doDiagramResponse(request, response, uml.toString(), idx);
+    }
+
+    private void doDiagramResponse(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        String uml,
+        int idx)
+        throws IOException {
+
         // generate the response
         DiagramResponse dr = new DiagramResponse(response, getOutputFormat(), request);
-        final int idx = Integer.parseInt(sourceAndIdx[1]);
         try {
             dr.sendDiagram(uml, idx);
         } catch (IIOException iioe) {

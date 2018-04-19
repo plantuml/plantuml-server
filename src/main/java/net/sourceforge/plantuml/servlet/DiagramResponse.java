@@ -99,6 +99,9 @@ class DiagramResponse {
             addHeaderForCache(blockUml);
         }
         final Diagram diagram = blockUml.getDiagram();
+        if (diagram instanceof PSystemError) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        }
         final ImageData result = diagram.exportDiagram(response.getOutputStream(), idx, new FileFormatOption(format));
     }
 
