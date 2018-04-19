@@ -47,6 +47,7 @@ public abstract class UmlDiagramService extends HttpServlet {
 
         // build the UML source from the compressed request parameter
         final String[] sourceAndIdx = getSourceAndIdx(request);
+        final int idx = Integer.parseInt(sourceAndIdx[1]);
         final String uml;
         try {
             uml = UmlExtractor.getUmlSource(sourceAndIdx[0]);
@@ -56,16 +57,7 @@ public abstract class UmlDiagramService extends HttpServlet {
             return;
         }
 
-        // generate the response
-        DiagramResponse dr = new DiagramResponse(response, getOutputFormat(), request);
-        final int idx = Integer.parseInt(sourceAndIdx[1]);
-        try {
-            dr.sendDiagram(uml, idx, false);
-        } catch (IIOException iioe) {
-            // Browser has closed the connection, so the HTTP OutputStream is closed
-            // Silently catch the exception to avoid annoying log
-        }
-        dr = null;
+        doDiagramResponse(request, response, uml, idx);
     }
 
     @Override
@@ -73,7 +65,7 @@ public abstract class UmlDiagramService extends HttpServlet {
 
         // build the UML source from the compressed request parameter
         final String[] sourceAndIdx = getSourceAndIdx(request);
-//        final String uml;
+        final int idx = Integer.parseInt(sourceAndIdx[1]);
 
         final StringBuilder uml = new StringBuilder();
         final BufferedReader in = request.getReader();
@@ -85,11 +77,20 @@ public abstract class UmlDiagramService extends HttpServlet {
             uml.append(line).append('\n');
         }
 
+        doDiagramResponse(request, response, uml.toString(), idx);
+    }
+
+    private void doDiagramResponse(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        String uml,
+        int idx)
+        throws IOException {
+
         // generate the response
         DiagramResponse dr = new DiagramResponse(response, getOutputFormat(), request);
-        final int idx = Integer.parseInt(sourceAndIdx[1]);
         try {
-            dr.sendDiagram(uml.toString(), idx, true);
+            dr.sendDiagram(uml, idx);
         } catch (IIOException iioe) {
             // Browser has closed the connection, so the HTTP OutputStream is closed
             // Silently catch the exception to avoid annoying log

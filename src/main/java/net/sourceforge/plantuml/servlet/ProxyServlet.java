@@ -85,7 +85,7 @@ public class ProxyServlet extends HttpServlet {
         // generate the response
         DiagramResponse dr = new DiagramResponse(response, getOutputFormat(fmt), request);
         try {
-            dr.sendDiagram(uml, 0, false);
+            dr.sendDiagram(uml, 0);
         } catch (IIOException iioe) {
             // Browser has closed the connection, so the HTTP OutputStream is closed
             // Silently catch the exception to avoid annoying log
