@@ -4,7 +4,7 @@ COPY pom.xml /app/
 COPY src /app/src/
 
 WORKDIR /app
-RUN mvn --batch-mode package
+RUN mvn --batch-mode --define java.net.useSystemProxies=true package
 
 ########################################################################################
 
