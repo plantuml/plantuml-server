@@ -4,7 +4,7 @@ COPY pom.xml /app/
 COPY src /app/src/
 
 WORKDIR /app
-RUN mvn package
+RUN mvn --batch-mode package
 
 ########################################################################################
 
