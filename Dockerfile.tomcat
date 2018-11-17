@@ -1,15 +1,10 @@
 FROM maven:3-jdk-8 AS builder
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends graphviz fonts-wqy-zenhei && \
-    apt-get clean
-
 COPY pom.xml /app/
 COPY src /app/src/
 
-ENV MAVEN_CONFIG=/app/.m2
 WORKDIR /app
-RUN mvn package
+RUN mvn --batch-mode --define java.net.useSystemProxies=true package
 
 ########################################################################################
 
@@ -20,5 +15,8 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends graphviz fonts-wqy-zenhei && \
     apt-get clean
 
-RUN rm -rf /usr/local/tomcat/webapps/ROOT
-COPY --from=builder /app/target/plantuml.war /usr/local/tomcat/webapps/ROOT.war
+ENV GRAPHVIZ_DOT=/usr/bin/dot
+
+ARG BASE_URL=plantuml
+RUN rm -rf /usr/local/tomcat/webapps/$BASE_URL
+COPY --from=builder /app/target/plantuml.war /usr/local/tomcat/webapps/$BASE_URL.war
