@@ -17,6 +17,5 @@ RUN apt-get update && \
 
 ENV GRAPHVIZ_DOT=/usr/bin/dot
 
-ARG BASE_URL=plantuml
-RUN rm -rf /usr/local/tomcat/webapps/$BASE_URL
-COPY --from=builder /app/target/plantuml.war /usr/local/tomcat/webapps/$BASE_URL.war
+RUN rm -rf /usr/local/tomcat/webapps/ROOT
+COPY --from=builder /app/target/plantuml.war /usr/local/tomcat/webapps/ROOT.war
