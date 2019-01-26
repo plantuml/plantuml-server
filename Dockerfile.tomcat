@@ -9,7 +9,7 @@ RUN mvn --batch-mode --define java.net.useSystemProxies=true package
 ########################################################################################
 
 FROM tomcat:9
-MAINTAINER D.Ducatel
+LABEL MAINTAINER D.Ducatel
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends graphviz fonts-wqy-zenhei && \
