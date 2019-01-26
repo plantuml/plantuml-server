@@ -38,8 +38,8 @@ How to run the server with Docker
 
 You can run Plantuml with jetty or tomcat container
 ```
-docker run -d -p 8080:8080 plantuml/plantuml-server:jetty
-docker run -d -p 8080:8080 plantuml/plantuml-server:tomcat
+docker run -d -p 8080:8080 --name plantuml-server plantuml/plantuml-server:jetty
+docker run -d -p 8080:8080 --name plantuml-server plantuml/plantuml-server:tomcat
 ```
 
 The server is now listing to [http://localhost:8080](http://localhost:8080).
