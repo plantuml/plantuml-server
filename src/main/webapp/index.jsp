@@ -51,7 +51,7 @@
     <c:if test="${cfg['SHOW_GITHUB_RIBBON'] eq 'on' }">
         <%@ include file="resource/githubribbon.html" %>
     </c:if>
-    <p>Create your <a href="http://plantuml.sourceforge.net">PlantUML</a> diagrams directly in your browser !</p>
+    <p>Create your <a href="http://plantuml.com">PlantUML</a> diagrams directly in your browser !</p>
 </div>
 <div id="content">
     <%-- CONTENT --%>
