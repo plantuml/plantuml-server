@@ -6,8 +6,8 @@ services:
     - docker
 
 after_success:
-  - docker login  -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
+    docker login  -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
 
     docker build --pull -t plantuml/plantuml-server:jetty -f Dockerfile.jetty . ;
     docker build --pull -t plantuml/plantuml-server:tomcat -f Dockerfile.tomcat . ;
