@@ -28,7 +28,7 @@ MAINTAINER D.Ducatel
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends fonts-noto-cjk libexpat1 libcairo2 libpango1.0 libpangoft2-1.0 libpangocairo-1.0 && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/*
 
 ENV GRAPHVIZ_DOT=/usr/bin/dot
 
