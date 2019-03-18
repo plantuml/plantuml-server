@@ -6,7 +6,7 @@ services:
     - docker
 
 after_success:
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+  - if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_REPO_SLUG" == "plantuml/plantuml-server" ] ; then
     docker login  -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
 
     docker build --pull -t plantuml/plantuml-server:jetty -f Dockerfile.jetty . ;
