@@ -2,22 +2,47 @@ language: java
 
 sudo: required
 
+jdk:
+    - openjdk8
+
 services:
     - docker
 
-after_success:
-  - docker login  -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+stages:
+  - build
+  - name: docker-push
+    if: branch = master
 
-    docker build --pull -t plantuml/plantuml-server:jetty -f Dockerfile.jetty . ;
-    docker build --pull -t plantuml/plantuml-server:tomcat -f Dockerfile.tomcat . ;
-    docker tag plantuml/plantuml-server:jetty plantuml/plantuml-server:latest ;
-
-    docker push plantuml/plantuml-server:tomcat;
-    docker push plantuml/plantuml-server:jetty;
-    docker push plantuml/plantuml-server:latest;
-
-    docker build --pull -t plantuml/plantuml-server:armv8a -f Dockerfile.armv8a . ;
-    docker push plantuml/plantuml-server:armv8a;
-
-    fi
+jobs:
+    include:
+        - stage: build
+          name: war
+          script: mvn --batch-mode --define java.net.useSystemProxies=true package
+          before_deploy: cp target/plantuml.war target/plantuml-${TRAVIS_BRANCH}.war
+          deploy:
+              provider: releases
+              api_key: "$GITHUB_TOKEN"
+              file: "target/plantuml-${TRAVIS_BRANCH}.war"
+              skip_cleanup: true
+              on:
+                  tags: true
+        - stage: docker-push
+          name: jetty
+          script: >
+              docker login  -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
+              docker build --pull -t plantuml/plantuml-server:jetty -f Dockerfile.jetty . ;
+              docker tag plantuml/plantuml-server:jetty plantuml/plantuml-server:latest ;
+              docker push plantuml/plantuml-server:jetty;
+              docker push plantuml/plantuml-server:latest;
+        - stage: docker-push
+          name: tomcat
+          script: >
+              docker login  -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
+              docker build --pull -t plantuml/plantuml-server:tomcat -f Dockerfile.tomcat . ;
+              docker push plantuml/plantuml-server:tomcat;
+        - stage: docker-push
+          name: armv8a
+          script: >
+              docker login  -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
+              docker build --pull -t plantuml/plantuml-server:armv8a -f Dockerfile.armv8a . ;
+              docker push plantuml/plantuml-server:armv8a;
