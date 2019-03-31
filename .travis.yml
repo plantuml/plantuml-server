@@ -40,9 +40,3 @@ jobs:
               - docker login  -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
               - docker build --pull -t plantuml/plantuml-server:tomcat -f Dockerfile.tomcat .
               - docker push plantuml/plantuml-server:tomcat
-        - stage: docker-push
-          name: armv8a
-          script:
-              - docker login  -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
-              - docker build --pull -t plantuml/plantuml-server:armv8a -f Dockerfile.armv8a .
-              - docker push plantuml/plantuml-server:armv8a
