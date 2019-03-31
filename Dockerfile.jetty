@@ -1,4 +1,4 @@
-FROM maven:3-jdk-8 AS builder
+FROM maven:3-jdk-8 AS builderjetty
 
 COPY pom.xml /app/
 COPY src /app/src/
@@ -22,4 +22,4 @@ USER jetty
 ENV GRAPHVIZ_DOT=/usr/bin/dot
 
 ARG BASE_URL=ROOT
-COPY --from=builder /app/target/plantuml.war /var/lib/jetty/webapps/$BASE_URL.war
+COPY --from=builderjetty /app/target/plantuml.war /var/lib/jetty/webapps/$BASE_URL.war
