@@ -1,4 +1,4 @@
-FROM maven:3-jdk-8 AS builder
+FROM maven:3-jdk-8 AS buildertomcat
 
 COPY pom.xml /app/
 COPY src /app/src/
@@ -19,4 +19,4 @@ ENV GRAPHVIZ_DOT=/usr/bin/dot
 
 ARG BASE_URL=ROOT
 RUN rm -rf /usr/local/tomcat/webapps/$BASE_URL
-COPY --from=builder /app/target/plantuml.war /usr/local/tomcat/webapps/$BASE_URL.war
+COPY --from=buildertomcat /app/target/plantuml.war /usr/local/tomcat/webapps/$BASE_URL.war
