@@ -1,4 +1,4 @@
-FROM maven:3-jdk-8 AS buildertomcat
+FROM maven:3.6-jdk-8-slim AS buildertomcat
 
 COPY pom.xml /app/
 COPY src /app/src/
@@ -8,12 +8,12 @@ RUN mvn --batch-mode --define java.net.useSystemProxies=true package
 
 ########################################################################################
 
-FROM tomcat:9
+FROM tomcat:9.0-jre8-slim
 MAINTAINER D.Ducatel
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends graphviz fonts-wqy-zenhei && \
-    apt-get clean
+    apt-get install -y --no-install-recommends graphviz fonts-noto-cjk && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ENV GRAPHVIZ_DOT=/usr/bin/dot
 
