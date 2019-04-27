@@ -1,4 +1,4 @@
-FROM maven:3.6-jdk-8-slim AS buildertomcat
+FROM maven:3.6-jdk-8 AS buildertomcat
 
 COPY pom.xml /app/
 COPY src /app/src/

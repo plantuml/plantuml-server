@@ -1,4 +1,4 @@
-FROM maven:3.6-jdk-8-slim AS builderjetty
+FROM maven:3.6-jdk-8 AS builderjetty
 
 COPY pom.xml /app/
 COPY src /app/src/
