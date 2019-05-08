@@ -1,12 +1,12 @@
-PlantUML Server 
+PlantUML Server
 ===============
 [![Build Status](https://travis-ci.org/plantuml/plantuml-server.png?branch=master)](https://travis-ci.org/plantuml/plantuml-server)
-[![](https://images.microbadger.com/badges/image/plantuml/plantuml-server.svg)](https://microbadger.com/images/plantuml/plantuml-server "Get your own image badge on microbadger.com") 
+[![](https://images.microbadger.com/badges/image/plantuml/plantuml-server.svg)](https://microbadger.com/images/plantuml/plantuml-server "Get your own image badge on microbadger.com")
 [![Docker Pull](https://img.shields.io/docker/pulls/plantuml/plantuml-server.svg)](https://hub.docker.com/r/plantuml/plantuml-server/)
 PlantUML Server is a web application to generate UML diagrams on-the-fly.
 
 ![](https://raw.githubusercontent.com/ftomassetti/plantuml-server/readme/screenshots/screenshot.png)
- 
+
 To know more about PlantUML, please visit http://plantuml.com/.
 
 Requirements
@@ -25,7 +25,7 @@ mvn jetty:run
 ```
 
 The server is now listing to [http://localhost:8080/plantuml](http://localhost:8080/plantuml).
-In this way the server is run on an embedded jetty server. 
+In this way the server is run on an embedded jetty server.
 
 You can specify the port at which it runs:
 
@@ -43,6 +43,15 @@ docker run -d -p 8080:8080 plantuml/plantuml-server:tomcat
 ```
 
 The server is now listing to [http://localhost:8080](http://localhost:8080).
+
+To run plantuml using different base url, change the `docker-compose.yml` file:
+~~~
+args:
+  BASE_URL: plantuml
+~~~
+
+And run `docker-compose up --build`. This will build a modified version of the image using
+the base url `/plantuml`, e.g. http://localhost/plantuml
 
 How to set PlantUML options
 =================================
@@ -80,19 +89,19 @@ You can set all  the following variables:
 Alternate: How to build your docker image
 ======================================================
 
-This method uses maven to run the application. That requires internet connectivity. 
-So, you can use following command to create a self-contained docker image that will "just-work". 
+This method uses maven to run the application. That requires internet connectivity.
+So, you can use following command to create a self-contained docker image that will "just-work".
 
 *Note: Generate the WAR (instructions further below) prior to running "docker build"*
 
 ```
-docker image build -t plantuml-server . 
+docker image build -t plantuml-server .
 docker run -d -p 8080:8080 plantuml-server
 ```
 The server is now listing to [http://localhost:8080/plantuml](http://localhost:8080/plantuml).
 
 You may specify the port in `-p` Docker command line argument.
- 
+
 
 How to generate the war
 =======================
