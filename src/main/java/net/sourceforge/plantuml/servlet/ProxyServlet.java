@@ -135,20 +135,18 @@ public class ProxyServlet extends HttpServlet {
     }
 
     private HttpURLConnection getConnection(final URL url) throws IOException {
-        if (url.getProtocol().startsWith("https")) {
-            HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
-            con.setReadTimeout(10000); // 10 seconds
-            // printHttpsCert(con);
-            con.connect();
-            return con;
-        } else {
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
-            con.setReadTimeout(10000); // 10 seconds
-            con.connect();
-            return con;
+        final HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        if (con instanceof HttpsURLConnection) {
+            // printHttpsCert((HttpsURLConnection) con);
         }
+        con.setRequestMethod("GET");
+        String token = System.getenv("HTTP_AUTHORIZATION");
+        if (token != null) {
+            con.setRequestProperty("Authorization", token);
+        }
+        con.setReadTimeout(10000); // 10 seconds
+        con.connect();
+        return con;
     }
 
     /**
