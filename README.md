@@ -83,7 +83,9 @@ You can set all  the following variables:
 * `PLANTUML_STATS`
     * Set it to `on` to enable [statistics report](http://plantuml.com/statistics-report)
     * Default value `off`
-
+* `HTTP_AUTHORIZATION`
+    * when calling the `proxy` endpoint, the value of `HTTP_AUTHORIZATION` will be used to set the HTTP Authorization header
+    * Default value: null
 
 
 Alternate: How to build your docker image
