@@ -66,6 +66,9 @@ public class PlantUmlServlet extends HttpServlet {
     private static final Pattern RECOVER_UML_PATTERN = Pattern.compile("/uml/(.*)");
     static {
         OptionFlags.ALLOW_INCLUDE = false;
+        if ("true".equalsIgnoreCase(System.getenv("ALLOW_PLANTUML_INCLUDE"))) {
+            OptionFlags.ALLOW_INCLUDE = true;
+        }
     }
 
     @Override
