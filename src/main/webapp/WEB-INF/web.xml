@@ -67,7 +67,11 @@
         <servlet-name>checkservlet</servlet-name>
         <servlet-class>net.sourceforge.plantuml.servlet.CheckSyntaxServlet</servlet-class>
     </servlet>
-	<!-- Patterns of the servlet -->
+    <servlet>
+        <servlet-name>languageservlet</servlet-name>
+        <servlet-class>net.sourceforge.plantuml.servlet.LanguageServlet</servlet-class>
+    </servlet>
+    <!-- Patterns of the servlet -->
 	<servlet-mapping>
 		<servlet-name>plantumlservlet</servlet-name>
 		<url-pattern>/welcome</url-pattern>
@@ -128,6 +132,10 @@
 		<servlet-name>proxyservlet</servlet-name>
 		<url-pattern>/proxy</url-pattern>
 	</servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>languageservlet</servlet-name>
+        <url-pattern>/language</url-pattern>
+    </servlet-mapping>
 	<error-page>
 		<exception-type>java.lang.Throwable</exception-type>
 		<location>/error.jsp</location>
