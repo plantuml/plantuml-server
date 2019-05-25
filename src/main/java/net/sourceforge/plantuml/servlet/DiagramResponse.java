@@ -44,7 +44,7 @@ import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.version.Version;
-import net.sourceforge.plantuml.PSystemError;
+import net.sourceforge.plantuml.error.PSystemError;
 import net.sourceforge.plantuml.ErrorUml;
 
 
