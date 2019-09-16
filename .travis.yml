@@ -10,6 +10,8 @@ services:
 
 stages:
   - build
+  - name: docker-tag
+    if: tag IS present
   - name: docker-push
     if: branch = master
 
@@ -26,6 +28,27 @@ jobs:
               skip_cleanup: true
               on:
                   tags: true
+
+        - stage: docker-tag
+          name: jetty
+          script:
+              - if [ -z "$TRAVIS_TAG" ]; then exit 0; fi
+              - docker login  -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
+              - docker build --pull -t plantuml/plantuml-server:jetty-$TRAVIS_TAG -f Dockerfile.jetty .
+              - docker push plantuml/plantuml-server:jetty-$TRAVIS_TAG
+          on:
+              tags: true
+
+        - stage: docker-tag
+          name: tomcat
+          script:
+              - if [ -z "$TRAVIS_TAG" ]; then exit 0; fi
+              - docker login  -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
+              - docker build --pull -t plantuml/plantuml-server:tomcat-$TRAVIS_TAG -f Dockerfile.tomcat .
+              - docker push plantuml/plantuml-server:tomcat-$TRAVIS_TAG
+          on:
+              tags: true
+
         - stage: docker-push
           name: jetty
           script:
