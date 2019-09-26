@@ -11,9 +11,9 @@ services:
 stages:
   - build
   - name: docker-tag
-    if: tag IS present
+    if: (tag IS present) AND (branch = master) AND (type != pull_request)
   - name: docker-push
-    if: branch = master
+    if: (branch = master) AND (type != pull_request)
 
 jobs:
     include:
