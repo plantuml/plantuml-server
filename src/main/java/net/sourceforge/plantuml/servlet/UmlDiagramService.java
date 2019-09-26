@@ -24,6 +24,7 @@
 package net.sourceforge.plantuml.servlet;
 
 import net.sourceforge.plantuml.FileFormat;
+import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.servlet.utility.UmlExtractor;
 
 import javax.imageio.IIOException;
