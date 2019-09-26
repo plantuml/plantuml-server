@@ -42,6 +42,13 @@ import java.util.regex.Pattern;
 @SuppressWarnings("serial")
 public abstract class UmlDiagramService extends HttpServlet {
 
+    static {
+        OptionFlags.ALLOW_INCLUDE = false;
+        if ("true".equalsIgnoreCase(System.getenv("ALLOW_PLANTUML_INCLUDE"))) {
+            OptionFlags.ALLOW_INCLUDE = true;
+        }
+    }
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 

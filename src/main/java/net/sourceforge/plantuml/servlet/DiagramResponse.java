@@ -69,6 +69,12 @@ class DiagramResponse {
         map.put(FileFormat.BASE64, "text/plain; charset=x-user-defined");
         CONTENT_TYPE = Collections.unmodifiableMap(map);
     }
+    static {
+        OptionFlags.ALLOW_INCLUDE = false;
+        if ("true".equalsIgnoreCase(System.getenv("ALLOW_PLANTUML_INCLUDE"))) {
+            OptionFlags.ALLOW_INCLUDE = true;
+        }
+    }
 
     DiagramResponse(HttpServletResponse r, FileFormat f, HttpServletRequest rq) {
         response = r;

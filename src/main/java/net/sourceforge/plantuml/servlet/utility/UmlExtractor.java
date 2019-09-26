@@ -36,6 +36,13 @@ import net.sourceforge.plantuml.code.TranscoderUtil;
  */
 public class UmlExtractor {
 
+    static {
+        OptionFlags.ALLOW_INCLUDE = false;
+        if ("true".equalsIgnoreCase(System.getenv("ALLOW_PLANTUML_INCLUDE"))) {
+            OptionFlags.ALLOW_INCLUDE = true;
+        }
+    }
+
     /**
      * Build the complete UML source from the compressed source extracted from the HTTP URI.
      *
