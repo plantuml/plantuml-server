@@ -77,17 +77,19 @@ You can set all  the following variables:
 
 * `PLANTUML_LIMIT_SIZE`
     * Limits image width and height
-    * Default value `4096`
+    * Default value: `4096`
 * `GRAPHVIZ_DOT`
     * Link to 'dot' executable
-    * Default value `/usr/local/bin/dot` or `/usr/bin/dot`
+    * Default value: `/usr/local/bin/dot` or `/usr/bin/dot`
 * `PLANTUML_STATS`
     * Set it to `on` to enable [statistics report](http://plantuml.com/statistics-report)
-    * Default value `off`
+    * Default value: `off`
 * `HTTP_AUTHORIZATION`
     * when calling the `proxy` endpoint, the value of `HTTP_AUTHORIZATION` will be used to set the HTTP Authorization header
-    * Default value: null
-
+    * Default value: `null`
+* `ALLOW_PLANTUML_INCLUDE`
+    * Enables `!include` processing which can read files from the server into diagrams. Files are read relative to the current working directory.
+    * Default value: `false`
 
 Alternate: How to build your docker image
 ======================================================
