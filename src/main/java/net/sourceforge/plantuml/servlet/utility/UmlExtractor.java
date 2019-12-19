@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
+import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.code.Transcoder;
 import net.sourceforge.plantuml.code.TranscoderUtil;
 
@@ -35,6 +36,13 @@ import net.sourceforge.plantuml.code.TranscoderUtil;
  * of the requested URI.
  */
 public class UmlExtractor {
+
+    static {
+        OptionFlags.ALLOW_INCLUDE = false;
+        if ("true".equalsIgnoreCase(System.getenv("ALLOW_PLANTUML_INCLUDE"))) {
+            OptionFlags.ALLOW_INCLUDE = true;
+        }
+    }
 
     /**
      * Build the complete UML source from the compressed source extracted from the HTTP URI.

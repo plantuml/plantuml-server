@@ -37,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sourceforge.plantuml.BlockUml;
 import net.sourceforge.plantuml.FileFormat;
+import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.SourceStringReader;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.core.UmlSource;
@@ -55,6 +56,13 @@ import javax.net.ssl.SSLPeerUnverifiedException;
  */
 @SuppressWarnings("serial")
 public class ProxyServlet extends HttpServlet {
+
+    static {
+        OptionFlags.ALLOW_INCLUDE = false;
+        if ("true".equalsIgnoreCase(System.getenv("ALLOW_PLANTUML_INCLUDE"))) {
+            OptionFlags.ALLOW_INCLUDE = true;
+        }
+    }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -135,20 +143,18 @@ public class ProxyServlet extends HttpServlet {
     }
 
     private HttpURLConnection getConnection(final URL url) throws IOException {
-        if (url.getProtocol().startsWith("https")) {
-            HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
-            con.setReadTimeout(10000); // 10 seconds
-            // printHttpsCert(con);
-            con.connect();
-            return con;
-        } else {
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
-            con.setReadTimeout(10000); // 10 seconds
-            con.connect();
-            return con;
+        final HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        if (con instanceof HttpsURLConnection) {
+            // printHttpsCert((HttpsURLConnection) con);
         }
+        con.setRequestMethod("GET");
+        String token = System.getenv("HTTP_AUTHORIZATION");
+        if (token != null) {
+            con.setRequestProperty("Authorization", token);
+        }
+        con.setReadTimeout(10000); // 10 seconds
+        con.connect();
+        return con;
     }
 
     /**

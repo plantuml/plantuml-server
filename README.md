@@ -1,13 +1,14 @@
-PlantUML Server 
+PlantUML Server
 ===============
 [![Build Status](https://travis-ci.org/plantuml/plantuml-server.png?branch=master)](https://travis-ci.org/plantuml/plantuml-server)
-[![](https://images.microbadger.com/badges/image/plantuml/plantuml-server.svg)](https://microbadger.com/images/plantuml/plantuml-server "Get your own image badge on microbadger.com") 
+[![](https://images.microbadger.com/badges/image/plantuml/plantuml-server.svg)](https://microbadger.com/images/plantuml/plantuml-server "Get your own image badge on microbadger.com")
 [![Docker Pull](https://img.shields.io/docker/pulls/plantuml/plantuml-server.svg)](https://hub.docker.com/r/plantuml/plantuml-server/)
 PlantUML Server is a web application to generate UML diagrams on-the-fly.
 
 ![](https://raw.githubusercontent.com/ftomassetti/plantuml-server/readme/screenshots/screenshot.png)
- 
+
 To know more about PlantUML, please visit http://plantuml.com/.
+
 
 Requirements
 ============
@@ -25,7 +26,7 @@ mvn jetty:run
 ```
 
 The server is now listing to [http://localhost:8080/plantuml](http://localhost:8080/plantuml).
-In this way the server is run on an embedded jetty server. 
+In this way the server is run on an embedded jetty server.
 
 You can specify the port at which it runs:
 
@@ -43,6 +44,15 @@ docker run -d -p 8080:8080 --name plantuml-server plantuml/plantuml-server:tomca
 ```
 
 The server is now listing to [http://localhost:8080](http://localhost:8080).
+
+To run plantuml using different base url, change the `docker-compose.yml` file:
+~~~
+args:
+  BASE_URL: plantuml
+~~~
+
+And run `docker-compose up --build`. This will build a modified version of the image using
+the base url `/plantuml`, e.g. http://localhost/plantuml
 
 How to set PlantUML options
 =================================
@@ -67,32 +77,36 @@ You can set all  the following variables:
 
 * `PLANTUML_LIMIT_SIZE`
     * Limits image width and height
-    * Default value `4096`
+    * Default value: `4096`
 * `GRAPHVIZ_DOT`
     * Link to 'dot' executable
-    * Default value `/usr/local/bin/dot` or `/usr/bin/dot`
+    * Default value: `/usr/local/bin/dot` or `/usr/bin/dot`
 * `PLANTUML_STATS`
     * Set it to `on` to enable [statistics report](http://plantuml.com/statistics-report)
-    * Default value `off`
-
-
+    * Default value: `off`
+* `HTTP_AUTHORIZATION`
+    * when calling the `proxy` endpoint, the value of `HTTP_AUTHORIZATION` will be used to set the HTTP Authorization header
+    * Default value: `null`
+* `ALLOW_PLANTUML_INCLUDE`
+    * Enables `!include` processing which can read files from the server into diagrams. Files are read relative to the current working directory.
+    * Default value: `false`
 
 Alternate: How to build your docker image
 ======================================================
 
-This method uses maven to run the application. That requires internet connectivity. 
-So, you can use following command to create a self-contained docker image that will "just-work". 
+This method uses maven to run the application. That requires internet connectivity.
+So, you can use following command to create a self-contained docker image that will "just-work".
 
 *Note: Generate the WAR (instructions further below) prior to running "docker build"*
 
 ```
-docker image build -t plantuml-server . 
+docker image build -t plantuml-server .
 docker run -d -p 8080:8080 plantuml-server
 ```
 The server is now listing to [http://localhost:8080/plantuml](http://localhost:8080/plantuml).
 
 You may specify the port in `-p` Docker command line argument.
- 
+
 
 How to generate the war
 =======================
