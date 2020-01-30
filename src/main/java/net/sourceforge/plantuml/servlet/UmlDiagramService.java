@@ -127,7 +127,7 @@ public abstract class UmlDiagramService extends HttpServlet {
             } else {
                 idx = idx.substring(0, idx.length() - 1);
             }
-            
+
             final String data = recoverUml.group(2);
             if (data.length() >= 4) {
                 return new String[]{data, idx };
