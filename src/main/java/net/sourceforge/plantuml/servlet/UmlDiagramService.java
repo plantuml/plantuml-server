@@ -121,15 +121,18 @@ public abstract class UmlDiagramService extends HttpServlet {
             request.getContextPath().length()));
         // the URL form has been submitted
         if (recoverUml.matches()) {
+            String idx = recoverUml.group(1);
+            if (idx == null) {
+                idx = "0";
+            } else {
+                idx = idx.substring(0, idx.length() - 1);
+            }
+            
             final String data = recoverUml.group(2);
             if (data.length() >= 4) {
-                String idx = recoverUml.group(1);
-                if (idx == null) {
-                    idx = "0";
-                } else {
-                    idx = idx.substring(0, idx.length() - 1);
-                }
                 return new String[]{data, idx };
+            } else {
+                return new String[]{"", idx};
             }
         }
         return new String[]{"", "0" };
