@@ -180,7 +180,7 @@
       <groupId>net.sourceforge.plantuml</groupId>
       <artifactId>plantuml</artifactId>
 	  
-      <version>1.2020.1</version>
+      <version>1.2020.2</version>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
