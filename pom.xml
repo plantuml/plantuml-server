@@ -232,5 +232,25 @@
       <version>2.1.v20100127</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+    	<groupId>org.scilab.forge</groupId>
+    	<artifactId>jlatexmath</artifactId>
+    	<version>1.0.7</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.scilab.forge</groupId>
+    	<artifactId>jlatexmath-font-greek</artifactId>
+    	<version>1.0.7</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.scilab.forge</groupId>
+    	<artifactId>jlatexmath-font-cyrillic</artifactId>
+    	<version>1.0.7</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.xmlgraphics</groupId>
+	<artifactId>batik-all</artifactId>
+	<version>1.12</version>
+    </dependency>
   </dependencies>
 </project>
