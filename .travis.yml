@@ -28,6 +28,8 @@ jobs:
               token: "$GITHUB_TOKEN"
               file: "target/plantuml-${TRAVIS_BRANCH}.war"
               cleanup: true
+              on:
+                  tags: true
 
         - stage: docker-tag
           name: jetty-tag
