@@ -27,7 +27,7 @@ jobs:
               provider: releases
               token: "$GITHUB_TOKEN"
               file: "target/plantuml-${TRAVIS_BRANCH}.war"
-              cleanup: true
+              skip_cleanup: true
               on:
                   tags: true
 
