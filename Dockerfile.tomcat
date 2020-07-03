@@ -8,7 +8,7 @@ RUN mvn --batch-mode --define java.net.useSystemProxies=true package
 
 ########################################################################################
 
-FROM tomcat:9.0-jre8-slim
+FROM tomcat:9.0-jdk8-openjdk-slim
 MAINTAINER D.Ducatel
 
 RUN apt-get update && \
