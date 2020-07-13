@@ -1,4 +1,4 @@
-FROM maven:3.6-jdk-8 AS buildertomcat
+FROM maven:3-jdk-11 AS buildertomcat
 
 COPY pom.xml /app/
 COPY src /app/src/
@@ -8,7 +8,7 @@ RUN mvn --batch-mode --define java.net.useSystemProxies=true package
 
 ########################################################################################
 
-FROM tomcat:9.0-jdk8-openjdk-slim
+FROM tomcat:9.0-jdk11-openjdk-slim
 MAINTAINER D.Ducatel
 
 RUN apt-get update && \
