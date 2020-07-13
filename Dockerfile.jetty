@@ -1,4 +1,4 @@
-FROM maven:3.6-jdk-8 AS builderjetty
+FROM maven:3-jdk-11 AS builderjetty
 
 COPY pom.xml /app/
 COPY src /app/src/
@@ -8,7 +8,7 @@ RUN mvn --batch-mode --define java.net.useSystemProxies=true package
 
 ########################################################################################
 
-FROM jetty:9.4-jre8
+FROM jetty:9.4-jre11
 MAINTAINER D.Ducatel
 
 USER root

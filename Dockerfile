@@ -1,4 +1,4 @@
-FROM maven:3-jdk-8
+FROM maven:3-jdk-11
 
 RUN apt-get update && apt-get install -y --no-install-recommends graphviz fonts-wqy-zenhei && rm -rf /var/lib/apt/lists/*
 
