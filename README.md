@@ -25,7 +25,7 @@ Just run:
 mvn jetty:run
 ```
 
-The server is now listing to [http://localhost:8080/plantuml](http://localhost:8080/plantuml).
+The server is now listening to [http://localhost:8080/plantuml](http://localhost:8080/plantuml).
 In this way the server is run on an embedded jetty server.
 
 You can specify the port at which it runs:
