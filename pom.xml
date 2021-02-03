@@ -176,12 +176,12 @@
     <timestamp>${maven.build.timestamp}</timestamp>
   </properties>
   <dependencies>
-    <dependency>
+    <!--<dependency>
       <groupId>net.sourceforge.plantuml</groupId>
       <artifactId>plantuml</artifactId>
       <version>1.2021.2</version>
       <scope>provided</scope>
-    </dependency>
+    </dependency>-->
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>jstl</artifactId>
