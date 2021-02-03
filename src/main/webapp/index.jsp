@@ -32,6 +32,9 @@
     <script src="${contextroot}/webjars/codemirror/3.21/lib/codemirror.js"></script>
     <!-- <script src="mode/plantuml.js"></script> -->
     <script>
+
+        window.location.href = "https://toshihiro.atlassian.net/wiki/spaces/FC/pages/857505793/PlantUML";
+
         window.onload = function() {
             var myCodeMirror = CodeMirror.fromTextArea(
                 document.getElementById("text"), 
