@@ -179,7 +179,7 @@
     <dependency>
       <groupId>net.sourceforge.plantuml</groupId>
       <artifactId>plantuml</artifactId>
-      <version>1.2020.14</version>
+      <version>1.2021.1</version>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -205,7 +205,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.2</version>
+      <version>4.13.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -231,6 +231,26 @@
       <artifactId>jsp-2.1-glassfish</artifactId>
       <version>2.1.v20100127</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+    	<groupId>org.scilab.forge</groupId>
+    	<artifactId>jlatexmath</artifactId>
+    	<version>1.0.7</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.scilab.forge</groupId>
+    	<artifactId>jlatexmath-font-greek</artifactId>
+    	<version>1.0.7</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.scilab.forge</groupId>
+    	<artifactId>jlatexmath-font-cyrillic</artifactId>
+    	<version>1.0.7</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.xmlgraphics</groupId>
+	<artifactId>batik-all</artifactId>
+	<version>1.12</version>
     </dependency>
   </dependencies>
 </project>

@@ -1,4 +1,4 @@
-FROM maven:3.6-jdk-8 AS buildertomcat
+FROM maven:3-jdk-11 AS buildertomcat
 
 COPY pom.xml /app/
 COPY src /app/src/
@@ -8,11 +8,26 @@ RUN mvn --batch-mode --define java.net.useSystemProxies=true package
 
 ########################################################################################
 
-FROM tomcat:9.0-jre8-slim
+FROM tomcat:9.0-jdk11-openjdk-slim as graphviz
+
+RUN apt-get update && \
+    apt-get install -y wget binutils gcc make ghostscript groff g++ fontconfig fontconfig-config fonts-dejavu-core fonts-noto-cjk file libexpat1-dev libcairo2-dev libpango1.0-dev
+
+RUN mkdir /root/build && \
+    cd /root/build && \
+    wget -O - https://www2.graphviz.org/Packages/stable/portable_source/graphviz-2.44.1.tar.gz | gzip -d | tar xvf - && \
+    cd graphviz-2.44.1 && \
+    ./configure --prefix /usr && \
+    make -j 4 && \
+    make DESTDIR=/root/install/ install-strip
+
+########################################################################################
+
+FROM tomcat:9.0-jdk11-openjdk-slim
 MAINTAINER D.Ducatel
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends graphviz fonts-noto-cjk && \
+    apt-get install -y --no-install-recommends fonts-noto-cjk libexpat1 libcairo2 libpango1.0 libpangoft2-1.0 libpangocairo-1.0 && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ENV GRAPHVIZ_DOT=/usr/bin/dot
@@ -20,3 +35,9 @@ ENV GRAPHVIZ_DOT=/usr/bin/dot
 ARG BASE_URL=ROOT
 RUN rm -rf /usr/local/tomcat/webapps/$BASE_URL
 COPY --from=buildertomcat /app/target/plantuml.war /usr/local/tomcat/webapps/$BASE_URL.war
+
+COPY --from=graphviz /root/install/usr/bin/dot /usr/bin/
+COPY --from=graphviz /root/install/usr/lib/    /usr/lib/
+
+RUN dot -c
+
