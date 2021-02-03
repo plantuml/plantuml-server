@@ -176,12 +176,14 @@
     <timestamp>${maven.build.timestamp}</timestamp>
   </properties>
   <dependencies>
-    <!--<dependency>
+    <dependency>
       <groupId>net.sourceforge.plantuml</groupId>
       <artifactId>plantuml</artifactId>
       <version>1.2021.2</version>
-      <scope>provided</scope>
-    </dependency>-->
+      <!--<scope>provided</scope>-->
+      <scope>system</scope>
+      <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/plantuml-1.2021.2.jar</systemPath>
+    </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>jstl</artifactId>
@@ -254,4 +256,6 @@
 	<version>1.12</version>
     </dependency>
   </dependencies>
+
+
 </project>
