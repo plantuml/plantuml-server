@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.eclipse.jetty.aggregate:jetty-all:8.0.4.v20111024">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/aggregate/jetty-all/8.0.4.v20111024/jetty-all-8.0.4.v20111024.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/aggregate/jetty-all/8.0.4.v20111024/jetty-all-8.0.4.v20111024-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/aggregate/jetty-all/8.0.4.v20111024/jetty-all-8.0.4.v20111024-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

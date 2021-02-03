@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.scilab.forge:jlatexmath-font-greek:1.0.7">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/scilab/forge/jlatexmath-font-greek/1.0.7/jlatexmath-font-greek-1.0.7.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/scilab/forge/jlatexmath-font-greek/1.0.7/jlatexmath-font-greek-1.0.7-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/scilab/forge/jlatexmath-font-greek/1.0.7/jlatexmath-font-greek-1.0.7-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
