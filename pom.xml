@@ -236,21 +236,59 @@
     	<groupId>org.scilab.forge</groupId>
     	<artifactId>jlatexmath</artifactId>
     	<version>1.0.7</version>
-    </dependency>
-    <dependency>
-    	<groupId>org.scilab.forge</groupId>
-    	<artifactId>jlatexmath-font-greek</artifactId>
-    	<version>1.0.7</version>
-    </dependency>
-    <dependency>
-    	<groupId>org.scilab.forge</groupId>
-    	<artifactId>jlatexmath-font-cyrillic</artifactId>
-    	<version>1.0.7</version>
+	<exclusions>
+            <exclusion>
+                <groupId>org.scilab.forge</groupId>
+                <artifactId>jlatexmath-font-cyrillic</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>org.scilab.forge</groupId>
+                <artifactId>jlatexmath-font-greek</artifactId>
+            </exclusion>
+        </exclusions>
     </dependency>
     <dependency>
         <groupId>org.apache.xmlgraphics</groupId>
 	<artifactId>batik-all</artifactId>
 	<version>1.12</version>
+	<exclusions>
+            <exclusion>
+                <groupId>org.apache.xmlgraphics</groupId>
+                <artifactId>batik-constants</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>org.apache.xmlgraphics</groupId>
+                <artifactId>batik-squiggle</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>org.apache.xmlgraphics</groupId>
+		<artifactId>batik-rasterizer</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>org.apache.xmlgraphics</groupId>
+                <artifactId>batik-ttf2svg</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>org.apache.xmlgraphics</groupId>
+                <artifactId>batik-squiggle-ext</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>org.apache.xmlgraphics</groupId>
+                <artifactId>batik-rasterizer-ext</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>org.apache.xmlgraphics</groupId>
+                <artifactId>batik-svgpp</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>org.apache.xmlgraphics</groupId>
+                <artifactId>batik-ext</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>xml-apis</groupId>
+                <artifactId>xml-apis</artifactId>
+            </exclusion>
+        </exclusions>
     </dependency>
   </dependencies>
 </project>
