@@ -25,11 +25,11 @@
     <meta http-equiv="expires" content="0" />
     <meta http-equiv="pragma" content="no-cache" />
     <meta http-equiv="cache-control" content="no-cache, must-revalidate" />
-    <link rel="icon" href="${contextroot}/favicon.ico" type="image/x-icon"/> 
-    <link rel="shortcut icon" href="${contextroot}/favicon.ico" type="image/x-icon"/>
-    <link rel="stylesheet" href="${contextroot}/plantuml.css" />
-    <link rel="stylesheet" href="${contextroot}/webjars/codemirror/3.21/lib/codemirror.css" />
-    <script src="${contextroot}/webjars/codemirror/3.21/lib/codemirror.js"></script>
+    <link rel="icon" href="${hostpath}/favicon.ico" type="image/x-icon"/> 
+    <link rel="shortcut icon" href="${hostpath}/favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="${hostpath}/plantuml.css" />
+    <link rel="stylesheet" href="${hostpath}/webjars/codemirror/3.21/lib/codemirror.css" />
+    <script src="${hostpath}/webjars/codemirror/3.21/lib/codemirror.js"></script>
     <!-- <script src="mode/plantuml.js"></script> -->
     <script>
         window.onload = function() {
