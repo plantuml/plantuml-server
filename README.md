@@ -49,7 +49,7 @@ The server is now listing to [http://localhost:8080](http://localhost:8080).
 
 The jetty container supports read-only files system, you can run the read-only mode with:
 ```
-docker run -d -p 8080:8080 --read-only -v /tmp/jetty plantuml/plantuml-server:jetty-readonly
+docker run -d -p 8080:8080 --read-only -v /tmp/jetty plantuml/plantuml-server:jetty
 ```
 
 This makes the container compatible with more restricted environment such as OpenShift, just make sure you mount a volume (can be ephemeral) on `/tmp/jetty`.
