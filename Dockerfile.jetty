@@ -15,7 +15,7 @@ USER root
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends graphviz fonts-noto-cjk && \
-    rm -rf /var/lib/apt/lists/* \
+    rm -rf /var/lib/apt/lists/* && \
     /generate-jetty-start.sh
 
 USER jetty
