@@ -61,3 +61,7 @@ jobs:
               - docker login  -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
               - docker build --pull -t plantuml/plantuml-server:tomcat -f Dockerfile.tomcat .
               - docker push plantuml/plantuml-server:tomcat
+
+cache:
+  directories:
+  - $HOME/.m2
