@@ -1,9 +1,5 @@
 name: Main
 on:
-  # push:
-  #   branches:
-  #     - master # should run docker-push when no pull request
-  # create: # should run docker-tag when it is a tag, and no pull request
   release:
     types: [published]
 
