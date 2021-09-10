@@ -39,3 +39,50 @@ jobs:
         asset_name: plantuml-${{ steps.version.outputs.VERSION }}.war
         tag: ${{ github.ref }}
         overwrite: true
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v1
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Login to DockerHub
+      uses: docker/login-action@v1
+      with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: build docker tagged images - jetty
+      uses: docker/build-push-action@v2
+      with:
+        push: true
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/plantuml-server:jetty-${{ steps.version.outputs.VERSION }}
+        file: Dockerfile.jetty
+
+    - name: build docker latest images - jetty
+      uses: docker/build-push-action@v2
+      with:
+        push: true
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/plantuml-server:jetty
+        file: Dockerfile.jetty
+
+    - name: build docker tagged images - tomcat
+      uses: docker/build-push-action@v2
+      with:
+        push: true
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/plantuml-server:tomcat-${{ steps.version.outputs.VERSION }}
+        file: Dockerfile.tomcat
+
+    - name: build docker latest images - tomcat
+      uses: docker/build-push-action@v2
+      with:
+        push: true
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/plantuml-server:tomcat
+        file: Dockerfile.tomcat
+
+    - name: build docker latest images - jetty as latest
+      uses: docker/build-push-action@v2
+      with:
+        push: true
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/plantuml-server:latest
+        file: Dockerfile.jetty
