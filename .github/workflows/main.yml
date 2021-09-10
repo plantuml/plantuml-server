@@ -1,0 +1,41 @@
+name: Main
+on:
+  # push:
+  #   branches:
+  #     - master # should run docker-push when no pull request
+  # create: # should run docker-tag when it is a tag, and no pull request
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'
+        java-version: '8'
+        check-latest: true
+        cache: 'maven'
+
+    - name: build with maven
+      run: mvn --batch-mode --define java.net.useSystemProxies=true package
+
+    - name: get tag name
+      id: version
+      run: echo ::set-output name=VERSION::${GITHUB_REF#refs/*/}
+
+    - name: create renamed build
+      run: cp target/plantuml.war target/plantuml-${{ steps.version.outputs.VERSION }}.war
+
+    - name: upload binaries to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: target/plantuml-${{ steps.version.outputs.VERSION }}.war
+        asset_name: plantuml-${{ steps.version.outputs.VERSION }}.war
+        tag: ${{ github.ref }}
+        overwrite: true
