@@ -1,99 +1,295 @@
-name: Main
+name: build, test, deploy
+
 on:
   push:
-    tags:
-      - "v*"
+    branches:
+      - develop
+      - master
+  pull_request:
+    branches:
+      - develop
+
+env:
+  REGISTRY: docker.io
+  DOCKER_PUSH: true
 
 jobs:
-  build:
+  test-embedded:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+
       - uses: actions/setup-java@v2
         with:
-          distribution: "adopt"
-          java-version: "8"
+          distribution: 'adopt'
+          java-version: '11'
           check-latest: true
-          cache: "maven"
+          cache: 'maven'
 
-      - name: build with maven
-        run: mvn --batch-mode --define java.net.useSystemProxies=true package
+      - name: Prepare tests - Step 1/7 - mvn clean
+        run: mvn clean
 
-      - name: get tag name
-        id: version
-        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/*/}
+      - name: Prepare tests - Step 2/7 - mvn validate
+        run: mvn validate
+        
+      - name: Prepare tests - Step 3/7 - mvn compile
+        run: mvn compile
 
-      - name: create renamed build
-        run: cp target/plantuml.war target/plantuml-${{ steps.version.outputs.VERSION }}.war
+      - name: Prepare tests - Step 4/7 - mvn test (with skipTests=true)
+        run: mvn test
 
-      - name: upload binaries to release
-        uses: svenstaro/upload-release-action@v2
+      - name: Prepare tests - Step 5/7 - mvn package
+        run: mvn package
+
+      - name: Prepare tests - Step 6/7 - mvn verify
+        run: mvn verify
+
+      - name: Prepare tests - Step 7/7 - mvn site
+        run: mvn site
+
+      - name: Run tests against jetty embedded server
+        run: mvn test -DskipTests=false
+
+  test-jetty:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: target/plantuml-${{ steps.version.outputs.VERSION }}.war
-          asset_name: plantuml-${{ steps.version.outputs.VERSION }}.war
-          tag: ${{ github.ref }}
-          overwrite: true
+          fetch-depth: 0
 
-      - name: Docker tomcat meta
-        id: docker_meta_tomcat
-        uses: crazy-max/ghaction-docker-meta@v3
+      - uses: actions/setup-java@v2
         with:
-          flavor: |
-            latest=false
-            prefix=
-            suffix=
-          images: plantuml/plantuml-server
-          tags: |
-            type=semver,pattern=tomcat-{{raw}}
-            type=raw,value=tomcat
+          distribution: 'adopt'
+          java-version: '11'
+          check-latest: true
+          cache: 'maven'
 
-      - name: Docker jetty meta
-        id: docker_meta_jetty
-        uses: crazy-max/ghaction-docker-meta@v3
+      - name: Prepare tests - Step 1/7 - mvn clean
+        run: mvn clean
+
+      - name: Prepare tests - Step 2/7 - mvn validate
+        run: mvn validate
+        
+      - name: Prepare tests - Step 3/7 - mvn compile
+        run: mvn compile
+
+      - name: Prepare tests - Step 4/7 - mvn test (with skipTests=true)
+        run: mvn test
+
+      - name: Prepare tests - Step 5/7 - mvn package
+        run: mvn package
+
+      - name: Prepare tests - Step 6/7 - mvn verify
+        run: mvn verify
+
+      - name: Prepare tests - Step 7/7 - mvn site
+        run: mvn site
+
+      - name: Build the Jetty docker-compose stack
+        run: docker-compose -f docker-compose.jetty.yml up -d --build
+
+      - name: Check running containers
+        run: docker ps
+
+      - name: run tests against jetty docker image
+        run: mvn test -DskipTests=false -DargLine="-Dsystem.test.server=http://localhost:8080/plantuml"
+
+  test-tomcat:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
         with:
-          flavor: |
-            latest=true
-            prefix=
-            suffix=
-          images: plantuml/plantuml-server
-          tags: |
-            type=semver,pattern={{raw}}
-            type=semver,pattern=jetty-{{raw}}
-            type=raw,value=jetty
+          fetch-depth: 0
+
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+          check-latest: true
+          cache: 'maven'
+
+      - name: Prepare tests - Step 1/7 - mvn clean
+        run: mvn clean
+
+      - name: Prepare tests - Step 2/7 - mvn validate
+        run: mvn validate
+        
+      - name: Prepare tests - Step 3/7 - mvn compile
+        run: mvn compile
+
+      - name: Prepare tests - Step 4/7 - mvn test (with skipTests=true)
+        run: mvn test
+
+      - name: Prepare tests - Step 5/7 - mvn package
+        run: mvn package
+
+      - name: Prepare tests - Step 6/7 - mvn verify
+        run: mvn verify
+
+      - name: Prepare tests - Step 7/7 - mvn site
+        run: mvn site
+
+      - name: Build the Jetty docker-compose stack
+        run: docker-compose -f docker-compose.tomcat.yml up -d --build
+
+      - name: Check running containers
+        run: docker ps
+
+      - name: run tests against tomcat docker image
+        run: mvn test -DskipTests=false -DargLine="-Dsystem.test.server=http://localhost:8080/plantuml"
+
+  pages:
+    runs-on: ubuntu-latest
+    if: contains(github.ref, 'develop')
+    needs:
+      - test-embedded
+      - test-jetty
+      - test-tomcat
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+          check-latest: true
+          cache: 'maven'
+
+      - name: Prepare tests - Step 1/7 - mvn clean
+        run: mvn clean
+
+      - name: Prepare tests - Step 2/7 - mvn validate
+        run: mvn validate
+        
+      - name: Prepare tests - Step 3/7 - mvn compile
+        run: mvn compile
+
+      - name: Prepare tests - Step 4/7 - mvn test (with skipTests=true)
+        run: mvn test
+
+      - name: Prepare tests - Step 5/7 - mvn package
+        run: mvn package
+
+      - name: Prepare tests - Step 6/7 - mvn verify
+        run: mvn verify
+
+      - name: Prepare tests - Step 7/7 - mvn site
+        run: mvn site
+
+      - name: Deploy GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./target/site
+
+  docker:
+    runs-on: ubuntu-latest
+    needs:
+      - test-embedded
+      - test-jetty
+      - test-tomcat
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: String manipulation
+        id: string
+        # if pull request branch variable will be "pr-<id>"
+        # if tag release branch variable will be the tag ("v...")
+        run: |
+          BRANCH=${GITHUB_REF#refs/*/}
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then BRANCH=pr-${BRANCH%%/*}; fi
+          echo ::set-output name=BRANCH::${BRANCH}
+          echo ::set-output name=ACTOR::${GITHUB_ACTOR,,}
+          echo ::set-output name=IMAGE::${GITHUB_REPOSITORY,,}
+          echo ::set-output name=SHA::${GITHUB_SHA:0:7}
+
+      - name: Manipulated strings
+        run: |
+          echo "steps.string.outputs.BRANCH: ${{ steps.string.outputs.BRANCH }}"
+          echo "steps.string.outputs.ACTOR:  ${{ steps.string.outputs.ACTOR }}"
+          echo "steps.string.outputs.IMAGE:  ${{ steps.string.outputs.IMAGE }}"
+          echo "steps.string.outputs.SHA:    ${{ steps.string.outputs.SHA }}"
 
       - name: Set up QEMU
+        id: qemu
+        # https://github.com/docker/setup-qemu-action
         uses: docker/setup-qemu-action@v1
 
+      - name: Available platforms
+        run: echo ${{ steps.qemu.outputs.platforms }}
+
       - name: Set up Docker Buildx
+        id: buildx
+        # https://github.com/docker/setup-buildx-action
         uses: docker/setup-buildx-action@v1
 
-      - name: Login to DockerHub
+      - name: Inspect builder
+        run: |
+          echo "Name:      ${{ steps.buildx.outputs.name }}"
+          echo "Endpoint:  ${{ steps.buildx.outputs.endpoint }}"
+          echo "Status:    ${{ steps.buildx.outputs.status }}"
+          echo "Flags:     ${{ steps.buildx.outputs.flags }}"
+          echo "Platforms: ${{ steps.buildx.outputs.platforms }}"
+
+      - name: Log into registry ${{ env.REGISTRY }}
+        # https://github.com/docker/login-action
         uses: docker/login-action@v1
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          registry: ${{ env.REGISTRY }}
+          username: ${{ steps.string.outputs.ACTOR }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build & push tomcat
-        id: docker_build_tomcat
+      - name: Extract Docker metadata (tomcat)
+        id: meta_tomcat
+        # https://github.com/docker/metadata-action
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.REGISTRY }}/${{ steps.string.outputs.IMAGE }}
+          tags: |
+            type=raw,value=tomcat,enable=${{ steps.string.outputs.BRANCH == 'master' }}
+            type=raw,value=${{ steps.string.outputs.BRANCH }}-tomcat
+            type=raw,value=${{ steps.string.outputs.BRANCH }}-tomcat-${{ steps.string.outputs.SHA }}
+            type=raw,value=${{ steps.string.outputs.SHA }}-tomcat
+          flavor: |
+            latest=false
+
+      - name: Docker jetty meta
+        id: meta_jetty
+        # https://github.com/docker/metadata-action
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.REGISTRY }}/${{ steps.string.outputs.IMAGE }}
+          tags: |
+            type=raw,value=${{ steps.string.outputs.BRANCH }}
+            type=raw,value=jetty,enable=${{ steps.string.outputs.BRANCH == 'master' }}
+            type=raw,value=${{ steps.string.outputs.BRANCH }}-jetty
+            type=raw,value=${{ steps.string.outputs.BRANCH }}-jetty-${{ steps.string.outputs.SHA }}
+            type=raw,value=${{ steps.string.outputs.SHA }}-jetty
+          flavor: |
+            latest=${{ steps.string.outputs.BRANCH == 'master' }}
+
+      - name: Build and push Docker image (tomcat)
+        # https://github.com/docker/build-push-action
         uses: docker/build-push-action@v2
         with:
           context: .
           file: ./Dockerfile.tomcat
-          platforms: linux/amd64
-          push: true
-          tags: ${{ steps.docker_meta_tomcat.outputs.tags }}
-          labels: ${{ steps.docker_meta_tomcat.outputs.labels }}
+          push: ${{ env.DOCKER_PUSH }}
+          tags: ${{ steps.meta_tomcat.outputs.tags }}
+          labels: ${{ steps.meta_tomcat.outputs.labels }}
 
-      - name: Build & push jetty
-        id: docker_build_jetty
+      - name: Build and push Docker image (jetty)
+        # https://github.com/docker/build-push-action
         uses: docker/build-push-action@v2
         with:
           context: .
           file: ./Dockerfile.jetty
-          platforms: linux/amd64
-          push: true
-          tags: ${{ steps.docker_meta_jetty.outputs.tags }}
-          labels: ${{ steps.docker_meta_jetty.outputs.labels }}
+          push: ${{ env.DOCKER_PUSH }}
+          tags: ${{ steps.meta_jetty.outputs.tags }}
+          labels: ${{ steps.meta_jetty.outputs.labels }}

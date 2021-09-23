@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset
+  comparisonMethod="maven"
+  xmlns="http://mojo.codehaus.org/versions-maven-plugin/rule/2.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://mojo.codehaus.org/versions-maven-plugin/rule/2.0.0 https://www.mojohaus.org/versions-maven-plugin/xsd/rule-2.0.0.xsd"
+>
+  <ignoreVersions>
+    <!-- Ignore Alpha's, Beta's, release candidates and milestones -->
+    <ignoreVersion type="regex">(?i).*Alpha(?:-?\d+)?</ignoreVersion>
+    <ignoreVersion type="regex">(?i).*a(?:-?\d+)?</ignoreVersion>
+    <ignoreVersion type="regex">(?i).*Beta(?:-?\d+)?</ignoreVersion>
+    <ignoreVersion type="regex">(?i).*-B(?:-?\d+)?</ignoreVersion>
+    <ignoreVersion type="regex">(?i).*RC(?:-?\d+)?</ignoreVersion>
+    <ignoreVersion type="regex">(?i).*CR(?:-?\d+)?</ignoreVersion>
+    <ignoreVersion type="regex">(?i).*M(?:-?\d+)?</ignoreVersion>
+  </ignoreVersions>
+  <rules>
+    <rule groupId="net.sourceforge.plantuml" artifactId="plantuml" comparisonMethod="maven">
+      <ignoreVersions>
+        <!-- allow only version like this: 1.20XX.X* -->
+        <ignoreVersion type="regex"><![CDATA[^(.(?<!1\.20.{2}\.\d))*?$]]></ignoreVersion>
+      </ignoreVersions>
+    </rule>
+  </rules>
+</ruleset>

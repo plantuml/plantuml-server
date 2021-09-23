@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * Project Info:  http://plantuml.sourceforge.net
+ * Project Info:  https://plantuml.com
  *
  * This file is part of PlantUML.
  *
@@ -30,10 +30,10 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import net.sourceforge.plantuml.BlockUml;
 import net.sourceforge.plantuml.FileFormat;
@@ -49,12 +49,12 @@ import javax.imageio.IIOException;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLPeerUnverifiedException;
 
-/*
+/**
  * Proxy servlet of the webapp.
  * This servlet retrieves the diagram source of a web resource (web html page)
  * and renders it.
  */
-@SuppressWarnings("serial")
+@SuppressWarnings("SERIAL")
 public class ProxyServlet extends HttpServlet {
 
     static {
@@ -76,6 +76,7 @@ public class ProxyServlet extends HttpServlet {
             srcUrl = new URL(source);
         } catch (MalformedURLException mue) {
             mue.printStackTrace();
+            response.setStatus(400);
             return;
         }
 
@@ -94,7 +95,7 @@ public class ProxyServlet extends HttpServlet {
         DiagramResponse dr = new DiagramResponse(response, getOutputFormat(fmt), request);
         try {
             dr.sendDiagram(uml, 0);
-        } catch (IIOException iioe) {
+        } catch (IIOException e) {
             // Browser has closed the connection, so the HTTP OutputStream is closed
             // Silently catch the exception to avoid annoying log
         }

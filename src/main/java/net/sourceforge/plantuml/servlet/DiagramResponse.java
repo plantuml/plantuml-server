@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * Project Info:  http://plantuml.sourceforge.net
+ * Project Info:  https://plantuml.com
  *
  * This file is part of PlantUML.
  *
@@ -30,8 +30,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 
 import net.sourceforge.plantuml.BlockUml;
 import net.sourceforge.plantuml.FileFormat;
@@ -88,11 +88,13 @@ class DiagramResponse {
         response.setContentType(getContentType());
         SourceStringReader reader = new SourceStringReader(uml);
         if (format == FileFormat.BASE64) {
-            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            final DiagramDescription result = reader.outputImage(baos, idx, new FileFormatOption(FileFormat.PNG));
-            baos.close();
-            final String encodedBytes = "data:image/png;base64,"
-                + Base64Coder.encodeLines(baos.toByteArray()).replaceAll("\\s", "");
+            byte[] imageBytes;
+            try (ByteArrayOutputStream outstream = new ByteArrayOutputStream()) {
+                reader.outputImage(outstream, idx, new FileFormatOption(FileFormat.PNG));
+                imageBytes = outstream.toByteArray();
+            }
+            final String base64 = Base64Coder.encodeLines(imageBytes).replaceAll("\\s", "");
+            final String encodedBytes = "data:image/png;base64," + base64;
             response.getOutputStream().write(encodedBytes.getBytes());
             return;
         }
@@ -109,7 +111,7 @@ class DiagramResponse {
         if (diagram instanceof PSystemError) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
-        final ImageData result = diagram.exportDiagram(response.getOutputStream(), idx, new FileFormatOption(format));
+        diagram.exportDiagram(response.getOutputStream(), idx, new FileFormatOption(format));
     }
 
     private boolean notModified(BlockUml blockUml) {
@@ -176,10 +178,9 @@ class DiagramResponse {
 
     public static void addHeaders(HttpServletResponse response) {
         response.addHeader("X-Powered-By", POWERED_BY);
-        response.addHeader("X-Patreon", "Support us on http://plantuml.com/patreon");
-        response.addHeader("X-Donate", "http://plantuml.com/paypal");
+        response.addHeader("X-Patreon", "Support us on https://plantuml.com/patreon");
+        response.addHeader("X-Donate", "https://plantuml.com/paypal");
     }
-
 
     private String getContentType() {
         return CONTENT_TYPE.get(format);

@@ -2,7 +2,10 @@ version: '3.3'
 
 services:
   plantuml-server:
-    image: heinrichad/plantuml-server:jetty-develop
+    build:
+      context: .
+      dockerfile: Dockerfile.tomcat
+    image: heinrichad/plantuml-server:tomcat-local
     container_name: plantuml-server
     ports:
       - 8080:8080
