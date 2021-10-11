@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * Project Info:  http://plantuml.sourceforge.net
+ * Project Info:  https://plantuml.com
  *
  * This file is part of PlantUML.
  *
@@ -45,14 +45,13 @@ public class UmlExtractor {
     }
 
     /**
-     * Build the complete UML source from the compressed source extracted from the HTTP URI.
+     * Build the complete UML source from the compressed source extracted from the
+     * HTTP URI.
      *
-     * @param source
-     *            the last part of the URI containing the compressed UML
+     * @param source the last part of the URI containing the compressed UML
      * @return the textual UML source
      */
     static public String getUmlSource(String source) {
-
         // build the UML source from the compressed part of the URL
         String text;
         try {

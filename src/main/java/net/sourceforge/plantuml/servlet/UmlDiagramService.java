@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * Project Info:  http://plantuml.sourceforge.net
+ * Project Info:  https://plantuml.com
  *
  * This file is part of PlantUML.
  *
@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
 /**
  * Common service servlet to produce diagram from compressed UML source contained in the end part of the requested URI.
  */
-@SuppressWarnings("serial")
+@SuppressWarnings("SERIAL")
 public abstract class UmlDiagramService extends HttpServlet {
 
     static {
@@ -99,7 +99,7 @@ public abstract class UmlDiagramService extends HttpServlet {
         DiagramResponse dr = new DiagramResponse(response, getOutputFormat(), request);
         try {
             dr.sendDiagram(uml, idx);
-        } catch (IIOException iioe) {
+        } catch (IIOException e) {
             // Browser has closed the connection, so the HTTP OutputStream is closed
             // Silently catch the exception to avoid annoying log
         }
@@ -109,11 +109,11 @@ public abstract class UmlDiagramService extends HttpServlet {
     private static final Pattern RECOVER_UML_PATTERN = Pattern.compile("/\\w+/(\\d+/)?(.*)");
 
     /**
-     * Extracts the compressed UML source from the HTTP URI.
+     * Extracts the UML source text and its index from the HTTP request.
      *
-     * @param uri
-     *            the complete URI as returned by request.getRequestURI()
-     * @return the compressed UML source
+     * @param request http request
+     *
+     * @return the UML source text and its index
      */
     public final String[] getSourceAndIdx(HttpServletRequest request) {
         final Matcher recoverUml = RECOVER_UML_PATTERN.matcher(

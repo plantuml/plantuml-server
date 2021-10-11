@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * Project Info:  http://plantuml.sourceforge.net
+ * Project Info:  https://plantuml.com
  *
  * This file is part of PlantUML.
  *
@@ -53,7 +53,7 @@ import net.sourceforge.plantuml.ErrorUml;
  * Delegates the diagram generation from the UML source and the filling of the HTTP response with the diagram in the
  * right format. Its own responsibility is to produce the right HTTP headers.
  */
-class DiagramResponse {
+public class DiagramResponse {
 
     private static final String POWERED_BY = "PlantUML Version " + Version.versionString();
 
@@ -77,22 +77,24 @@ class DiagramResponse {
         }
     }
 
-    DiagramResponse(HttpServletResponse r, FileFormat f, HttpServletRequest rq) {
+    public DiagramResponse(HttpServletResponse r, FileFormat f, HttpServletRequest rq) {
         response = r;
         format = f;
         request = rq;
     }
 
-    void sendDiagram(String uml, int idx) throws IOException {
+    public void sendDiagram(String uml, int idx) throws IOException {
         response.addHeader("Access-Control-Allow-Origin", "*");
         response.setContentType(getContentType());
         SourceStringReader reader = new SourceStringReader(uml);
         if (format == FileFormat.BASE64) {
-            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            final DiagramDescription result = reader.outputImage(baos, idx, new FileFormatOption(FileFormat.PNG));
-            baos.close();
-            final String encodedBytes = "data:image/png;base64,"
-                + Base64Coder.encodeLines(baos.toByteArray()).replaceAll("\\s", "");
+            byte[] imageBytes;
+            try (ByteArrayOutputStream outstream = new ByteArrayOutputStream()) {
+                reader.outputImage(outstream, idx, new FileFormatOption(FileFormat.PNG));
+                imageBytes = outstream.toByteArray();
+            }
+            final String base64 = Base64Coder.encodeLines(imageBytes).replaceAll("\\s", "");
+            final String encodedBytes = "data:image/png;base64," + base64;
             response.getOutputStream().write(encodedBytes.getBytes());
             return;
         }
@@ -109,7 +111,7 @@ class DiagramResponse {
         if (diagram instanceof PSystemError) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
-        final ImageData result = diagram.exportDiagram(response.getOutputStream(), idx, new FileFormatOption(format));
+        diagram.exportDiagram(response.getOutputStream(), idx, new FileFormatOption(format));
     }
 
     private boolean notModified(BlockUml blockUml) {
@@ -126,7 +128,7 @@ class DiagramResponse {
     }
 
 
-    void sendMap(String uml) throws IOException {
+    public void sendMap(String uml) throws IOException {
         response.setContentType(getContentType());
         SourceStringReader reader = new SourceStringReader(uml);
         final BlockUml blockUml = reader.getBlocks().get(0);
@@ -141,16 +143,17 @@ class DiagramResponse {
             final String cmap = map.getCMapData("plantuml");
             httpOut.print(cmap);
         }
-   }
+    }
 
-    void sendCheck(String uml) throws IOException {
+    public void sendCheck(String uml) throws IOException {
         response.setContentType(getContentType());
         SourceStringReader reader = new SourceStringReader(uml);
         DiagramDescription desc = reader.outputImage(
             new NullOutputStream(), new FileFormatOption(FileFormat.PNG, false));
         PrintWriter httpOut = response.getWriter();
         httpOut.print(desc.getDescription());
- }
+    }
+
     private void addHeaderForCache(BlockUml blockUml) {
         long today = System.currentTimeMillis();
         // Add http headers to force the browser to cache the image
@@ -176,10 +179,9 @@ class DiagramResponse {
 
     public static void addHeaders(HttpServletResponse response) {
         response.addHeader("X-Powered-By", POWERED_BY);
-        response.addHeader("X-Patreon", "Support us on http://plantuml.com/patreon");
-        response.addHeader("X-Donate", "http://plantuml.com/paypal");
+        response.addHeader("X-Patreon", "Support us on https://plantuml.com/patreon");
+        response.addHeader("X-Donate", "https://plantuml.com/paypal");
     }
-
 
     private String getContentType() {
         return CONTENT_TYPE.get(format);

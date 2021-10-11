@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * Project Info:  http://plantuml.sourceforge.net
+ * Project Info:  https://plantuml.com
  *
  * This file is part of PlantUML.
  *
@@ -25,13 +25,19 @@ package net.sourceforge.plantuml.servlet;
 
 import net.sourceforge.plantuml.FileFormat;
 
-/*
- * EPS servlet of the webapp.
- * This servlet produces the UML diagram in EPS format.
+/**
+ * EPS Text servlet of the webapp.
+ * This servlet produces the UML diagram in EPS Text format.
  */
-@SuppressWarnings("serial")
+@SuppressWarnings("SERIAL")
 public class EpsTextServlet extends UmlDiagramService {
 
+    /**
+     * Gives the wished output format of the diagram.
+     * This value is used by the DiagramResponse class.
+     *
+     * @return the format for EPS Text responses
+     */
     @Override
     public FileFormat getOutputFormat() {
         return FileFormat.EPS_TEXT;

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -8,6 +9,28 @@
   <packaging>war</packaging>
   <build>
     <finalName>plantuml</finalName>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <version>3.1.2</version>
+          <dependencies>
+            <dependency>
+              <groupId>com.puppycrawl.tools</groupId>
+              <artifactId>checkstyle</artifactId>
+              <version>9.0.1</version>
+            </dependency>
+          </dependencies>
+          <configuration>
+            <configLocation>${basedir}/src/main/config/checkstyle.xml</configLocation>
+            <linkXRef>false</linkXRef>
+            <consoleOutput>true</consoleOutput>
+            <failsOnError>true</failsOnError>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <artifactId>maven-eclipse-plugin</artifactId>
@@ -95,24 +118,17 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.11</version>
+        <version>3.1.2</version>
         <executions>
           <execution>
-            <id>validate</id>
+            <?m2e execute onConfiguration,onIncremental?>
             <phase>validate</phase>
-            <configuration>
-              <configLocation>${basedir}/src/main/config/checkstyle.xml</configLocation>
-              <encoding>UTF-8</encoding>
-              <consoleOutput>true</consoleOutput>
-              <failsOnError>true</failsOnError>
-              <linkXRef>false</linkXRef>
-            </configuration>
             <goals>
               <goal>check</goal>
             </goals>
           </execution>
         </executions>
-      </plugin>   
+      </plugin>
     </plugins>
   </build>
   <reporting>
@@ -129,11 +145,11 @@
             </reports>
           </reportSet>
         </reportSets>
-      </plugin>    
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.9.1</version>
+        <version>3.3.1</version>
         <configuration>
           <show>private</show>
           <nohelp>true</nohelp>
@@ -150,24 +166,21 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.11</version>
-        <configuration>
-          <configLocation>${basedir}/src/main/config/checkstyle.xml</configLocation>
-          <encoding>UTF-8</encoding>
-          <linkXRef>false</linkXRef>          
-        </configuration>
+        <version>3.1.2</version>
         <reportSets>
           <reportSet>
             <reports>
               <report>checkstyle</report>
+              <report>checkstyle-aggregate</report>
             </reports>
           </reportSet>
-        </reportSets>        
+        </reportSets>
       </plugin>
     </plugins>
   </reporting>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <jetty.version>8.0.4.v20111024</jetty.version>
     <jetty.port>8080</jetty.port>
     <jetty.contextpath>/plantuml</jetty.contextpath>

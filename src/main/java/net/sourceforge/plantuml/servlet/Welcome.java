@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * Project Info:  http://plantuml.sourceforge.net
+ * Project Info:  https://plantuml.com
  *
  * This file is part of PlantUML.
  *
@@ -31,11 +31,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/*
+/**
  * Welcome servlet of the webapp.
  * Displays the sample Bob and Alice sequence diagram.
  */
-@SuppressWarnings("serial")
+@SuppressWarnings("SERIAL")
 public class Welcome extends HttpServlet {
 
     @Override
