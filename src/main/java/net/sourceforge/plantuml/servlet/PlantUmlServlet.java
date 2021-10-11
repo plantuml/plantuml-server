@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * Project Info:  http://plantuml.sourceforge.net
+ * Project Info:  https://plantuml.com
  *
  * This file is part of PlantUML.
  *
@@ -43,9 +43,8 @@ import net.sourceforge.plantuml.code.Transcoder;
 import net.sourceforge.plantuml.code.TranscoderUtil;
 import net.sourceforge.plantuml.png.MetadataTag;
 
-/*
+/**
  * Original idea from Achim Abeling for Confluence macro
- * See http://www.banapple.de/display/BANAPPLE/plantuml+user+macro
  *
  * This class is the old all-in-one historic implementation of the PlantUml server.
  * See package.html for the new design. It's a work in progress.
@@ -53,17 +52,16 @@ import net.sourceforge.plantuml.png.MetadataTag;
  * Modified by Arnaud Roques
  * Modified by Pablo Lalloni
  * Modified by Maxime Sinclair
- *
  */
-@SuppressWarnings("serial")
+@SuppressWarnings("SERIAL")
 public class PlantUmlServlet extends HttpServlet {
 
     private static final String DEFAULT_ENCODED_TEXT = "SyfFKj2rKt3CoKnELR1Io4ZDoSa70000";
 
     // Last part of the URL
     public static final Pattern URL_PATTERN = Pattern.compile("^.*[^a-zA-Z0-9\\-\\_]([a-zA-Z0-9\\-\\_]+)");
-
     private static final Pattern RECOVER_UML_PATTERN = Pattern.compile("/uml/(.*)");
+
     static {
         OptionFlags.ALLOW_INCLUDE = false;
         if ("true".equalsIgnoreCase(System.getenv("ALLOW_PLANTUML_INCLUDE"))) {
@@ -112,10 +110,10 @@ public class PlantUmlServlet extends HttpServlet {
         if (text != null && PlantumlUtils.hasCMapData(text)) {
             request.setAttribute("mapneeded", Boolean.TRUE);
         }
+
         // forward to index.jsp
         final RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
         dispatcher.forward(request, response);
-
     }
 
     @Override
@@ -188,7 +186,5 @@ public class PlantUmlServlet extends HttpServlet {
         is = con.getInputStream();
         return is;
     }
-
-
 
 }
