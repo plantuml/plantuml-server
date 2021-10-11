@@ -1,26 +1,33 @@
-FROM maven:3-jdk-11 AS builderjetty
+FROM maven:3-jdk-11-slim AS builder
 
 COPY pom.xml /app/
-COPY src /app/src/
+COPY src/main /app/src/main/
 
 WORKDIR /app
 RUN mvn --batch-mode --define java.net.useSystemProxies=true package
 
 ########################################################################################
 
-FROM jetty:9.4-jre11
-MAINTAINER D.Ducatel
+FROM jetty:9.4-jre11-slim
 
 USER root
-
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends graphviz fonts-noto-cjk && \
-    rm -rf /var/lib/apt/lists/* \
+    apt-get install -y --no-install-recommends \
+        fonts-noto-cjk \
+        graphviz \
+        && \
+    rm -rf /var/lib/apt/lists/* && \
     /generate-jetty-start.sh
+
+COPY docker-entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 USER jetty
 
-ENV GRAPHVIZ_DOT=/usr/bin/dot
+ENV BASE_URL=ROOT \
+    WEBAPP_PATH=$JETTY_BASE/webapps
+RUN rm -rf $WEBAPP_PATH && \
+    mkdir -p $WEBAPP_PATH
+COPY --from=builder /app/target/plantuml.war $WEBAPP_PATH/ROOT.war
 
-ARG BASE_URL=ROOT
-COPY --from=builderjetty /app/target/plantuml.war /var/lib/jetty/webapps/$BASE_URL.war
+ENTRYPOINT ["/entrypoint.sh"]
