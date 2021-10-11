@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * Project Info:  http://plantuml.sourceforge.net
+ * Project Info:  https://plantuml.com
  *
  * This file is part of PlantUML.
  *
@@ -32,14 +32,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sourceforge.plantuml.FileFormat;
-
 import net.sourceforge.plantuml.servlet.utility.UmlExtractor;
 
-/*
+/**
  * Check servlet of the webapp.
  * This servlet checks the syntax of the diagram and send a report in TEXT format.
  */
-@SuppressWarnings("serial")
+@SuppressWarnings("SERIAL")
 public class CheckSyntaxServlet extends HttpServlet {
 
     @Override
@@ -52,12 +51,19 @@ public class CheckSyntaxServlet extends HttpServlet {
         DiagramResponse dr = new DiagramResponse(response, getOutputFormat(), request);
         try {
             dr.sendCheck(uml);
-        } catch (IIOException iioe) {
+        } catch (IIOException e) {
             // Browser has closed the connection, do nothing
         }
         dr = null;
     }
 
+    /**
+     * Extract UML source from URI.
+     *
+     * @param uri the complete URI as returned by `request.getRequestURI()`
+     *
+     * @return the encoded UML text
+     */
     public String getSource(String uri) {
         String[] result = uri.split("/check/", 2);
         if (result.length != 2) {
@@ -67,6 +73,12 @@ public class CheckSyntaxServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Gives the wished output format of the diagram.
+     * This value is used by the DiagramResponse class.
+     *
+     * @return the format for check responses
+     */
     public FileFormat getOutputFormat() {
         return FileFormat.UTXT;
     }

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * Project Info:  http://plantuml.sourceforge.net
+ * Project Info:  https://plantuml.com
  *
  * This file is part of PlantUML.
  *
@@ -44,12 +44,12 @@ import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
 
-/*
+/**
  * Proxy servlet of the webapp.
  * This servlet retrieves the diagram source of a web resource (web html page)
  * and renders it.
  */
-@SuppressWarnings("serial")
+@SuppressWarnings("SERIAL")
 public class OldProxyServlet extends HttpServlet {
 
     private static final Pattern PROXY_PATTERN = Pattern.compile("/\\w+/proxy/((\\d+)/)?((\\w+)/)?(http://.*)");

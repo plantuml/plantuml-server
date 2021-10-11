@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * Project Info:  http://plantuml.sourceforge.net
+ * Project Info:  https://plantuml.com
  *
  * This file is part of PlantUML.
  *
@@ -49,12 +49,12 @@ import javax.imageio.IIOException;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLPeerUnverifiedException;
 
-/*
+/**
  * Proxy servlet of the webapp.
  * This servlet retrieves the diagram source of a web resource (web html page)
  * and renders it.
  */
-@SuppressWarnings("serial")
+@SuppressWarnings("SERIAL")
 public class ProxyServlet extends HttpServlet {
 
     static {
@@ -94,7 +94,7 @@ public class ProxyServlet extends HttpServlet {
         DiagramResponse dr = new DiagramResponse(response, getOutputFormat(fmt), request);
         try {
             dr.sendDiagram(uml, 0);
-        } catch (IIOException iioe) {
+        } catch (IIOException e) {
             // Browser has closed the connection, so the HTTP OutputStream is closed
             // Silently catch the exception to avoid annoying log
         }
@@ -144,9 +144,9 @@ public class ProxyServlet extends HttpServlet {
 
     private HttpURLConnection getConnection(final URL url) throws IOException {
         final HttpURLConnection con = (HttpURLConnection) url.openConnection();
-        if (con instanceof HttpsURLConnection) {
-            // printHttpsCert((HttpsURLConnection) con);
-        }
+        //if (con instanceof HttpsURLConnection) {
+        //    printHttpsCert((HttpsURLConnection) con);
+        //}
         con.setRequestMethod("GET");
         String token = System.getenv("HTTP_AUTHORIZATION");
         if (token != null) {
