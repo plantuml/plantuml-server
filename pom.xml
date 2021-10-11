@@ -107,7 +107,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.14.1</version>
         <configuration>
-          <skipTests>true</skipTests>
+          <skipTests>${skipTests}</skipTests>
         </configuration>
       </plugin>
       <plugin>
@@ -187,6 +187,7 @@
     <maven.build.timestamp.format>yyyyMMdd-HHmm
     </maven.build.timestamp.format>
     <timestamp>${maven.build.timestamp}</timestamp>
+    <skipTests>true</skipTests>
   </properties>
   <dependencies>
     <dependency>
@@ -205,11 +206,6 @@
       <version>3.21</version>
     </dependency>
     <dependency>
-      <groupId>HTTPClient</groupId>
-      <artifactId>HTTPClient</artifactId>
-      <version>0.3-3</version>
-    </dependency>
-    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <version>2.5</version>
@@ -218,19 +214,13 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.13.1</version>
+      <version>4.13.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>httpunit</groupId>
-      <artifactId>httpunit</artifactId>
-      <version>1.7</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>rhino</groupId>
-      <artifactId>js</artifactId>
-      <version>1.7R2</version>
+      <groupId>net.sourceforge.htmlunit</groupId>
+      <artifactId>htmlunit</artifactId>
+      <version>2.53.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>

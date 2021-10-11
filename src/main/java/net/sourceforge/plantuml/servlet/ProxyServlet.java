@@ -76,6 +76,7 @@ public class ProxyServlet extends HttpServlet {
             srcUrl = new URL(source);
         } catch (MalformedURLException mue) {
             mue.printStackTrace();
+            response.setStatus(400);
             return;
         }
 

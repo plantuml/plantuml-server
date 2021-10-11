@@ -1,65 +1,105 @@
 package net.sourceforge.plantuml.servlet;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 
-import com.meterware.httpunit.GetMethodWebRequest;
-import com.meterware.httpunit.WebConversation;
-import com.meterware.httpunit.WebRequest;
-import com.meterware.httpunit.WebResponse;
 
 public class TestProxy extends WebappTestCase {
+
     /**
      * Verifies the proxified reception of the default Bob and Alice diagram
      */
-    public void testDefaultProxy() throws Exception {
-        WebConversation conversation = new WebConversation();
-        WebRequest request = new GetMethodWebRequest(getServerUrl()
-            + "proxy?src=" + getServerUrl() + "resource/test2diagrams.txt");
-        WebResponse response = conversation.getResource(request);
+    public void testDefaultProxy() throws IOException {
+        final URL url = new URL(getServerUrl() + "/proxy?src=" + getServerUrl() + "/resource/test2diagrams.txt");
+        final URLConnection conn = url.openConnection();
         // Analyze response
         // Verifies the Content-Type header
-        assertEquals("Response content type is not PNG", "image/png", response.getContentType());
+        assertEquals(
+            "Response content type is not PNG",
+            "image/png",
+            conn.getContentType().toLowerCase()
+        );
         // Get the image and verify its size (~2000 bytes)
-        InputStream responseStream = response.getInputStream();
-        ByteArrayOutputStream imageStream = new ByteArrayOutputStream();
-        byte[] buf = new byte[1024];
-        int n = 0;
-        while ((n = responseStream.read(buf)) != -1) {
-            imageStream.write(buf, 0, n);
-        }
-        imageStream.close();
-        responseStream.close();
-        byte[] inMemoryImage = imageStream.toByteArray();
+        byte[] inMemoryImage = getContentAsBytes(conn);
         int diagramLen = inMemoryImage.length;
-        assertTrue(diagramLen > 1500);
-        assertTrue(diagramLen < 2500);
+        assertTrue(diagramLen > 2000);
+        assertTrue(diagramLen < 3000);
     }
-/*
-    public void testProxyWithFormat() throws Exception {
-        WebConversation conversation = new WebConversation();
-        WebRequest request = new GetMethodWebRequest(getServerUrl()
-            + "proxy?format=svg&src=" + getServerUrl() + "resource/test2diagrams.txt");
-        WebResponse response = conversation.getResource(request);
+
+    /**
+     * Verifies the proxified reception of the default Bob and Alice diagram with defined format.
+     */
+    public void testProxyWithFormat() throws IOException {
+        final URL url = new URL(getServerUrl() + "/proxy?fmt=svg&src=" + getServerUrl() + "/resource/test2diagrams.txt");
+        final URLConnection conn = url.openConnection();
         // Analyze response
         // Verifies the Content-Type header
-        assertEquals( "Response content type is not SVG", "image/svg+xml", response.getContentType());
+        assertEquals(
+            "Response content type is not SVG",
+            "image/svg+xml",
+            conn.getContentType().toLowerCase()
+        );
         // Get the content and verify its size
-        String diagram = response.getText();
+        String diagram = getContentText(conn);
         int diagramLen = diagram.length();
-        assertTrue(diagramLen > 1000);
+        assertTrue(diagramLen > 2000);
         assertTrue(diagramLen < 3000);
+    }
+
+    /**
+     * Verifies the proxified reception of the default Bob and Alice diagram with defined format and format (idx=0).
+     */
+    public void testProxyWithFormatIdx0() throws IOException {
+        final URL url = new URL(getServerUrl() + "/proxy?fmt=svg&idx=0&src=" + getServerUrl() + "/resource/test2diagrams.txt");
+        final URLConnection conn = url.openConnection();
+        // Analyze response
+        // Verifies the Content-Type header
+        assertEquals(
+            "Response content type is not SVG",
+            "image/svg+xml",
+            conn.getContentType().toLowerCase()
+        );
+        // Get the content and verify its size
+        String diagram = getContentText(conn);
+        int diagramLen = diagram.length();
+        assertTrue(diagramLen > 2000);
+        assertTrue(diagramLen < 3000);
+    }
+
+    /**
+     * Verifies the proxified reception of the default Bob and Alice diagram with defined format and format (idx=1).
+     */
+    public void testProxyWithFormatIdx1() throws IOException {
+        final URL url = new URL(getServerUrl() + "/proxy?fmt=svg&idx=1&src=" + getServerUrl() + "/resource/test2diagrams.txt");
+        final URLConnection conn = url.openConnection();
+        // Analyze response
+        // Verifies the Content-Type header
+        assertEquals(
+            "Response content type is not SVG",
+            "image/svg+xml",
+            conn.getContentType().toLowerCase()
+        );
+        // Get the content and verify its size
+        String diagram = getContentText(conn);
+        int diagramLen = diagram.length();
+        assertTrue(diagramLen > 5000);
+        assertTrue(diagramLen < 6000);
     }
 
     /**
      * Verifies that the HTTP header of a diagram incites the browser to cache it.
      */
-    public void testInvalidUrl() throws Exception {
-        WebConversation conversation = new WebConversation();
-        // Try to proxify an invalid address
-        WebRequest request = new GetMethodWebRequest(getServerUrl() + "proxy?src=invalidURL");
-        WebResponse response = conversation.getResource(request);
-        // Analyze response, it must be HTTP error 500
-        //assertEquals("Bad HTTP status received", 500, response.getResponseCode());
+    public void testInvalidUrl() throws IOException {
+        final URL url = new URL(getServerUrl() + "/proxy?src=invalidURL");
+        final HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+        // Analyze response, it must be HTTP error 400
+        assertEquals(
+            "Bad HTTP status received",
+            400,
+            conn.getResponseCode()
+        );
     }
+
 }

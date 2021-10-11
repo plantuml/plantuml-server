@@ -57,11 +57,11 @@ This makes the container compatible with more restricted environment such as Ope
 
 To run plantuml using different base url, change the `docker-compose.yml` file:
 ```yaml
-args:
-  BASE_URL: plantuml
+environment:
+  - BASE_URL=plantuml
 ```
 
-And run `docker-compose up --build`. This will build a modified version of the image using the base url `/plantuml`, e.g. http://localhost:8080/plantuml
+And run `docker-compose up`. This will start a modified version of the image using the base url `/plantuml`, e.g. http://localhost:8080/plantuml
 
 
 ## How to set PlantUML options
@@ -84,21 +84,21 @@ docker run -d -p 8080:8080 -e THE_ENV_VARIABLE=THE_ENV_VALUE plantuml/plantuml-s
 
 You can set all  the following variables:
 
-* `PLANTUML_LIMIT_SIZE`
-    * Limits image width and height
-    * Default value: `4096`
-* `GRAPHVIZ_DOT`
-    * Link to 'dot' executable
-    * Default value: `/usr/local/bin/dot` or `/usr/bin/dot`
-* `PLANTUML_STATS`
-    * Set it to `on` to enable [statistics report](https://plantuml.com/statistics-report)
-    * Default value: `off`
-* `HTTP_AUTHORIZATION`
-    * when calling the `proxy` endpoint, the value of `HTTP_AUTHORIZATION` will be used to set the HTTP Authorization header
-    * Default value: `null`
-* `ALLOW_PLANTUML_INCLUDE`
-    * Enables `!include` processing which can read files from the server into diagrams. Files are read relative to the current working directory.
-    * Default value: `false`
+- `BASE_URL`
+  * PlantUML base url
+  * Default value: `ROOT`
+- `PLANTUML_LIMIT_SIZE`
+  * Limits image width and height
+  * Default value: `4096`
+- `PLANTUML_STATS`
+  * Set it to `on` to enable [statistics report](https://plantuml.com/statistics-report)
+  * Default value: `off`
+- `HTTP_AUTHORIZATION`
+  * when calling the `proxy` endpoint, the value of `HTTP_AUTHORIZATION` will be used to set the HTTP Authorization header
+  * Default value: `null`
+- `ALLOW_PLANTUML_INCLUDE`
+  * Enables `!include` processing which can read files from the server into diagrams. Files are read relative to the current working directory.
+  * Default value: `false`
 
 
 ## Alternate: How to build your docker image

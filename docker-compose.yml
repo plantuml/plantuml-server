@@ -5,9 +5,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.jetty
-      args:
-        BASE_URL: plantuml
-    image: plantuml/plantuml-server:local
+    image: plantuml/plantuml-server:jetty-local
     container_name: plantuml-server
     ports:
       - 8080:8080
+    environment:
+      - BASE_URL=plantuml

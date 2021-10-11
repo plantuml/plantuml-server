@@ -33,7 +33,7 @@
     <!-- <script src="mode/plantuml.js"></script> -->
     <script>
         window.onload = function() {
-            var myCodeMirror = CodeMirror.fromTextArea(
+            document.myCodeMirror = CodeMirror.fromTextArea(
                 document.getElementById("text"), 
                 {lineNumbers: true}
             );
