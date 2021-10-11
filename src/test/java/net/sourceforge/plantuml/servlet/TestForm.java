@@ -1,155 +1,219 @@
 package net.sourceforge.plantuml.servlet;
 
-import com.meterware.httpunit.GetMethodWebRequest;
-import com.meterware.httpunit.HTMLElement;
-import com.meterware.httpunit.WebConversation;
-import com.meterware.httpunit.WebForm;
-import com.meterware.httpunit.WebRequest;
-import com.meterware.httpunit.WebResponse;
+import static org.junit.Assert.assertNotEquals;
+
+import java.io.IOException;
+import java.util.List;
+
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.DomElement;
+import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlImage;
+import com.gargoylesoftware.htmlunit.html.HtmlInput;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
+import com.gargoylesoftware.htmlunit.html.HtmlTextArea;
+
 
 public class TestForm extends WebappTestCase {
 
     /**
      * Verifies that the welcome page has exactly two form with the Bob --> Alice sample
      */
-    public void testWelcomePage() throws Exception {
-        WebConversation conversation = new WebConversation();
-        WebRequest request = new GetMethodWebRequest(getServerUrl());
-        WebResponse response = conversation.getResponse(request);
-        // Analyze response
-        WebForm[] forms = response.getForms();
-        assertEquals(2, forms.length);
-        assertEquals("url", forms[1].getParameterNames()[0]);
-        assertTrue(forms[1].getParameterValue("url").endsWith("/png/" + TestUtils.SEQBOB));
-        // Ensure the generated image is present
-        assertNotNull(response.getImageWithAltText("PlantUML diagram"));
+    public void testWelcomePage() throws IOException {
+        try (final WebClient webClient = new WebClient()) {
+            HtmlPage page = webClient.getPage(getServerUrl());
+            // Analyze response
+            List<HtmlForm> forms = page.getForms();
+            assertEquals(2, forms.size());
+            // Ensure the Text field is correct
+            String text = ((HtmlTextArea)(forms.get(0).getFirstByXPath("//textarea[contains(@name, 'text')]"))).getTextContent();
+            assertEquals("@startuml\nBob -> Alice : hello\n@enduml", text);
+            // Ensure the URL field is correct
+            HtmlInput url = forms.get(1).getInputByName("url");
+            assertNotNull(url);
+            assertTrue(url.getAttribute("value").endsWith("/png/" + TestUtils.SEQBOB));
+            // Ensure the generated image is present
+            HtmlImage img = page.getFirstByXPath("//img[contains(@alt, 'PlantUML diagram')]");
+            assertNotEquals(0, img.getImageReader().getHeight(0));  // 131
+            assertNotEquals(0, img.getImageReader().getWidth(0));   // 120
+        }
     }
 
     /**
      * Verifies that the version image is generated
      */
-    public void testVersion() throws Exception {
-        WebConversation conversation = new WebConversation();
-        // Fill the form and submit it
-        WebRequest request = new GetMethodWebRequest(getServerUrl());
-        WebResponse response = conversation.getResponse(request);
-        WebForm formUMLText = response.getForms()[0];
-        formUMLText.setParameter("text", "version");
-        response = formUMLText.submit();
-        // Analyze response
-        WebForm[] forms = response.getForms();
-        assertEquals(2, forms.length);
-        // Ensure the Text field is correct
-        assertEquals("version", forms[0].getParameterValue("text"));
-        // Ensure the URL field is correct
-        assertTrue(forms[1].getParameterValue("url").endsWith("/png/" + TestUtils.VERSION));
-        // Ensure the image is present
-        assertNotNull(response.getImageWithAltText("PlantUML diagram"));
+    public void testVersion() throws IOException {
+        try (final WebClient webClient = new WebClient()) {
+            HtmlPage page = webClient.getPage(getServerUrl());
+            page.initialize();
+            // Fill the form and submit it
+            page.executeJavaScript("document.myCodeMirror.setValue('version')");
+            HtmlForm form = page.getForms().get(0);
+            HtmlSubmitInput btn = form.getFirstByXPath("//input[contains(@type, 'submit')]");
+            page = btn.click();
+            // Analyze response
+            List<HtmlForm> forms = page.getForms();
+            assertEquals(2, forms.size());
+            // Ensure the Text field is correct
+            String text = ((HtmlTextArea)(forms.get(0).getFirstByXPath("//textarea[contains(@name, 'text')]"))).getTextContent();
+            assertEquals("@startuml\nversion\n@enduml", text);
+            // Ensure the URL field is correct
+            HtmlInput url = forms.get(1).getInputByName("url");
+            assertNotNull(url);
+            assertTrue(url.getAttribute("value").endsWith("/png/" + TestUtils.VERSION));
+            // Ensure the generated image is present
+            HtmlImage img = page.getFirstByXPath("//img[contains(@alt, 'PlantUML diagram')]");
+            assertNotEquals(0, img.getImageReader().getHeight(0));  // 186
+            assertNotEquals(0, img.getImageReader().getWidth(0));   // 519
+        }
     }
 
     /**
-     * Verifies that when the UML text is empty, no image is generated
+     * Verifies that when the UML text is empty, default page and image is generated
      */
-    public void testEmptyText() throws Exception {
-        WebConversation conversation = new WebConversation();
-        // Fill the form and submit it
-        WebRequest request = new GetMethodWebRequest(getServerUrl());
-        WebResponse response = conversation.getResponse(request);
-        WebForm formUMLText = response.getForms()[0];
-        formUMLText.setParameter("text", "");
-        response = formUMLText.submit();
-        // Analyze response
-        WebForm[] forms = response.getForms();
-        assertEquals(2, forms.length);
-        // Ensure the Text field is empty
-        assertNull(forms[0].getParameterValue("text"));
-        // Ensure the URL field is empty
-        assertTrue(forms[1].getParameterValue("url").isEmpty());
-        // Ensure there is no image
-        assertNull(response.getImageWithAltText("PlantUML diagram"));
+    public void testEmptyText() throws IOException {
+        try (final WebClient webClient = new WebClient()) {
+            HtmlPage page = webClient.getPage(getServerUrl());
+            page.initialize();
+            // Fill the form and submit it
+            page.executeJavaScript("document.myCodeMirror.setValue('')");
+            HtmlForm form = page.getForms().get(0);
+            HtmlSubmitInput btn = form.getFirstByXPath("//input[contains(@type, 'submit')]");
+            page = btn.click();
+            // Analyze response
+            List<HtmlForm> forms = page.getForms();
+            assertEquals(2, forms.size());
+            // Ensure the Text field is correct
+            String text = ((HtmlTextArea)(forms.get(0).getFirstByXPath("//textarea[contains(@name, 'text')]"))).getTextContent();
+            assertEquals("@startuml\nBob -> Alice : hello\n@enduml", text);
+            // Ensure the URL field is correct
+            HtmlInput url = forms.get(1).getInputByName("url");
+            assertNotNull(url);
+            assertTrue(url.getAttribute("value").endsWith("/png/" + TestUtils.SEQBOB));
+            // Ensure the generated image is present
+            HtmlImage img = page.getFirstByXPath("//img[contains(@alt, 'PlantUML diagram')]");
+            assertNotEquals(0, img.getImageReader().getHeight(0));  // 131
+            assertNotEquals(0, img.getImageReader().getWidth(0));   // 120
+        }
     }
 
     /**
-     * Verifies that when the encoded URL is empty, no image is generated
+     * Verifies that when the encoded URL is empty, default page and image is generated
      */
-    public void testEmptyUrl() throws Exception {
-        WebConversation conversation = new WebConversation();
-        // Fill the form and submit it
-        WebRequest request = new GetMethodWebRequest(getServerUrl());
-        WebResponse response = conversation.getResponse(request);
-        WebForm formUrl = response.getForms()[1];
-        formUrl.setParameter("url", "");
-        response = formUrl.submit();
-        // Analyze response
-        WebForm[] forms = response.getForms();
-        assertEquals(2, forms.length);
-        // Ensure the Text field is empty
-        assertNull(forms[0].getParameterValue("text"));
-        // Ensure the URL field is empty
-        assertTrue(forms[1].getParameterValue("url").isEmpty());
-        // Ensure there is no image
-        assertNull(response.getImageWithAltText("PlantUML diagram"));
+    public void testEmptyUrl() throws IOException {
+        try (final WebClient webClient = new WebClient()) {
+            HtmlPage page = webClient.getPage(getServerUrl());
+            page.initialize();
+            // Fill the form and submit it
+            List<HtmlForm> forms = page.getForms();
+            HtmlInput url = forms.get(1).getInputByName("url");
+            url.setAttribute("value", "");
+            HtmlSubmitInput btn = forms.get(1).getFirstByXPath("//input[contains(@type, 'submit')]");
+            page = btn.click();
+            // Analyze response
+            forms = page.getForms();
+            assertEquals(2, forms.size());
+            // Ensure the Text field is correct
+            String text = ((HtmlTextArea)(forms.get(0).getFirstByXPath("//textarea[contains(@name, 'text')]"))).getTextContent();
+            assertEquals("@startuml\nBob -> Alice : hello\n@enduml", text);
+            // Ensure the URL field is correct
+            url = forms.get(1).getInputByName("url");
+            assertNotNull(url);
+            assertTrue(url.getAttribute("value").endsWith("/png/" + TestUtils.SEQBOB));
+            // Ensure the generated image is present
+            HtmlImage img = page.getFirstByXPath("//img[contains(@alt, 'PlantUML diagram')]");
+            assertNotEquals(0, img.getImageReader().getHeight(0));  // 131
+            assertNotEquals(0, img.getImageReader().getWidth(0));   // 120
+        }
     }
 
     /**
      * Verifies that a ditaa diagram is generated
      */
-    public void testDitaaText() throws Exception {
-        WebConversation conversation = new WebConversation();
-        // Fill the form and submit it
-        WebRequest request = new GetMethodWebRequest(getServerUrl());
-        WebResponse response = conversation.getResponse(request);
-        WebForm formDitaaText = response.getForms()[0];
-        formDitaaText.setParameter("text", "@startditaa \n*--> \n@endditaa");
-        response = formDitaaText.submit();
-        // Analyze response
-        WebForm[] forms = response.getForms();
-        assertEquals(2, forms.length);
-        // Ensure the Text field is correct
-        assertTrue(forms[0].getParameterValue("text").startsWith("@startditaa"));
-        // Ensure the URL field is correct
-        assertTrue(forms[1].getParameterValue("url").endsWith("/png/SoWkIImgISaiIKnKuDBIrRLJu798pKi12m00"));
-        // Ensure the image is present
-        assertNotNull(response.getImageWithAltText("PlantUML diagram"));
+    public void testDitaaText() throws IOException {
+        try (final WebClient webClient = new WebClient()) {
+            HtmlPage page = webClient.getPage(getServerUrl());
+            page.initialize();
+            // Fill the form and submit it
+            page.executeJavaScript("document.myCodeMirror.setValue(`@startditaa \n*--> \n@endditaa`)");
+            HtmlForm form = page.getForms().get(0);
+            HtmlSubmitInput btn = form.getFirstByXPath("//input[contains(@type, 'submit')]");
+            page = btn.click();
+            // Analyze response
+            List<HtmlForm> forms = page.getForms();
+            assertEquals(2, forms.size());
+            // Ensure the Text field is correct
+            String text = ((HtmlTextArea)(forms.get(0).getFirstByXPath("//textarea[contains(@name, 'text')]"))).getTextContent();
+            assertEquals("@startditaa \n*--> \n@endditaa", text);
+            // Ensure the URL field is correct
+            HtmlInput url = forms.get(1).getInputByName("url");
+            assertNotNull(url);
+            assertTrue(url.getAttribute("value").endsWith("/png/SoWkIImgISaiIKnKuDBIrRLJu798pKi12m00"));
+            // Ensure the generated image is present
+            HtmlImage img = page.getFirstByXPath("//img[contains(@alt, 'PlantUML diagram')]");
+            assertNotEquals(0, img.getImageReader().getHeight(0));  // 70
+            assertNotEquals(0, img.getImageReader().getWidth(0));   // 90
+        }
     }
 
     /**
      * Verifies that an image map is produced if the diagram contains a link
      */
-    public void testImageMap() throws Exception {
-        WebConversation conversation = new WebConversation();
-        // Fill the form and submit it
-        WebRequest request = new GetMethodWebRequest(getServerUrl());
-        WebResponse response = conversation.getResponse(request);
-        WebForm formText = response.getForms()[0];
-        formText.setParameter("text", "@startuml \nBob -> Alice : [[http://yahoo.com]] Hello \n@enduml");
-        response = formText.submit();
-        // Analyze response
-        // Ensure the generated image is present
-        assertNotNull(response.getImageWithAltText("PlantUML diagram"));
-        // Ensure the image map is present
-        HTMLElement[] maps = response.getElementsByTagName("map");
-        assertEquals(1, maps.length);
+    public void testImageMap() throws IOException {
+        try (final WebClient webClient = new WebClient()) {
+            HtmlPage page = webClient.getPage(getServerUrl());
+            page.initialize();
+            // Fill the form and submit it
+            page.executeJavaScript("document.myCodeMirror.setValue(`@startuml\nBob -> Alice : [[http://yahoo.com]] Hello\n@enduml`)");
+            HtmlForm form = page.getForms().get(0);
+            HtmlSubmitInput btn = form.getFirstByXPath("//input[contains(@type, 'submit')]");
+            page = btn.click();
+            // Analyze response
+            List<HtmlForm> forms = page.getForms();
+            assertEquals(2, forms.size());
+            // Ensure the Text field is correct
+            String text = ((HtmlTextArea)(forms.get(0).getFirstByXPath("//textarea[contains(@name, 'text')]"))).getTextContent();
+            assertEquals("@startuml\nBob -> Alice : [[http://yahoo.com]] Hello\n@enduml", text);
+            // Ensure the URL field is correct
+            HtmlInput url = forms.get(1).getInputByName("url");
+            assertNotNull(url);
+            assertTrue(url.getAttribute("value").endsWith("/png/SyfFKj2rKt3CoKnELR1IY8xEA2afiDBNhqpCoC_NIyxFZOrLy4ZDoSa70000"));
+            // Ensure the generated image is present
+            HtmlImage img = page.getFirstByXPath("//img[contains(@alt, 'PlantUML diagram')]");
+            assertNotEquals(0, img.getImageReader().getHeight(0));  // 131
+            assertNotEquals(0, img.getImageReader().getWidth(0));   // 231
+            // TODO: Ensure the image map is present
+            //DomElement map = page.getElementById("plantuml_map");
+            //assertNotNull(map);
+            //assertEquals(1, map.getChildElementCount());
+        }
     }
 
     /**
      * Verifies that when the encoded source is specified as an URL parameter
      * the diagram is displayed and the source is decoded
      */
-    public void testUrlParameter() throws Exception {
-        WebConversation conversation = new WebConversation();
-        // Submit the request with a url parameter
-        WebRequest request = new GetMethodWebRequest(getServerUrl() + "form?url=" + TestUtils.SEQBOB);
-        WebResponse response = conversation.getResponse(request);
-        // Analyze response
-        WebForm[] forms = response.getForms();
-        assertEquals(2, forms.length);
-        // Ensure the Text field is filled
-        assertEquals(forms[0].getParameterValue("text"), "@startuml\nBob -> Alice : hello\n@enduml");
-        // Ensure the URL field is filled
-        assertEquals(forms[1].getParameterValue("url"), getServerUrl() + "png/" + TestUtils.SEQBOB);
-        // Ensure the image is present
-        assertNotNull(response.getImageWithAltText("PlantUML diagram"));
+    public void testUrlParameter() throws IOException {
+        try (final WebClient webClient = new WebClient()) {
+            // Submit the request with a url parameter
+            HtmlPage page = webClient.getPage(getServerUrl() + "/form?url=" + TestUtils.SEQBOB);
+            page.initialize();
+            // Analyze response
+            List<HtmlForm> forms = page.getForms();
+            assertEquals(2, forms.size());
+            // Ensure the Text field is correct
+            String text = ((HtmlTextArea)(forms.get(0).getFirstByXPath("//textarea[contains(@name, 'text')]"))).getTextContent();
+            assertEquals("@startuml\nBob -> Alice : hello\n@enduml", text);
+            // Ensure the URL field is correct
+            HtmlInput url = forms.get(1).getInputByName("url");
+            assertNotNull(url);
+            assertTrue(url.getAttribute("value").endsWith("/png/" + TestUtils.SEQBOB));
+            // Ensure the generated image is present
+            HtmlImage img = page.getFirstByXPath("//img[contains(@alt, 'PlantUML diagram')]");
+            assertNotEquals(0, img.getImageReader().getHeight(0));  // 131
+            assertNotEquals(0, img.getImageReader().getWidth(0));   // 120
+        }
     }
 
 }
