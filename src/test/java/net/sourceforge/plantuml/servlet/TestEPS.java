@@ -1,27 +1,30 @@
 package net.sourceforge.plantuml.servlet;
 
-import com.meterware.httpunit.GetMethodWebRequest;
-import com.meterware.httpunit.WebConversation;
-import com.meterware.httpunit.WebRequest;
-import com.meterware.httpunit.WebResponse;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 
-import java.util.Scanner;
 
 public class TestEPS extends WebappTestCase {
+
     /**
      * Verifies the generation of the EPS for the Bob -> Alice sample
      */
-    public void testSimpleSequenceDiagram() throws Exception {
-        WebConversation conversation = new WebConversation();
-        WebRequest request = new GetMethodWebRequest(getServerUrl() + "eps/" + TestUtils.SEQBOB);
-        WebResponse response = conversation.getResource(request);
+    public void testSimpleSequenceDiagram() throws IOException {
+        final URL url = new URL(getServerUrl() + "/eps/" + TestUtils.SEQBOB);
+        final URLConnection conn = url.openConnection();
         // Analyze response
         // Verifies the Content-Type header
-        assertEquals("Response content type is not EPS", "application/postscript", response.getContentType());
+        assertEquals(
+            "Response content type is not EPS",
+            "application/postscript",
+            conn.getContentType().toLowerCase()
+        );
         // Get the content and verify its size
-        String diagram = response.getText();
+        String diagram = getContentText(conn);
         int diagramLen = diagram.length();
         assertTrue(diagramLen > 10000);
         assertTrue(diagramLen < 12000);
     }
+
 }

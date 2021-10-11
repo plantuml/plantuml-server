@@ -23,22 +23,18 @@
  */
 package net.sourceforge.plantuml.servlet;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import HTTPClient.CookieModule;
-import HTTPClient.HTTPConnection;
-import HTTPClient.HTTPResponse;
-import HTTPClient.ModuleException;
-import HTTPClient.ParseException;
 
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
@@ -52,54 +48,50 @@ import net.sourceforge.plantuml.SourceStringReader;
 @SuppressWarnings("serial")
 public class OldProxyServlet extends HttpServlet {
 
-    private static final Pattern PROXY_PATTERN = Pattern.compile("/\\w+/proxy/((\\d+)/)?((\\w+)/)?(http://.*)");
+    private static final Pattern PROXY_PATTERN = Pattern.compile("/\\w+/proxy/((\\d+)/)?((\\w+)/)?(https?://.*)");
     private String format;
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-
         final String uri = request.getRequestURI();
 
+        // Check if the src URL is valid
         Matcher proxyMatcher = PROXY_PATTERN.matcher(uri);
-        if (proxyMatcher.matches()) {
-            String num = proxyMatcher.group(2); // Optional number of the diagram source
-            format = proxyMatcher.group(4); // Expected format of the generated diagram
-            String sourceURL = proxyMatcher.group(5);
-            handleImageProxy(response, num, sourceURL);
-        } else {
-            request.setAttribute("net.sourceforge.plantuml.servlet.decoded", "ERROR Invalid proxy syntax : " + uri);
-            request.removeAttribute("net.sourceforge.plantuml.servlet.encoded");
-
-            // forward to index.jsp
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
-            dispatcher.forward(request, response);
+        if (!proxyMatcher.matches()) {
+            // Bad URI format.
+            response.setStatus(400);
+            return;
         }
+
+        String num = proxyMatcher.group(2); // Optional number of the diagram source
+        format = proxyMatcher.group(4); // Expected format of the generated diagram
+        String sourceURL = proxyMatcher.group(5);
+        handleImageProxy(response, num, sourceURL);
     }
 
     private void handleImageProxy(HttpServletResponse response, String num, String source) throws IOException {
         SourceStringReader reader = new SourceStringReader(getSource(source));
         int n = num == null ? 0 : Integer.parseInt(num);
 
-        reader.generateImage(response.getOutputStream(), n, new FileFormatOption(getOutputFormat(), false));
+        FileFormat fileFormat = getOutputFormat();
+        response.addHeader("Content-Type", fileFormat.getMimeType());
+        reader.outputImage(response.getOutputStream(), n, new FileFormatOption(fileFormat, false));
     }
 
-    private String getSource(String uri) throws IOException {
-        CookieModule.setCookiePolicyHandler(null);
-
-        final Pattern p = Pattern.compile("http://[^/]+(/?.*)");
-        final Matcher m = p.matcher(uri);
-        if (m.find() == false) {
-            throw new IOException(uri);
-        }
+    private String getSource(final String uri) throws IOException {
         final URL url = new URL(uri);
-        final HTTPConnection httpConnection = new HTTPConnection(url);
-        try {
-            final HTTPResponse resp = httpConnection.Get(m.group(1));
-            return resp.getText();
-        } catch (ModuleException e) {
-            throw new IOException(e.toString());
-        } catch (ParseException e) {
-            throw new IOException(e.toString());
+        try (
+            InputStream responseStream = url.openStream();
+            InputStreamReader isr = new InputStreamReader(responseStream);
+            BufferedReader br = new BufferedReader(isr);
+        ) {
+            String line;
+            StringBuffer sb = new StringBuffer();
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+                sb.append("\n");
+            }
+            return sb.toString().trim();
         }
     }
 

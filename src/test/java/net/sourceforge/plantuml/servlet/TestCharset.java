@@ -1,24 +1,27 @@
 package net.sourceforge.plantuml.servlet;
 
-import com.meterware.httpunit.GetMethodWebRequest;
-import com.meterware.httpunit.WebConversation;
-import com.meterware.httpunit.WebRequest;
-import com.meterware.httpunit.WebResponse;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
+
 
 public class TestCharset extends WebappTestCase {
 
     /**
      * Verifies the preservation of unicode characters for the "Bob -> Alice : hell‽" sample
      */
-    public void testUnicodeSupport() throws Exception {
-        WebConversation conversation = new WebConversation();
-        WebRequest request = new GetMethodWebRequest(getServerUrl() + "txt/SyfFKj2rKt3CoKnELR1Io4ZDoNdKi1S0");
-        WebResponse response = conversation.getResource(request);
+    public void testUnicodeSupport() throws IOException {
+        final URL url = new URL(getServerUrl() + "/txt/SyfFKj2rKt3CoKnELR1Io4ZDoNdKi1S0");
+        final URLConnection conn = url.openConnection();
         // Analyze response
         // Verifies the Content-Type header
-        assertEquals("Response content type is not TEXT PLAIN", "text/plain", response.getContentType());
+        assertEquals(
+            "Response content type is not TEXT PLAIN or UTF-8",
+            "text/plain;charset=utf-8",
+            conn.getContentType().toLowerCase()
+        );
         // Get the content and verify that the interrobang unicode character is present
-        String diagram = response.getText();
+        String diagram = getContentText(conn);
         assertTrue("Interrobang unicode character is not preserved", diagram.contains("‽"));
     }
 
@@ -26,18 +29,22 @@ public class TestCharset extends WebappTestCase {
      * Verifies the preservation of unicode characters for the
      * "participant Bob [[http://www.snow.com/❄]]\nBob -> Alice" sample
      */
-    public void testUnicodeInCMap() throws Exception {
-        WebConversation conversation = new WebConversation();
-        WebRequest request = new GetMethodWebRequest(getServerUrl()
-                + "map/AqWiAibCpYn8p2jHSCfFKeYEpYWfAR3IroylBzShpiilrqlEpzL_DBSbDfOB9Azhf-2OavcS2W00");
-        WebResponse response = conversation.getResource(request);
+    public void testUnicodeInCMap() throws IOException {
+        final URL url = new URL(
+            getServerUrl() +
+            "/map/AqWiAibCpYn8p2jHSCfFKeYEpYWfAR3IroylBzShpiilrqlEpzL_DBSbDfOB9Azhf-2OavcS2W00"
+        );
+        final URLConnection conn = url.openConnection();
         // Analyze response
         // Verifies the Content-Type header
-        assertEquals("Response content type is not TEXT PLAIN", "text/plain", response.getContentType());
+        assertEquals(
+            "Response content type is not TEXT PLAIN or UTF-8",
+            "text/plain;charset=utf-8",
+            conn.getContentType().toLowerCase()
+        );
         // Get the content and verify that the snow unicode character is present
-        String map = response.getText();
+        String map = getContentText(conn);
         assertTrue("Snow unicode character is not preserved", map.contains("❄"));
     }
-
 
 }
