@@ -13,7 +13,8 @@
         "servlet",
         "servlets",
         "startditaa",
-        "startuml"
+        "startuml",
+        "utxt"
     ],
     "cSpell.allowCompoundWords": true
 }

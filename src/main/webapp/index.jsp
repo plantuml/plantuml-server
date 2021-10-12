@@ -28,9 +28,8 @@
     <link rel="icon" href="${hostpath}/favicon.ico" type="image/x-icon"/> 
     <link rel="shortcut icon" href="${hostpath}/favicon.ico" type="image/x-icon"/>
     <link rel="stylesheet" href="${hostpath}/plantuml.css" />
-    <link rel="stylesheet" href="${hostpath}/webjars/codemirror/3.21/lib/codemirror.css" />
-    <script src="${hostpath}/webjars/codemirror/3.21/lib/codemirror.js"></script>
-    <!-- <script src="mode/plantuml.js"></script> -->
+    <link rel="stylesheet" href="${hostpath}/webjars/codemirror/5.63.0/lib/codemirror.css" />
+    <script src="${hostpath}/webjars/codemirror/5.63.0/lib/codemirror.js"></script>
     <script>
         window.onload = function() {
             document.myCodeMirror = CodeMirror.fromTextArea(

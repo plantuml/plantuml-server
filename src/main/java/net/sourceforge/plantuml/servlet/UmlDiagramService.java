@@ -43,6 +43,11 @@ import java.util.regex.Pattern;
 @SuppressWarnings("SERIAL")
 public abstract class UmlDiagramService extends HttpServlet {
 
+    /**
+     * Regex pattern to fetch encoded uml text from an URL.
+     */
+    private static final Pattern RECOVER_UML_PATTERN = Pattern.compile("/\\w+/(\\d+/)?(.*)");
+
     static {
         OptionFlags.ALLOW_INCLUDE = false;
         if ("true".equalsIgnoreCase(System.getenv("ALLOW_PLANTUML_INCLUDE"))) {
@@ -52,7 +57,6 @@ public abstract class UmlDiagramService extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-
         // build the UML source from the compressed request parameter
         final String[] sourceAndIdx = getSourceAndIdx(request);
         final int idx = Integer.parseInt(sourceAndIdx[1]);
@@ -70,7 +74,6 @@ public abstract class UmlDiagramService extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
         // build the UML source from the compressed request parameter
         final String[] sourceAndIdx = getSourceAndIdx(request);
         final int idx = Integer.parseInt(sourceAndIdx[1]);
@@ -88,13 +91,22 @@ public abstract class UmlDiagramService extends HttpServlet {
         doDiagramResponse(request, response, uml.toString(), idx);
     }
 
+    /**
+     * Send diagram response.
+     *
+     * @param request html request
+     * @param response html response
+     * @param uml textual UML diagram(s) source
+     * @param idx diagram index of {@code uml} to send
+     *
+     * @throws IOException if an input or output exception occurred
+     */
     private void doDiagramResponse(
         HttpServletRequest request,
         HttpServletResponse response,
         String uml,
-        int idx)
-        throws IOException {
-
+        int idx
+    ) throws IOException {
         // generate the response
         DiagramResponse dr = new DiagramResponse(response, getOutputFormat(), request);
         try {
@@ -103,10 +115,7 @@ public abstract class UmlDiagramService extends HttpServlet {
             // Browser has closed the connection, so the HTTP OutputStream is closed
             // Silently catch the exception to avoid annoying log
         }
-        dr = null;
     }
-
-    private static final Pattern RECOVER_UML_PATTERN = Pattern.compile("/\\w+/(\\d+/)?(.*)");
 
     /**
      * Extracts the UML source text and its index from the HTTP request.
@@ -132,7 +141,7 @@ public abstract class UmlDiagramService extends HttpServlet {
                 return new String[]{data, idx };
             }
         }
-        return new String[]{"", "0" };
+        return new String[]{"", "0"};
     }
 
     /**

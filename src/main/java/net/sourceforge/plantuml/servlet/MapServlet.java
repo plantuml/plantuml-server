@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sourceforge.plantuml.FileFormat;
-
 import net.sourceforge.plantuml.servlet.utility.UmlExtractor;
 
 /**
@@ -58,6 +57,13 @@ public class MapServlet extends HttpServlet {
         dr = null;
     }
 
+    /**
+     * Extract UML source from URI.
+     *
+     * @param uri the complete URI as returned by `request.getRequestURI()`
+     *
+     * @return the encoded UML text
+     */
     public String getSource(String uri) {
         String[] result = uri.split("/map/", 2);
         if (result.length != 2) {

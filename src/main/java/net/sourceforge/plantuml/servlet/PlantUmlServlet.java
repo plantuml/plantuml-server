@@ -44,7 +44,7 @@ import net.sourceforge.plantuml.code.TranscoderUtil;
 import net.sourceforge.plantuml.png.MetadataTag;
 
 /**
- * Original idea from Achim Abeling for Confluence macro
+ * Original idea from Achim Abeling for Confluence macro.
  *
  * This class is the old all-in-one historic implementation of the PlantUml server.
  * See package.html for the new design. It's a work in progress.
@@ -56,10 +56,19 @@ import net.sourceforge.plantuml.png.MetadataTag;
 @SuppressWarnings("SERIAL")
 public class PlantUmlServlet extends HttpServlet {
 
+    /**
+     * Default encoded uml text.
+     * Bob -> Alice : hello
+     */
     private static final String DEFAULT_ENCODED_TEXT = "SyfFKj2rKt3CoKnELR1Io4ZDoSa70000";
 
-    // Last part of the URL
-    public static final Pattern URL_PATTERN = Pattern.compile("^.*[^a-zA-Z0-9\\-\\_]([a-zA-Z0-9\\-\\_]+)");
+    /**
+     * Regex pattern to fetch last part of the URL.
+     */
+    private static final Pattern URL_PATTERN = Pattern.compile("^.*[^a-zA-Z0-9\\-\\_]([a-zA-Z0-9\\-\\_]+)");
+    /**
+     * Regex pattern to fetch encoded uml text from an "uml" URL.
+     */
     private static final Pattern RECOVER_UML_PATTERN = Pattern.compile("/uml/(.*)");
 
     static {
@@ -134,36 +143,75 @@ public class PlantUmlServlet extends HttpServlet {
         redirectNow(request, response, encoded);
     }
 
+    /**
+     * Get textual diagram source from URL.
+     *
+     * @param request http request which contains the source URL
+     * @param text fallback textual diagram source
+     *
+     * @return if successful textual diagram source from URL; otherwise fallback {@code text}
+     *
+     * @throws IOException if an input or output exception occurred
+     */
     private String getTextFromUrl(HttpServletRequest request, String text) throws IOException {
-        String url = request.getParameter("url");
-        final Matcher recoverUml = RECOVER_UML_PATTERN.matcher(request.getRequestURI().substring(
-                request.getContextPath().length()));
+        final Matcher recoverUml = RECOVER_UML_PATTERN.matcher(
+            request.getRequestURI().substring(request.getContextPath().length())
+        );
         // the URL form has been submitted
         if (recoverUml.matches()) {
             final String data = recoverUml.group(1);
-            text = getTranscoder().decode(data);
-        } else if (url != null && !url.trim().isEmpty()) {
-            // Catch the last part of the URL if necessary
-            final Matcher m1 = URL_PATTERN.matcher(url);
-            if (m1.find()) {
-                url = m1.group(1);
-            }
-            text = getTranscoder().decode(url);
+            return getTranscoder().decode(data);
         }
+        String url = request.getParameter("url");
+        if (url != null && !url.trim().isEmpty()) {
+            // Catch the last part of the URL if necessary
+            final Matcher matcher = URL_PATTERN.matcher(url);
+            if (matcher.find()) {
+                url = matcher.group(1);
+            }
+            return getTranscoder().decode(url);
+        }
+        // fallback
         return text;
     }
 
-    private void redirectNow(HttpServletRequest request, HttpServletResponse response, String encoded)
-            throws IOException {
+    /**
+     * Send redirect response to encoded uml text.
+     *
+     * @param request http request
+     * @param response http response
+     * @param encoded encoded uml text
+     *
+     * @throws IOException if an input or output exception occurred
+     */
+    private void redirectNow(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        String encoded
+    ) throws IOException {
         final String result = request.getContextPath() + "/uml/" + encoded;
         response.sendRedirect(result);
     }
 
+    /**
+     * Get PlantUML transcoder.
+     *
+     * @return transcoder instance
+     */
     private Transcoder getTranscoder() {
         return TranscoderUtil.getDefaultTranscoder();
     }
 
-    static private HttpURLConnection getConnection(URL url) throws IOException {
+    /**
+     * Get open http connection from URL.
+     *
+     * @param url URL to open connection
+     *
+     * @return open http connection
+     *
+     * @throws IOException if an input or output exception occurred
+     */
+    private static HttpURLConnection getConnection(URL url) throws IOException {
         if (url.getProtocol().startsWith("https")) {
             HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
             con.setRequestMethod("GET");
@@ -180,7 +228,16 @@ public class PlantUmlServlet extends HttpServlet {
         }
     }
 
-    static public InputStream getImage(URL url) throws IOException {
+    /**
+     * Get image input stream from URL.
+     *
+     * @param url URL to open connection
+     *
+     * @return response input stream from URL
+     *
+     * @throws IOException if an input or output exception occurred
+     */
+    private static InputStream getImage(URL url) throws IOException {
         InputStream is = null;
         HttpURLConnection con = getConnection(url);
         is = con.getInputStream();

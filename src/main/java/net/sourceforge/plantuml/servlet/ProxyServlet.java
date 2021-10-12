@@ -102,6 +102,15 @@ public class ProxyServlet extends HttpServlet {
         dr = null;
     }
 
+    /**
+     * Get textual uml diagram source from URL.
+     *
+     * @param url source URL
+     *
+     * @return textual uml diagram source
+     *
+     * @throws IOException if an input or output exception occurred
+     */
     private String getSource(final URL url) throws IOException {
         String line;
         BufferedReader rd;
@@ -124,6 +133,14 @@ public class ProxyServlet extends HttpServlet {
         return "";
     }
 
+    /**
+     * Get {@link FileFormat} instance from string.
+     *
+     * @param format file format name
+     *
+     * @return corresponding file format instance,
+     *         if {@code format} is null or unknown the default {@link FileFormat#PNG} will be returned
+     */
     private FileFormat getOutputFormat(String format) {
         if (format == null) {
             return FileFormat.PNG;
@@ -143,6 +160,15 @@ public class ProxyServlet extends HttpServlet {
         return FileFormat.PNG;
     }
 
+    /**
+     * Get open http connection from URL.
+     *
+     * @param url URL to open connection
+     *
+     * @return open http connection
+     *
+     * @throws IOException if an input or output exception occurred
+     */
     private HttpURLConnection getConnection(final URL url) throws IOException {
         final HttpURLConnection con = (HttpURLConnection) url.openConnection();
         //if (con instanceof HttpsURLConnection) {
@@ -159,7 +185,8 @@ public class ProxyServlet extends HttpServlet {
     }
 
     /**
-     * Debug method used to dump the certificate info
+     * Debug method used to dump the certificate info.
+     *
      * @param con the https connection
      */
     @SuppressWarnings("unused")
