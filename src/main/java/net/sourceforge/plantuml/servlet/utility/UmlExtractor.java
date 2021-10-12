@@ -35,7 +35,7 @@ import net.sourceforge.plantuml.code.TranscoderUtil;
  * Utility class to extract the UML source from the compressed UML source contained in the end part
  * of the requested URI.
  */
-public class UmlExtractor {
+public abstract class UmlExtractor {
 
     static {
         OptionFlags.ALLOW_INCLUDE = false;
@@ -49,6 +49,7 @@ public class UmlExtractor {
      * HTTP URI.
      *
      * @param source the last part of the URI containing the compressed UML
+     *
      * @return the textual UML source
      */
     static public String getUmlSource(String source) {
@@ -81,11 +82,6 @@ public class UmlExtractor {
             uml = plantUmlSource.toString();
         }
         return uml;
-    }
-
-    protected UmlExtractor() {
-        // prevents calls from subclass
-        throw new UnsupportedOperationException();
     }
 
 }

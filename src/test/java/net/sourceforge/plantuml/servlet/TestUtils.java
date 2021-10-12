@@ -6,16 +6,16 @@ package net.sourceforge.plantuml.servlet;
  */
 public abstract class TestUtils {
 
-    /*
-     * Theses strings are the compressed form of a PlantUML diagram.
-     */
+    //
+    // Theses strings are the compressed form of a PlantUML diagram.
+    //
 
-    /*
+    /**
      * version
      */
     public static final String VERSION = "AqijAixCpmC0";
 
-    /*
+    /**
      * Bob -> Alice : hello
      */
     public static final String SEQBOB = "SyfFKj2rKt3CoKnELR1Io4ZDoSa70000";

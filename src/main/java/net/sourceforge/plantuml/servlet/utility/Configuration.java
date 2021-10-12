@@ -28,13 +28,22 @@ import java.io.InputStream;
 
 import java.util.Properties;
 
+/**
+ * Shared PlantUML Server configuration.
+ */
 public final class Configuration {
 
+    /**
+     * Singleton configuration instance.
+     */
     private static Configuration instance;
+    /**
+     * Configuration properties.
+     */
     private Properties config;
 
     /**
-     * Singleton constructor
+     * Singleton constructor.
      */
     private Configuration() {
         config = new Properties();
@@ -57,7 +66,7 @@ public final class Configuration {
     }
 
     /**
-     * Get the configuration
+     * Get the configuration.
      *
      * @return the complete configuration
      */
@@ -69,7 +78,9 @@ public final class Configuration {
     }
 
     /**
-     * Get a boolean configuration value
+     * Get a boolean configuration value.
+     *
+     * @param key config property key
      *
      * @return true if the value is "on"
      */

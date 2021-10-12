@@ -48,8 +48,10 @@ import net.sourceforge.plantuml.SourceStringReader;
 @SuppressWarnings("SERIAL")
 public class OldProxyServlet extends HttpServlet {
 
+    /**
+     * Proxy request URI regex pattern.
+     */
     private static final Pattern PROXY_PATTERN = Pattern.compile("/\\w+/proxy/((\\d+)/)?((\\w+)/)?(https?://.*)");
-    private String format;
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -64,20 +66,44 @@ public class OldProxyServlet extends HttpServlet {
         }
 
         String num = proxyMatcher.group(2); // Optional number of the diagram source
-        format = proxyMatcher.group(4); // Expected format of the generated diagram
+        String format = proxyMatcher.group(4); // Expected format of the generated diagram
         String sourceURL = proxyMatcher.group(5);
-        handleImageProxy(response, num, sourceURL);
+        handleImageProxy(response, num, format, sourceURL);
     }
 
-    private void handleImageProxy(HttpServletResponse response, String num, String source) throws IOException {
+    /**
+     * Handle image proxy request.
+     *
+     * @param response http response
+     * @param num image number/index of uml {@code source}
+     * @param format file format name
+     * @param source diagram source URL
+     *
+     * @throws IOException if an input or output exception occurred
+     */
+    private void handleImageProxy(
+        HttpServletResponse response,
+        String num,
+        String format,
+        String source
+    ) throws IOException {
         SourceStringReader reader = new SourceStringReader(getSource(source));
         int n = num == null ? 0 : Integer.parseInt(num);
 
-        FileFormat fileFormat = getOutputFormat();
+        FileFormat fileFormat = getOutputFormat(format);
         response.addHeader("Content-Type", fileFormat.getMimeType());
         reader.outputImage(response.getOutputStream(), n, new FileFormatOption(fileFormat, false));
     }
 
+    /**
+     * Get textual diagram source from URL.
+     *
+     * @param uri diagram source URL
+     *
+     * @return textual diagram source
+     *
+     * @throws IOException if an input or output exception occurred
+     */
     private String getSource(final String uri) throws IOException {
         final URL url = new URL(uri);
         try (
@@ -95,7 +121,15 @@ public class OldProxyServlet extends HttpServlet {
         }
     }
 
-    private FileFormat getOutputFormat() {
+    /**
+     * Get {@link FileFormat} instance from string.
+     *
+     * @param format file format name
+     *
+     * @return corresponding file format instance,
+     *         if {@code format} is null or unknown the default {@link FileFormat#PNG} will be returned
+     */
+    private FileFormat getOutputFormat(String format) {
         if (format == null) {
             return FileFormat.PNG;
         }

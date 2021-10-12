@@ -26,29 +26,19 @@ package net.sourceforge.plantuml.servlet.utility;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * This output stream ignores everything and writes nothing.
+ */
 public class NullOutputStream extends OutputStream {
 
     /**
-     * Writes to nowhere
+     * Writes to nowhere.
+     *
+     * @param b anything
      */
     @Override
     public void write(int b) throws IOException {
         // Do nothing silently
     }
 
-    /**
-     * Overridden for performance reason
-     */
-    @Override
-    public void write(byte[] b) throws IOException {
-        // Do nothing silently
-    }
-
-    /**
-     * Overridden for performance reason
-     */
-    @Override
-    public void write(byte[] b, int off, int len) throws IOException {
-        // Do nothing silently
-    }
 }

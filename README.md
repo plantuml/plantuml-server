@@ -1,7 +1,13 @@
 # PlantUML Server
 
-![workflow status](https://github.com/plantuml/plantuml-server/actions/workflows/main.yml/badge.svg)
-[![docker pulls](https://img.shields.io/docker/pulls/plantuml/plantuml-server.svg)](https://hub.docker.com/r/plantuml/plantuml-server)
+[![GNU GENERAL PUBLIC LICENSE, Version 3, 29 June 2007](https://img.shields.io/github/license/plantuml/plantuml-server.svg?color=blue)](https://www.gnu.org/licenses/gpl-3.0)
+[![latest tag](https://img.shields.io/github/v/tag/plantuml/plantuml-server)](https://github.com/plantuml/plantuml-server/tags)
+![workflow status (Main)](https://github.com/plantuml/plantuml-server/actions/workflows/main.yml/badge.svg)
+![workflow status (Tests)](https://github.com/plantuml/plantuml-server/actions/workflows/tests.yml/badge.svg)
+![workflow status (Pages)](https://github.com/plantuml/plantuml-server/actions/workflows/pages.yml/badge.svg)  
+[![docker pulls](https://img.shields.io/docker/pulls/plantuml/plantuml-server.svg?color=blue)](https://hub.docker.com/r/plantuml/plantuml-server)
+![Docker Image Size (Jetty)](https://img.shields.io/docker/image-size/plantuml/plantuml-server/jetty?label=jetty%20image%20size)
+![Docker Image Size (Tomcat)](https://img.shields.io/docker/image-size/plantuml/plantuml-server/tomcat?label=tomcat%20image%20size)
 
 PlantUML Server is a web application to generate UML diagrams on-the-fly.
 
@@ -84,21 +90,21 @@ docker run -d -p 8080:8080 -e THE_ENV_VARIABLE=THE_ENV_VALUE plantuml/plantuml-s
 
 You can set all  the following variables:
 
+* `BASE_URL`
+  * PlantUML Base URL path
+  * Default value: `ROOT`
 * `PLANTUML_LIMIT_SIZE`
-    * Limits image width and height
-    * Default value: `4096`
-* `GRAPHVIZ_DOT`
-    * Link to 'dot' executable
-    * Default value: `/usr/local/bin/dot` or `/usr/bin/dot`
+  * Limits image width and height
+  * Default value: `4096`
 * `PLANTUML_STATS`
-    * Set it to `on` to enable [statistics report](https://plantuml.com/statistics-report)
-    * Default value: `off`
+  * Set it to `on` to enable [statistics report](https://plantuml.com/statistics-report)
+  * Default value: `off`
 * `HTTP_AUTHORIZATION`
-    * when calling the `proxy` endpoint, the value of `HTTP_AUTHORIZATION` will be used to set the HTTP Authorization header
-    * Default value: `null`
+  * when calling the `proxy` endpoint, the value of `HTTP_AUTHORIZATION` will be used to set the HTTP Authorization header
+  * Default value: `null`
 * `ALLOW_PLANTUML_INCLUDE`
-    * Enables `!include` processing which can read files from the server into diagrams. Files are read relative to the current working directory.
-    * Default value: `false`
+  * Enables `!include` processing which can read files from the server into diagrams. Files are read relative to the current working directory.
+  * Default value: `false`
 
 
 ## Alternate: How to build your docker image
@@ -112,7 +118,7 @@ So, you can use following command to create a self-contained docker image that w
 docker image build -t plantuml-server:local .
 docker run -d -p 8080:8080 plantuml-server:local
 ```
-The server is now listening to [http://localhost:8080/plantuml](http://localhost:8080/plantuml).
+The server is now listening to [http://localhost:8080](http://localhost:8080).
 
 You may specify the port in `-p` Docker command line argument.
 
