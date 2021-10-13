@@ -28,6 +28,7 @@ h1, p, #content a {
     font-family: monospace;
     font-size: medium;
     width: 100%;
+    resize: vertical;
 }
 
 #content input[type=text] {
