@@ -29,11 +29,17 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.cert.Certificate;
+import java.util.List;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.imageio.IIOException;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLPeerUnverifiedException;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import net.sourceforge.plantuml.BlockUml;
 import net.sourceforge.plantuml.FileFormat;
@@ -41,13 +47,6 @@ import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.SourceStringReader;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.core.UmlSource;
-
-import java.security.cert.Certificate;
-import java.util.List;
-
-import javax.imageio.IIOException;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLPeerUnverifiedException;
 
 /**
  * Proxy servlet of the webapp.

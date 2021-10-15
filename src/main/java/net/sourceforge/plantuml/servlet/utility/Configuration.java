@@ -85,10 +85,10 @@ public final class Configuration {
      * @return true if the value is "on"
      */
     public static boolean get(final String key) {
-        if (instance.config.getProperty(key) == null) {
+        if (get().getProperty(key) == null) {
             return false;
         }
-        return instance.config.getProperty(key).startsWith("on");
+        return get().getProperty(key).startsWith("on");
     }
 
 }

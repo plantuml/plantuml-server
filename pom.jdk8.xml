@@ -15,7 +15,7 @@
   <url>https://plantuml.github.io/plantuml-server/index.html</url>
 
   <properties>
-    <java.version>11</java.version>
+    <java.version>8</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -113,16 +113,38 @@
       <version>${codemirror.version}</version>
     </dependency>
     <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <version>5.0.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>apache-jsp</artifactId>
       <version>${apache-jsp.version}</version>
       <scope>${apache-jsp.scope}</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.jetty.toolchain</groupId>
+          <artifactId>jetty-jakarta-servlet-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty.toolchain</groupId>
+          <artifactId>jetty-schemas</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-annotations</artifactId>
       <version>${jetty-annotations.version}</version>
       <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.jetty.toolchain</groupId>
+          <artifactId>jetty-jakarta-servlet-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <!-- batik-all generally tends to provide duplicate resources on the classpath -->
@@ -176,6 +198,12 @@
       <artifactId>jetty-server</artifactId>
       <version>${jetty-server.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.jetty.toolchain</groupId>
+          <artifactId>jetty-jakarta-servlet-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 

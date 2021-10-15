@@ -31,17 +31,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.HttpsURLConnection;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.api.PlantumlUtils;
 import net.sourceforge.plantuml.code.Transcoder;
 import net.sourceforge.plantuml.code.TranscoderUtil;
 import net.sourceforge.plantuml.png.MetadataTag;
+import net.sourceforge.plantuml.servlet.utility.Configuration;
+import net.sourceforge.plantuml.servlet.utility.UmlExtractor;
 
 /**
  * Original idea from Achim Abeling for Confluence macro.
@@ -81,62 +84,36 @@ public class PlantUmlServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         request.setCharacterEncoding("UTF-8");
-        String text = request.getParameter("text");
 
-        String metadata = request.getParameter("metadata");
-        if (metadata != null) {
-            InputStream img = null;
-            try {
-                img = getImage(new URL(metadata));
-                MetadataTag metadataTag = new MetadataTag(img, "plantuml");
-                String data = metadataTag.getData();
-                if (data != null) {
-                    text = data;
-                }
-            } finally {
-                if (img != null) {
-                    img.close();
-                }
-            }
-        }
-        try {
-            text = getTextFromUrl(request, text);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // textual diagram source
+        final String text = getText(request).trim();
 
         // no Text form has been submitted
-        if (text == null || text.trim().isEmpty()) {
+        if (text.isEmpty()) {
             redirectNow(request, response, DEFAULT_ENCODED_TEXT);
             return;
         }
 
-        final String encoded = getTranscoder().encode(text);
-        request.setAttribute("decoded", text);
-        request.setAttribute("encoded", encoded);
-
-        // check if an image map is necessary
-        if (text != null && PlantumlUtils.hasCMapData(text)) {
-            request.setAttribute("mapneeded", Boolean.TRUE);
-        }
-
         // forward to index.jsp
+        prepareRequestForDispatch(request, text);
         final RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
         dispatcher.forward(request, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException,
-            IOException {
+    protected void doPost(
+        HttpServletRequest request,
+        HttpServletResponse response
+    ) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
 
-        String text = request.getParameter("text");
-        String encoded = DEFAULT_ENCODED_TEXT;
-
+        // encoded diagram source
+        String encoded;
         try {
-            text = getTextFromUrl(request, text);
+            String text = getText(request).trim();
             encoded = getTranscoder().encode(text);
         } catch (Exception e) {
+            encoded = DEFAULT_ENCODED_TEXT;
             e.printStackTrace();
         }
 
@@ -144,16 +121,59 @@ public class PlantUmlServlet extends HttpServlet {
     }
 
     /**
-     * Get textual diagram source from URL.
+     * Get textual diagram.
+     * Search for textual diagram in following order:
+     * 1. URL {@link PlantUmlServlet.getTextFromUrl}
+     * 2. metadata
+     * 3. request parameter "text"
      *
-     * @param request http request which contains the source URL
-     * @param text fallback textual diagram source
+     * @param request http request
      *
-     * @return if successful textual diagram source from URL; otherwise fallback {@code text}
+     * @return if successful textual diagram source; otherwise empty string
      *
      * @throws IOException if an input or output exception occurred
      */
-    private String getTextFromUrl(HttpServletRequest request, String text) throws IOException {
+    private String getText(final HttpServletRequest request) throws IOException {
+        String text;
+        // 1. URL
+        try {
+            text = getTextFromUrl(request);
+            if (text != null && !text.isEmpty()) {
+                return text;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // 2. metadata
+        String metadata = request.getParameter("metadata");
+        if (metadata != null) {
+            try (InputStream img = getImage(new URL(metadata))) {
+                MetadataTag metadataTag = new MetadataTag(img, "plantuml");
+                String data = metadataTag.getData();
+                if (data != null) {
+                    return data;
+                }
+            }
+        }
+        // 3. request parameter text
+        text = request.getParameter("text");
+        if (text != null && !text.isEmpty()) {
+            return text;
+        }
+        // nothing found
+        return "";
+    }
+
+    /**
+     * Get textual diagram source from URL.
+     *
+     * @param request http request which contains the source URL
+     *
+     * @return if successful textual diagram source from URL; otherwise empty string
+     *
+     * @throws IOException if an input or output exception occurred
+     */
+    private String getTextFromUrl(HttpServletRequest request) throws IOException {
         final Matcher recoverUml = RECOVER_UML_PATTERN.matcher(
             request.getRequestURI().substring(request.getContextPath().length())
         );
@@ -171,8 +191,75 @@ public class PlantUmlServlet extends HttpServlet {
             }
             return getTranscoder().decode(url);
         }
-        // fallback
-        return text;
+        // nothing found
+        return "";
+    }
+
+    /**
+     * Prepare request for dispatch and get request dispatcher.
+     *
+     * @param request http request which will be further prepared for dispatch
+     * @param text textual diagram source
+     *
+     * @throws IOException if an input or output exception occurred
+     */
+    private void prepareRequestForDispatch(HttpServletRequest request, String text) throws IOException {
+        // diagram sources
+        final String encoded = getTranscoder().encode(text);
+        request.setAttribute("decoded", text);
+        request.setAttribute("encoded", encoded);
+        // properties
+        request.setAttribute("showSocialButtons", Configuration.get("SHOW_SOCIAL_BUTTONS"));
+        request.setAttribute("showGithubRibbon", Configuration.get("SHOW_GITHUB_RIBBON"));
+        // URL base
+        final String hostpath = getHostpath(request);
+        request.setAttribute("hostpath", hostpath);
+        // image URLs
+        final boolean hasImg = !text.isEmpty();
+        request.setAttribute("hasImg", hasImg);
+        request.setAttribute("imgurl", hostpath + "/png/" + encoded);
+        request.setAttribute("svgurl", hostpath + "/svg/" + encoded);
+        request.setAttribute("txturl", hostpath + "/txt/" + encoded);
+        request.setAttribute("mapurl", hostpath + "/map/" + encoded);
+        // map for diagram source if necessary
+        final boolean hasMap = PlantumlUtils.hasCMapData(text);
+        request.setAttribute("hasMap", hasMap);
+        String map = "";
+        if (hasMap) {
+            try {
+                map = UmlExtractor.extractMap(text);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        request.setAttribute("map", map);
+    }
+
+    /**
+     * Get hostpath (URL base) from request.
+     *
+     * @param request http request
+     *
+     * @return hostpath
+     */
+    private String getHostpath(final HttpServletRequest request) {
+        // port
+        String port = "";
+        if (
+            (request.getScheme() == "http" && request.getServerPort() != 80)
+            ||
+            (request.getScheme() == "https" && request.getServerPort() != 443)
+        ) {
+            port = ":" + request.getServerPort();
+        }
+        // scheme
+        String scheme = request.getScheme();
+        final String forwardedProto = request.getHeader("x-forwarded-proto");
+        if (forwardedProto != null && !forwardedProto.isEmpty()) {
+            scheme = forwardedProto;
+        }
+        // hostpath
+        return scheme + "://" + request.getServerName() + port + request.getContextPath();
     }
 
     /**

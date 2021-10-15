@@ -18,7 +18,7 @@ To know more about PlantUML, please visit https://plantuml.com.
 
 ## Requirements
 
-- jre/jdk 1.6.0 or above
+- jre/jdk 11 or above
 - apache maven 3.0.2 or above
 
 
@@ -36,7 +36,7 @@ In this way the server is run on an embedded jetty server.
 You can specify the port at which it runs:
 
 ```sh
-mvn jetty:run -Djetty.port=9999
+mvn jetty:run -Djetty.http.port=9999
 ```
 
 
@@ -74,18 +74,27 @@ And run `docker-compose up`. This will start a modified version of the image usi
 
 You can apply some option to your PlantUML server with environment variable.
 
-If you run the directly the jar, you can pass the option with `-D` flag
+If you run the directly the jar:
 ```sh
-java -D THE_ENV_VARIABLE=THE_ENV_VALUE -Djetty.contextpath=/ -jar target/dependency/jetty-runner.jar target/plantuml.war
+# NOTE: jetty-runner is deprecated.
+# build war file and jetty-runner
+mvn package
+# start directly
+# java $JVM_ARGS -jar jetty-runner.jar $JETTY_ARGS
+java -jar target/dependency/jetty-runner.jar --config src/main/config/jetty.xml --port 9999 --path /plantuml target/plantuml.war
+# see help for more possible options
+java -jar target/dependency/jetty-runner.jar --help
 ```
-or
+Note: `--config src/main/config/jetty.xml` is only necessary if you need support for empty path segments in URLs (e.g. for the old proxy)
+
+Alternatively, start over maven and pass the option with `-D` flag
 ```sh
-mvn jetty:run -D THE_ENV_VARIABLE=THE_ENV_VALUE -Djetty.port=9999
+mvn jetty:run -D THE_ENV_VARIABLE=THE_ENV_VALUE -Djetty.http.port=9999
 ```
 
 If you use docker, you can use the `-e` flag:
 ```sh
-docker run -d -p 8080:8080 -e THE_ENV_VARIABLE=THE_ENV_VALUE plantuml/plantuml-server:jetty
+docker run -d -p 9999:8080 -e THE_ENV_VARIABLE=THE_ENV_VALUE plantuml/plantuml-server:jetty
 ```
 
 You can set all  the following variables:
@@ -115,7 +124,7 @@ So, you can use following command to create a self-contained docker image that w
 *Note: Generate the WAR (instructions further below) prior to running "docker build"*
 
 ```sh
-docker image build -t plantuml-server:local .
+docker image build -f Dockerfile.jetty -t plantuml-server:local .
 docker run -d -p 8080:8080 plantuml-server:local
 ```
 The server is now listening to [http://localhost:8080](http://localhost:8080).
@@ -126,9 +135,18 @@ You may specify the port in `-p` Docker command line argument.
 ## How to generate the war
 
 To build the war, just run:
-
 ```sh
 mvn package
 ```
-
 at the root directory of the project to produce plantuml.war in the target/ directory.
+
+NOTE: If you want that the generated war includes the `apache-jsp` artifact run:
+```sh
+mvn package -Dapache-jsp.scope=compile
+```
+
+If you want to generate the war with java 8 as target just remove the src/test directory and use `pom.jdk8.xml`.
+```sh
+rm -rf src/test
+mvn package -f pom.jdk8.xml [-Dapache-jsp.scope=compile]
+```

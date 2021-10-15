@@ -8,7 +8,12 @@ RUN mvn --batch-mode --define java.net.useSystemProxies=true package
 
 ########################################################################################
 
-FROM jetty:9.4-jre11-slim
+FROM jetty:11.0.7-jre11-slim
+
+# Proxy and OldProxy need empty path segments support in URIs
+# Hence: allow AMBIGUOUS_EMPTY_SEGMENT
+# Changes are only active if `/generate-jetty-start.sh` is called!
+RUN sed -i 's/# jetty\.httpConfig\.uriCompliance=DEFAULT/jetty.httpConfig.uriCompliance=DEFAULT,AMBIGUOUS_EMPTY_SEGMENT/g' /var/lib/jetty/start.d/server.ini
 
 USER root
 RUN apt-get update && \

@@ -183,10 +183,10 @@ public class TestForm extends WebappTestCase {
             HtmlImage img = page.getFirstByXPath("//img[contains(@alt, 'PlantUML diagram')]");
             assertNotEquals(0, img.getImageReader().getHeight(0));  // 131
             assertNotEquals(0, img.getImageReader().getWidth(0));   // 231
-            // TODO: Ensure the image map is present
-            //DomElement map = page.getElementById("plantuml_map");
-            //assertNotNull(map);
-            //assertEquals(1, map.getChildElementCount());
+            // Ensure the image map is present
+            DomElement map = page.getElementById("plantuml_map");
+            assertNotNull(map);
+            assertEquals(1, map.getChildElementCount());
         }
     }
 
