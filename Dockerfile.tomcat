@@ -4,11 +4,11 @@ COPY pom.xml /app/
 COPY src/main /app/src/main/
 
 WORKDIR /app
-RUN mvn --batch-mode --define java.net.useSystemProxies=true package
+RUN mvn --batch-mode --define java.net.useSystemProxies=true -Dapache-jsp.scope=compile package
 
 ########################################################################################
 
-FROM tomcat:9.0-jdk11-openjdk-slim
+FROM tomcat:10-jdk11-openjdk-slim
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \

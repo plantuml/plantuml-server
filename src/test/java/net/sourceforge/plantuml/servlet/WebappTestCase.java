@@ -8,6 +8,9 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import junit.framework.TestCase;
 import net.sourceforge.plantuml.servlet.server.EmbeddedJettyServer;
 import net.sourceforge.plantuml.servlet.server.ExternalServer;
@@ -15,6 +18,8 @@ import net.sourceforge.plantuml.servlet.server.ServerUtils;
 
 
 public abstract class WebappTestCase extends TestCase {
+
+    protected final Logger logger;
 
     private final ServerUtils serverUtils;
 
@@ -24,24 +29,26 @@ public abstract class WebappTestCase extends TestCase {
 
     public WebappTestCase(String name) {
         super(name);
+        logger = LoggerFactory.getLogger(this.getClass());
 
         String uri = System.getProperty("system.test.server", "");
         //uri = "http://localhost:8080/plantuml";
         if (!uri.isEmpty()) {
             // mvn test -DskipTests=false -DargLine="-Dsystem.test.server=http://localhost:8080/plantuml"
-            System.out.println("Test against external server: " + uri);
+            logger.info("Test against external server: " + uri);
             serverUtils = new ExternalServer(uri);
             return;
         }
 
         // mvn test -DskipTests=false
-        System.out.println("Test against embedded jetty server.");
+        logger.info("Test against embedded jetty server.");
         serverUtils = new EmbeddedJettyServer();
     }
 
     @Override
     public void setUp() throws Exception {
         serverUtils.startServer();
+        logger.info(getServerUrl());
     }
 
     @Override

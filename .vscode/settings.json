@@ -14,7 +14,9 @@
         "servlets",
         "startditaa",
         "startuml",
-        "utxt"
+        "utxt",
+        "ghaction",
+        "buildx"
     ],
     "cSpell.allowCompoundWords": true
 }

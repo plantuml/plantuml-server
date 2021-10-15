@@ -27,9 +27,14 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
+import net.sourceforge.plantuml.FileFormat;
+import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.OptionFlags;
+import net.sourceforge.plantuml.SourceStringReader;
 import net.sourceforge.plantuml.code.Transcoder;
 import net.sourceforge.plantuml.code.TranscoderUtil;
+import net.sourceforge.plantuml.core.Diagram;
+import net.sourceforge.plantuml.core.ImageData;
 
 /**
  * Utility class to extract the UML source from the compressed UML source contained in the end part
@@ -82,6 +87,38 @@ public abstract class UmlExtractor {
             uml = plantUmlSource.toString();
         }
         return uml;
+    }
+
+    /**
+     * Get image map from uml.
+     *
+     * @param uml textual diagram source
+     *
+     * @return image map of the diagram in HTML format if the image has some position information; otherwise `null`
+     *
+     * @throws IOException if an input or output exception occurred
+     */
+    public static String extractMap(final String uml) throws IOException {
+        return extractMap(uml, FileFormat.PNG);
+    }
+
+    /**
+     * Get image map from uml.
+     *
+     * @param uml textual diagram source
+     * @param fileFormat underlying file format of uml image
+     *
+     * @return image map of the diagram in HTML format if the image has some position information; otherwise `null`
+     *
+     * @throws IOException if an input or output exception occurred
+     */
+    public static String extractMap(final String uml, final FileFormat fileFormat) throws IOException {
+        Diagram diagram = new SourceStringReader(uml).getBlocks().get(0).getDiagram();
+        ImageData map = diagram.exportDiagram(new NullOutputStream(), 0, new FileFormatOption(fileFormat, false));
+        if (map.containsCMapData()) {
+            return map.getCMapData("plantuml");
+        }
+        return null;
     }
 
 }

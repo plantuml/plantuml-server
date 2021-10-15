@@ -23,19 +23,20 @@
  */
 package net.sourceforge.plantuml.servlet;
 
-import net.sourceforge.plantuml.FileFormat;
-import net.sourceforge.plantuml.OptionFlags;
-import net.sourceforge.plantuml.servlet.utility.UmlExtractor;
-
-import javax.imageio.IIOException;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.imageio.IIOException;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import net.sourceforge.plantuml.FileFormat;
+import net.sourceforge.plantuml.OptionFlags;
+import net.sourceforge.plantuml.servlet.utility.UmlExtractor;
 
 /**
  * Common service servlet to produce diagram from compressed UML source contained in the end part of the requested URI.
