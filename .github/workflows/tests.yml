@@ -157,8 +157,8 @@ jobs:
       - name: Start jetty server over maven
         run: mvn --batch-mode jetty:run &
 
-      - name: Wait 10 seconds (to let maven start the jetty server)
-        run: sleep 10s
+      - name: Wait 20 seconds (to let maven start the jetty server)
+        run: sleep 20s
 
       - name: Run tests against "mvn jetty:run" server
         run: mvn --batch-mode test -DskipTests=false -DargLine="-Dsystem.test.server=http://localhost:8080/plantuml"
