@@ -45,6 +45,7 @@ import net.sourceforge.plantuml.code.TranscoderUtil;
 import net.sourceforge.plantuml.png.MetadataTag;
 import net.sourceforge.plantuml.servlet.utility.Configuration;
 import net.sourceforge.plantuml.servlet.utility.UmlExtractor;
+import net.sourceforge.plantuml.servlet.utility.UrlDataExtractor;
 
 /**
  * Original idea from Achim Abeling for Confluence macro.
@@ -69,10 +70,6 @@ public class PlantUmlServlet extends HttpServlet {
      * Regex pattern to fetch last part of the URL.
      */
     private static final Pattern URL_PATTERN = Pattern.compile("^.*[^a-zA-Z0-9\\-\\_]([a-zA-Z0-9\\-\\_]+)");
-    /**
-     * Regex pattern to fetch encoded uml text from an "uml" URL.
-     */
-    private static final Pattern RECOVER_UML_PATTERN = Pattern.compile("/uml/(.*)");
 
     static {
         OptionFlags.ALLOW_INCLUDE = false;
@@ -94,8 +91,11 @@ public class PlantUmlServlet extends HttpServlet {
             return;
         }
 
+        // diagram index to render
+        final int idx = UrlDataExtractor.getIndex(request.getRequestURI());
+
         // forward to index.jsp
-        prepareRequestForDispatch(request, text);
+        prepareRequestForDispatch(request, text, idx);
         final RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
         dispatcher.forward(request, response);
     }
@@ -107,6 +107,9 @@ public class PlantUmlServlet extends HttpServlet {
     ) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
 
+        // diagram index to render
+        final int idx = UrlDataExtractor.getIndex(request.getRequestURI());
+
         // encoded diagram source
         String encoded;
         try {
@@ -117,7 +120,7 @@ public class PlantUmlServlet extends HttpServlet {
             e.printStackTrace();
         }
 
-        redirectNow(request, response, encoded);
+        redirectNow(request, response, encoded, idx);
     }
 
     /**
@@ -174,15 +177,16 @@ public class PlantUmlServlet extends HttpServlet {
      * @throws IOException if an input or output exception occurred
      */
     private String getTextFromUrl(HttpServletRequest request) throws IOException {
-        final Matcher recoverUml = RECOVER_UML_PATTERN.matcher(
-            request.getRequestURI().substring(request.getContextPath().length())
-        );
-        // the URL form has been submitted
-        if (recoverUml.matches()) {
-            final String data = recoverUml.group(1);
-            return getTranscoder().decode(data);
+        // textual diagram source from request URI
+        String url = request.getRequestURI();
+        if (url.contains("/uml/") && !url.endsWith("/uml/")) {
+            final String encoded = UrlDataExtractor.getEncodedDiagram(request.getRequestURI(), "");
+            if (!encoded.isEmpty()) {
+                return getTranscoder().decode(encoded);
+            }
         }
-        String url = request.getParameter("url");
+        // textual diagram source from "url" parameter
+        url = request.getParameter("url");
         if (url != null && !url.trim().isEmpty()) {
             // Catch the last part of the URL if necessary
             final Matcher matcher = URL_PATTERN.matcher(url);
@@ -203,11 +207,12 @@ public class PlantUmlServlet extends HttpServlet {
      *
      * @throws IOException if an input or output exception occurred
      */
-    private void prepareRequestForDispatch(HttpServletRequest request, String text) throws IOException {
-        // diagram sources
+    private void prepareRequestForDispatch(HttpServletRequest request, String text, int idx) throws IOException {
         final String encoded = getTranscoder().encode(text);
+        final String index = (idx < 0) ? "" : idx + "/";
+        // diagram sources
         request.setAttribute("decoded", text);
-        request.setAttribute("encoded", encoded);
+        request.setAttribute("index", idx);
         // properties
         request.setAttribute("showSocialButtons", Configuration.get("SHOW_SOCIAL_BUTTONS"));
         request.setAttribute("showGithubRibbon", Configuration.get("SHOW_GITHUB_RIBBON"));
@@ -217,10 +222,10 @@ public class PlantUmlServlet extends HttpServlet {
         // image URLs
         final boolean hasImg = !text.isEmpty();
         request.setAttribute("hasImg", hasImg);
-        request.setAttribute("imgurl", hostpath + "/png/" + encoded);
-        request.setAttribute("svgurl", hostpath + "/svg/" + encoded);
-        request.setAttribute("txturl", hostpath + "/txt/" + encoded);
-        request.setAttribute("mapurl", hostpath + "/map/" + encoded);
+        request.setAttribute("imgurl", hostpath + "/png/" + index + encoded);
+        request.setAttribute("svgurl", hostpath + "/svg/" + index + encoded);
+        request.setAttribute("txturl", hostpath + "/txt/" + index + encoded);
+        request.setAttribute("mapurl", hostpath + "/map/" + index + encoded);
         // map for diagram source if necessary
         final boolean hasMap = PlantumlUtils.hasCMapData(text);
         request.setAttribute("hasMap", hasMap);
@@ -276,7 +281,32 @@ public class PlantUmlServlet extends HttpServlet {
         HttpServletResponse response,
         String encoded
     ) throws IOException {
-        final String result = request.getContextPath() + "/uml/" + encoded;
+        redirectNow(request, response, encoded, null);
+    }
+
+    /**
+     * Send redirect response to encoded uml text.
+     *
+     * @param request http request
+     * @param response http response
+     * @param encoded encoded uml text
+     * @param index diagram index
+     *
+     * @throws IOException if an input or output exception occurred
+     */
+    private void redirectNow(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        String encoded,
+        Integer index
+    ) throws IOException {
+        final String result;
+        if (index == null || index < 0) {
+            result = request.getContextPath() + "/uml/" + encoded;
+        } else {
+            result = request.getContextPath() + "/uml/" + index + "/" + encoded;
+        }
+
         response.sendRedirect(result);
     }
 

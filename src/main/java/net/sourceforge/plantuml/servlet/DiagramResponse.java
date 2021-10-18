@@ -166,10 +166,14 @@ public class DiagramResponse {
      * Produce and send the image map of the uml diagram in HTML format.
      *
      * @param uml textual UML diagram source
+     * @param idx diagram index of {@code uml} to send
      *
      * @throws IOException if an input or output exception occurred
      */
-    public void sendMap(String uml) throws IOException {
+    public void sendMap(String uml, int idx) throws IOException {
+        if (idx < 0) {
+            idx = 0;
+        }
         response.setContentType(getContentType());
         SourceStringReader reader = new SourceStringReader(uml);
         final BlockUml blockUml = reader.getBlocks().get(0);
@@ -177,7 +181,7 @@ public class DiagramResponse {
             addHeaderForCache(blockUml);
         }
         final Diagram diagram = blockUml.getDiagram();
-        ImageData map = diagram.exportDiagram(new NullOutputStream(), 0,
+        ImageData map = diagram.exportDiagram(new NullOutputStream(), idx,
                 new FileFormatOption(FileFormat.PNG, false));
         if (map.containsCMapData()) {
             PrintWriter httpOut = response.getWriter();
@@ -237,7 +241,7 @@ public class DiagramResponse {
      *
      * @param response http response
      */
-    public static void addHeaders(HttpServletResponse response) {
+    private static void addHeaders(HttpServletResponse response) {
         response.addHeader("X-Powered-By", POWERED_BY);
         response.addHeader("X-Patreon", "Support us on https://plantuml.com/patreon");
         response.addHeader("X-Donate", "https://plantuml.com/paypal");
