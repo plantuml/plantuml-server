@@ -216,4 +216,88 @@ public class TestForm extends WebappTestCase {
         }
     }
 
+    /**
+     * Verifies that an multipage diagram renders correct given index.
+     *
+     * Bob -> Alice : hello
+     * newpage
+     * Bob <- Alice : hello
+     * Bob -> Alice : let's talk
+     * Bob <- Alice : better not
+     * Bob -> Alice : <&rain> bye
+     * newpage
+     * Bob <- Alice : bye
+     */
+    public void testIndexPage() throws IOException {
+        try (final WebClient webClient = new WebClient()) {
+            HtmlPage page = webClient.getPage(
+                getServerUrl() + "/uml/1/" +
+                "SyfFKj2rKt3CoKnELR1Io4ZDoSddoaijBqXCJ-Lo0ahQwA99Eg7go4ajKIzMA4dCoKPNdfHQKf9Qf92NNuAknqQjA34ppquXgJ8Lbrr0AG00"
+            );
+            // Analyze response
+            List<HtmlForm> forms = page.getForms();
+            assertEquals(2, forms.size());
+            // Ensure the Text field is correct
+            String text = ((HtmlTextArea)(forms.get(0).getFirstByXPath("//textarea[contains(@name, 'text')]"))).getTextContent();
+            assertEquals(
+                "@startuml\nBob -> Alice : hello\nnewpage\nBob <- Alice : hello\nBob -> Alice : let's talk\nBob <- Alice : better not\nBob -> Alice : <&rain> bye\nnewpage\nBob <- Alice : bye\n@enduml",
+                text
+            );
+            // Ensure the URL field is correct
+            HtmlInput url = forms.get(1).getInputByName("url");
+            assertNotNull(url);
+            assertTrue(url.getAttribute("value").endsWith("/png/1/SyfFKj2rKt3CoKnELR1Io4ZDoSddoaijBqXCJ-Lo0ahQwA99Eg7go4ajKIzMA4dCoKPNdfHQKf9Qf92NNuAknqQjA34ppquXgJ8Lbrr0AG00"));
+            // Ensure the generated image is present
+            HtmlImage img = page.getFirstByXPath("//img[contains(@alt, 'PlantUML diagram')]");
+            int height = img.getImageReader().getHeight(0);
+            assertNotEquals(0, height);  // 222
+            assertNotEquals(0, img.getImageReader().getWidth(0));  // 152
+            // Ensure the correct index was generated
+            assertTrue(height > 200);  // 222
+            assertTrue(height < 250);  // 222
+        }
+    }
+
+    /**
+     * Verifies that an multipage diagram renders correct even if no index is specified.
+     *
+     * Bob -> Alice : hello
+     * newpage
+     * Bob <- Alice : hello
+     * Bob -> Alice : let's talk
+     * Bob <- Alice : better not
+     * Bob -> Alice : <&rain> bye
+     * newpage
+     * Bob <- Alice : bye
+     */
+    public void testIndexPageWithNoDefinedIndex() throws IOException {
+        try (final WebClient webClient = new WebClient()) {
+            HtmlPage page = webClient.getPage(
+                getServerUrl() + "/uml/" +
+                "SyfFKj2rKt3CoKnELR1Io4ZDoSddoaijBqXCJ-Lo0ahQwA99Eg7go4ajKIzMA4dCoKPNdfHQKf9Qf92NNuAknqQjA34ppquXgJ8Lbrr0AG00"
+            );
+            // Analyze response
+            List<HtmlForm> forms = page.getForms();
+            assertEquals(2, forms.size());
+            // Ensure the Text field is correct
+            String text = ((HtmlTextArea)(forms.get(0).getFirstByXPath("//textarea[contains(@name, 'text')]"))).getTextContent();
+            assertEquals(
+                "@startuml\nBob -> Alice : hello\nnewpage\nBob <- Alice : hello\nBob -> Alice : let's talk\nBob <- Alice : better not\nBob -> Alice : <&rain> bye\nnewpage\nBob <- Alice : bye\n@enduml",
+                text
+            );
+            // Ensure the URL field is correct
+            HtmlInput url = forms.get(1).getInputByName("url");
+            assertNotNull(url);
+            assertTrue(url.getAttribute("value").endsWith("/png/SyfFKj2rKt3CoKnELR1Io4ZDoSddoaijBqXCJ-Lo0ahQwA99Eg7go4ajKIzMA4dCoKPNdfHQKf9Qf92NNuAknqQjA34ppquXgJ8Lbrr0AG00"));
+            // Ensure the generated image is present
+            HtmlImage img = page.getFirstByXPath("//img[contains(@alt, 'PlantUML diagram')]");
+            int height = img.getImageReader().getHeight(0);
+            assertNotEquals(0, height);  // 132
+            assertNotEquals(0, img.getImageReader().getWidth(0));  // 152
+            // Ensure the correct index was generated
+            assertTrue(height > 100);  // 132
+            assertTrue(height < 150);  // 132
+        }
+    }
+
 }

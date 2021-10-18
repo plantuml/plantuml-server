@@ -6,26 +6,33 @@ hide empty members
 hide empty methods
 hide empty fields
 abstract class UmlDiagramService {
-  public void doGet(HttpServletRequest rq, HttpServletResponse rsp)
-  abstract public String getSource( String uri)
-  abstract FileFormat getOutputFormat()
+  + doGet(request: HttpServletRequest, response: HttpServletResponse) : void
+  + doPost(request: HttpServletRequest, response: HttpServletResponse) : void
+  + {abstract} getOutputFormat() : FileFormat
 }
 class DiagramResponse {
-  DiagramResponse( HttpServletResponse r, FileFormat f)
-  void sendDiagram( String uml)
-  void sendMap( String uml)
+  + DiagramResponse(res: HttpServletResponse, fmt: FileFormat, req: HttpServletRequest)
+  + sendDiagram(uml: String, idx: int) : void
+  + sendMap(uml: String, idx: int) : void
+  + sendCheck(uml: String) : void
 }
-abstract HttpServlet <|-- UmlDiagramService
-abstract HttpServlet <|-- MapServlet
-abstract HttpServlet <|-- ProxyServlet
-UmlDiagramService <|-- PngServlet
-UmlDiagramService <|-- SvgServlet
+HttpServlet <|-- CheckSyntaxServlet
+HttpServlet <|-- LanguageServlet
+HttpServlet <|-- MapServlet
+HttpServlet <|-- PlantUmlServlet
+HttpServlet <|-- ProxyServlet
+HttpServlet <|-- OldProxyServlet
+HttpServlet <|-- UmlDiagramService
+UmlDiagramService <|-- AsciiServlet
+UmlDiagramService <|-- Base64Servlet
 UmlDiagramService <|-- EpsServlet
 UmlDiagramService <|-- EpsTextServlet
-UmlDiagramService <|-- AsciiServlet
-UmlDiagramService o- DiagramResponse
-MapServlet o-- DiagramResponse
-ProxyServlet o-- DiagramResponse
+UmlDiagramService <|-- ImgServlet
+UmlDiagramService <|-- SvgServlet
+UmlDiagramService o-- DiagramResponse
+DiagramResponse --o CheckSyntaxServlet
+DiagramResponse --o MapServlet
+DiagramResponse --o ProxyServlet
 @enduml
 
 ## Sequence diagram ##
@@ -33,14 +40,17 @@ ProxyServlet o-- DiagramResponse
 
 @startuml
 title Generation of a PNG image illustrated
-PngServlet -> PngServlet : getSource()
-PngServlet -> UmlExtractor : getUmlSource()
-UmlExtractor --> PngServlet
-PngServlet -> PngServlet : getOutputFormat()
-PngServlet -> DiagramResponse : <<create>>
-PngServlet -> DiagramResponse : sendDiagram()
+ImgServlet -> UrlDataExtractor : getEncodedDiagram()
+UrlDataExtractor --> ImgServlet : encoded
+ImgServlet -> UrlDataExtractor : getIndex()
+UrlDataExtractor --> ImgServlet : index
+ImgServlet -> UmlExtractor : getUmlSource()
+UmlExtractor --> ImgServlet : decoded
+ImgServlet -> ImgServlet : getOutputFormat()
+ImgServlet -> "dr:DiagramResponse" as dr ** : <<create>>
+ImgServlet -> dr : sendDiagram()
 participant "PlantUML library" as Lib #99FF99
-DiagramResponse -> Lib : generateImage()
-Lib --> DiagramResponse
-DiagramResponse --> PngServlet
+dr -> Lib : generateImage()
+Lib --> dr
+dr --> ImgServlet
 @enduml

@@ -34,6 +34,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.servlet.utility.UmlExtractor;
+import net.sourceforge.plantuml.servlet.utility.UrlDataExtractor;
 
 /**
  * Check servlet of the webapp.
@@ -46,7 +47,8 @@ public class CheckSyntaxServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         // build the UML source from the compressed request parameter
-        String uml = UmlExtractor.getUmlSource(getSource(request.getRequestURI()));
+        final String url = request.getRequestURI();
+        final String uml = UmlExtractor.getUmlSource(UrlDataExtractor.getEncodedDiagram(url, ""));
 
         // generate the response
         DiagramResponse dr = new DiagramResponse(response, getOutputFormat(), request);
@@ -54,23 +56,6 @@ public class CheckSyntaxServlet extends HttpServlet {
             dr.sendCheck(uml);
         } catch (IIOException e) {
             // Browser has closed the connection, do nothing
-        }
-        dr = null;
-    }
-
-    /**
-     * Extract UML source from URI.
-     *
-     * @param uri the complete URI as returned by `request.getRequestURI()`
-     *
-     * @return the encoded UML text
-     */
-    public String getSource(String uri) {
-        String[] result = uri.split("/check/", 2);
-        if (result.length != 2) {
-            return "";
-        } else {
-            return result[1];
         }
     }
 

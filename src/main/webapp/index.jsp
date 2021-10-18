@@ -3,7 +3,6 @@
 <%
     // diagram sources
     String decoded = request.getAttribute("decoded").toString();
-    String encoded = request.getAttribute("encoded").toString();
     // properties
     boolean showSocialButtons = (boolean)request.getAttribute("showSocialButtons");
     boolean showGithubRibbon = (boolean)request.getAttribute("showGithubRibbon");
