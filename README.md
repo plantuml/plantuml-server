@@ -4,7 +4,7 @@
 [![latest tag](https://img.shields.io/github/v/tag/plantuml/plantuml-server)](https://github.com/plantuml/plantuml-server/tags)
 ![workflow status (Main)](https://github.com/plantuml/plantuml-server/actions/workflows/main.yml/badge.svg)
 ![workflow status (Tests)](https://github.com/plantuml/plantuml-server/actions/workflows/tests.yml/badge.svg)
-![workflow status (Pages)](https://github.com/plantuml/plantuml-server/actions/workflows/pages.yml/badge.svg)  
+
 [![docker pulls](https://img.shields.io/docker/pulls/plantuml/plantuml-server.svg?color=blue)](https://hub.docker.com/r/plantuml/plantuml-server)
 ![Docker Image Size (Jetty)](https://img.shields.io/docker/image-size/plantuml/plantuml-server/jetty?label=jetty%20image%20size)
 ![Docker Image Size (Tomcat)](https://img.shields.io/docker/image-size/plantuml/plantuml-server/tomcat?label=tomcat%20image%20size)
