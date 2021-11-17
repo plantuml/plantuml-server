@@ -5,6 +5,9 @@
 ![workflow status (Main)](https://github.com/plantuml/plantuml-server/actions/workflows/main.yml/badge.svg)
 ![workflow status (Tests)](https://github.com/plantuml/plantuml-server/actions/workflows/tests.yml/badge.svg)
 
+[![online](https://img.shields.io/endpoint?url=https://www.plantuml.com/plantuml/badge)](https://www.plantuml.com/plantuml/uml/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000)
+[![rate](https://img.shields.io/endpoint?url=https://www.plantuml.com/plantuml/rate)](https://www.plantuml.com/plantuml/uml/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000)
+
 [![docker pulls](https://img.shields.io/docker/pulls/plantuml/plantuml-server.svg?color=blue)](https://hub.docker.com/r/plantuml/plantuml-server)
 ![Docker Image Size (Jetty)](https://img.shields.io/docker/image-size/plantuml/plantuml-server/jetty?label=jetty%20image%20size)
 ![Docker Image Size (Tomcat)](https://img.shields.io/docker/image-size/plantuml/plantuml-server/tomcat?label=tomcat%20image%20size)
