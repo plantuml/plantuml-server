@@ -24,6 +24,11 @@ To know more about PlantUML, please visit https://plantuml.com.
 - jre/jdk 11 or above
 - apache maven 3.0.2 or above
 
+## Recommendations
+
+- Jetty 11 or above
+- Tomcat 10 or above
+
 
 ## How to run the server
 
