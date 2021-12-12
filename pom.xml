@@ -57,7 +57,6 @@
     <!-- Please keep the jetty version identical with the docker image -->
     <jetty.version>11.0.7</jetty.version>
     <codemirror.version>5.63.0</codemirror.version>
-    <slf4j.version>1.7.32</slf4j.version>
 
     <!-- dependencies -->
     <jstl.version>1.2</jstl.version>
@@ -69,9 +68,7 @@
     <jlatexmath.version>1.0.7</jlatexmath.version>
     <jlatexmath-font-greek.version>${jlatexmath.version}</jlatexmath-font-greek.version>
     <jlatexmath-font-cyrillic.version>${jlatexmath.version}</jlatexmath-font-cyrillic.version>
-    <!-- Logging -->
-    <slf4j-log4j12.version>${slf4j.version}</slf4j-log4j12.version>
-    <slf4j-api.version>${slf4j.version}</slf4j-api.version>
+
     <!-- Testing -->
     <junit.version>4.13.2</junit.version>
     <htmlunit.version>2.53.0</htmlunit.version>
@@ -147,18 +144,8 @@
       <artifactId>jlatexmath-font-cyrillic</artifactId>
       <version>${jlatexmath-font-cyrillic.version}</version>
     </dependency>
-    <!-- Logging -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>${slf4j-log4j12.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>${slf4j-api.version}</version>
-    </dependency>
-    <!-- Testing -->
+ 
+   <!-- Testing -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
