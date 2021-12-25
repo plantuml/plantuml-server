@@ -162,3 +162,22 @@ If you want to generate the war with java 8 as target just remove the src/test d
 rm -rf src/test
 mvn package -f pom.jdk8.xml [-Dapache-jsp.scope=compile]
 ```
+
+## Use with reverse-proxy
+
+It is possible to use PlantUML with a reverse proxy.
+
+Here is an example of setting for nginx reverse proxy.
+
+```
+# PlantUML
+location /plantuml/ {
+    include /etc/nginx/proxy.conf;
+
+    proxy_set_header  HOST               $host/plantuml;
+    proxy_set_header  X-Forwarded-Host   $host/plantuml;
+    proxy_set_header  X-Forwarded-Proto  $scheme;
+
+    proxy_pass http://plantuml-server:8080/;
+}
+```
