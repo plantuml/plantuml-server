@@ -167,17 +167,4 @@ mvn package -f pom.jdk8.xml [-Dapache-jsp.scope=compile]
 
 It is possible to use PlantUML with a reverse proxy.
 
-Here is an example of setting for nginx reverse proxy.
-
-```
-# PlantUML
-location /plantuml/ {
-    include /etc/nginx/proxy.conf;
-
-    proxy_set_header  HOST               $host/plantuml;
-    proxy_set_header  X-Forwarded-Host   $host/plantuml;
-    proxy_set_header  X-Forwarded-Proto  $scheme;
-
-    proxy_pass http://plantuml-server:8080/;
-}
-```
+You can find this and other examples [here](./examples).
