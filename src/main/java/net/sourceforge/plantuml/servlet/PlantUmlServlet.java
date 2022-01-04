@@ -255,16 +255,16 @@ public class PlantUmlServlet extends HttpServlet {
         request.setAttribute("showSocialButtons", Configuration.get("SHOW_SOCIAL_BUTTONS"));
         request.setAttribute("showGithubRibbon", Configuration.get("SHOW_GITHUB_RIBBON"));
         // URL base
-        final String hostpath = getHostpath(request);
-        request.setAttribute("hostpath", hostpath);
+        final String contextpath = request.getContextPath();
+        request.setAttribute("contextpath", contextpath);
         // image URLs
         final boolean hasImg = !text.isEmpty();
         request.setAttribute("hasImg", hasImg);
-        request.setAttribute("imgurl", hostpath + "/png/" + index + encoded);
-        request.setAttribute("svgurl", hostpath + "/svg/" + index + encoded);
-        request.setAttribute("pdfurl", hostpath + "/pdf/" + index + encoded);
-        request.setAttribute("txturl", hostpath + "/txt/" + index + encoded);
-        request.setAttribute("mapurl", hostpath + "/map/" + index + encoded);
+        request.setAttribute("imgurl", contextpath + "/png/" + index + encoded);
+        request.setAttribute("svgurl", contextpath + "/svg/" + index + encoded);
+        request.setAttribute("pdfurl", contextpath + "/pdf/" + index + encoded);
+        request.setAttribute("txturl", contextpath + "/txt/" + index + encoded);
+        request.setAttribute("mapurl", contextpath + "/map/" + index + encoded);
         // map for diagram source if necessary
         final boolean hasMap = PlantumlUtils.hasCMapData(text);
         request.setAttribute("hasMap", hasMap);
@@ -277,33 +277,6 @@ public class PlantUmlServlet extends HttpServlet {
             }
         }
         request.setAttribute("map", map);
-    }
-
-    /**
-     * Get hostpath (URL base) from request.
-     *
-     * @param request http request
-     *
-     * @return hostpath
-     */
-    private String getHostpath(final HttpServletRequest request) {
-        // port
-        String port = "";
-        if (
-            (request.getScheme() == "http" && request.getServerPort() != 80)
-            ||
-            (request.getScheme() == "https" && request.getServerPort() != 443)
-        ) {
-            port = ":" + request.getServerPort();
-        }
-        // scheme
-        String scheme = request.getScheme();
-        final String forwardedProto = request.getHeader("x-forwarded-proto");
-        if (forwardedProto != null && !forwardedProto.isEmpty()) {
-            scheme = forwardedProto;
-        }
-        // hostpath
-        return scheme + "://" + request.getServerName() + port + request.getContextPath();
     }
 
     /**

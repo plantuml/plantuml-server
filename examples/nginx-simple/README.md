@@ -64,7 +64,7 @@ services:
     image: plantuml/plantuml-server:jetty
     container_name: plantuml-server
     environment:
-      - TZ="Europe/Berlin"
+      - TZ=Europe/Berlin
 
   nginx:
     image: nginx:alpine
@@ -72,7 +72,7 @@ services:
     ports:
       - "80:80"
     environment:
-      - TZ="Europe/Berlin"
+      - TZ=Europe/Berlin
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
 ```
