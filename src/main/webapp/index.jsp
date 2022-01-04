@@ -7,7 +7,7 @@
     boolean showSocialButtons = (boolean)request.getAttribute("showSocialButtons");
     boolean showGithubRibbon = (boolean)request.getAttribute("showGithubRibbon");
     // URL base
-    String hostpath = request.getAttribute("hostpath").toString();
+    String contextpath = request.getAttribute("contextpath").toString();
     // image URLs
     boolean hasImg = (boolean)request.getAttribute("hasImg");
     String imgurl = request.getAttribute("imgurl").toString();
@@ -27,20 +27,26 @@
     <meta http-equiv="expires" content="0" />
     <meta http-equiv="pragma" content="no-cache" />
     <meta http-equiv="cache-control" content="no-cache, must-revalidate" />
-    <link rel="icon" href="<%= hostpath %>/favicon.ico" type="image/x-icon"/> 
-    <link rel="shortcut icon" href="<%= hostpath %>/favicon.ico" type="image/x-icon"/>
-    <link rel="stylesheet" href="<%= hostpath %>/plantuml.css" />
-    <link rel="stylesheet" href="<%= hostpath %>/webjars/codemirror/5.63.0/lib/codemirror.css" />
-    <script src="<%= hostpath %>/webjars/codemirror/5.63.0/lib/codemirror.js"></script>
+    <link rel="icon" href="<%= contextpath %>/favicon.ico" type="image/x-icon"/> 
+    <link rel="shortcut icon" href="<%= contextpath %>/favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="<%= contextpath %>/plantuml.css" />
+    <link rel="stylesheet" href="<%= contextpath %>/webjars/codemirror/5.63.0/lib/codemirror.css" />
+    <script src="<%= contextpath %>/webjars/codemirror/5.63.0/lib/codemirror.js"></script>
     <script>
         window.onload = function() {
+            // load CodeMirror
             document.myCodeMirror = CodeMirror.fromTextArea(
                 document.getElementById("text"), 
                 { lineNumbers: true,
                   extraKeys: {Tab: false, "Shift-Tab": false} 
                 }
             );
-            };
+            // resolve relative path inside url input once
+            const url = document.getElementById("url");
+            if (!url.value.startsWith("http")) {
+                url.value = window.location.origin + url.value;
+            }
+        };
     </script>
     <title>PlantUMLServer</title>
 </head>
@@ -58,7 +64,7 @@
     </div>
     <div id="content">
         <%-- CONTENT --%>
-        <form method="post" accept-charset="utf-8"  action="<%= hostpath %>/form">
+        <form method="post" accept-charset="utf-8"  action="<%= contextpath %>/form">
             <p> <label for="text">UML Editor Content</label>
                 <textarea id="text" name="text" cols="120" rows="10"><%= net.sourceforge.plantuml.servlet.PlantUmlServlet.stringToHTMLString(decoded) %></textarea>
                 <input type="submit" value="Submit" title="Submit Code and generate diagram"/>&nbsp;
@@ -67,7 +73,7 @@
         </form>
         <hr/>
         <p>You can enter here a previously generated URL:</p>
-        <form method="post" action="<%= hostpath %>/form">
+        <form method="post" action="<%= contextpath %>/form">
             <p> <label for="url">previously generated URL</label>
                 <input id="url" name="url" type="text" size="150" value="<%= imgurl %>" />
                 <br/>
@@ -88,8 +94,12 @@
                 <%@ include file="resource/socialbuttons2.jspf" %>
             <% } %>
             <p id="diagram">
-                <img src="<%= imgurl %>" alt="PlantUML diagram" />
-                <%= map %>
+                <% if (!hasMap) { %>
+                    <img src="<%= imgurl %>" alt="PlantUML diagram" />
+                <% } else { %>
+                    <img src="<%= imgurl %>" alt="PlantUML diagram" usemap="#plantuml_map" />
+                    <%= map %>
+                <% } %>
             </p>
         <% } %>
     </div>
