@@ -5,9 +5,9 @@
 ![workflow status (Main)](https://github.com/plantuml/plantuml-server/actions/workflows/main.yml/badge.svg)
 ![workflow status (Tests)](https://github.com/plantuml/plantuml-server/actions/workflows/tests.yml/badge.svg)
 
-[![online](https://img.shields.io/endpoint?url=https://www.plantuml.com/plantuml/badge)](https://www.plantuml.com/plantuml/uml/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000)
-[![rate](https://img.shields.io/endpoint?url=https://www.plantuml.com/plantuml/rate)](https://www.plantuml.com/plantuml/uml/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000)
-[![peak](https://img.shields.io/endpoint?url=https://www.plantuml.com/plantuml/rate?peak)](https://www.plantuml.com/plantuml/uml/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000)
+[![online](https://img.shields.io/endpoint?url=https://plantuml.io/plantuml/badge)](https://plantuml.io)
+[![rate](https://img.shields.io/endpoint?url=https://plantuml.io/plantuml/rate)](https://plantuml.io)
+[![peak](https://img.shields.io/endpoint?url=https://plantuml.io/plantuml/rate?peak)](https://plantuml.io)
 
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/plantuml?logo=github)](https://github.com/sponsors/plantuml/)
 [![docker pulls](https://img.shields.io/docker/pulls/plantuml/plantuml-server.svg?color=blue)](https://hub.docker.com/r/plantuml/plantuml-server)
