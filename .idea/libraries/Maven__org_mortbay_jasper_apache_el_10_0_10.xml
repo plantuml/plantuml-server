@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.mortbay.jasper:apache-el:10.0.10">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.m2/repository/org/mortbay/jasper/apache-el/10.0.10/apache-el-10.0.10.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.m2/repository/org/mortbay/jasper/apache-el/10.0.10/apache-el-10.0.10-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.m2/repository/org/mortbay/jasper/apache-el/10.0.10/apache-el-10.0.10-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

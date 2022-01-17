@@ -100,9 +100,17 @@
 
   <dependencies>
     <dependency>
+      <!--<groupId>net.sourceforge.plantuml</groupId>
+      <artifactId>plantuml</artifactId>
+      <version>${plantuml.version}</version>-->
+
       <groupId>net.sourceforge.plantuml</groupId>
       <artifactId>plantuml</artifactId>
-      <version>${plantuml.version}</version>
+      <version>1.2022.1-SNAPSHOT</version>
+      <!--<scope>provided</scope>-->
+      <scope>system</scope>
+      <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/plantuml-1.2022.1-SNAPSHOT.jar</systemPath>
+
     </dependency>
     <dependency>
       <groupId>org.webjars.npm</groupId>

@@ -3,3 +3,9 @@ target
 .classpath
 .project
 .checkstyle
+*.iml
+target/*
+.idea/*
+/.idea/
+/target/
+._.gitignore
