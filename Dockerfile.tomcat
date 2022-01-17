@@ -1,43 +1,30 @@
-FROM maven:3-jdk-11 AS buildertomcat
+FROM maven:3-jdk-11-slim AS builder
 
 COPY pom.xml /app/
-COPY src /app/src/
+COPY src/main /app/src/main/
 
 WORKDIR /app
-RUN mvn --batch-mode --define java.net.useSystemProxies=true package
+RUN mvn --batch-mode --define java.net.useSystemProxies=true -Dapache-jsp.scope=compile package
 
 ########################################################################################
 
-FROM tomcat:9.0-jdk11-openjdk-slim as graphviz
+FROM tomcat:10-jdk11-openjdk-slim
 
 RUN apt-get update && \
-    apt-get install -y wget binutils gcc make ghostscript groff g++ fontconfig fontconfig-config fonts-dejavu-core fonts-noto-cjk file libexpat1-dev libcairo2-dev libpango1.0-dev
+    apt-get install -y --no-install-recommends \
+        fonts-noto-cjk \
+        graphviz \
+        && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN mkdir /root/build && \
-    cd /root/build && \
-    wget -O - https://www2.graphviz.org/Packages/stable/portable_source/graphviz-2.44.1.tar.gz | gzip -d | tar xvf - && \
-    cd graphviz-2.44.1 && \
-    ./configure --prefix /usr && \
-    make -j 4 && \
-    make DESTDIR=/root/install/ install-strip
+COPY docker-entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-########################################################################################
+ENV BASE_URL=ROOT \
+    WEBAPP_PATH=$CATALINA_HOME/webapps
+RUN rm -rf $WEBAPP_PATH && \
+    mkdir -p $WEBAPP_PATH
+COPY --from=builder /app/target/plantuml.war $WEBAPP_PATH/ROOT.war
 
-FROM tomcat:9.0-jdk11-openjdk-slim
-MAINTAINER D.Ducatel
-
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends fonts-noto-cjk libexpat1 libcairo2 libpango1.0 libpangoft2-1.0 libpangocairo-1.0 && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
-
-ENV GRAPHVIZ_DOT=/usr/bin/dot
-
-ARG BASE_URL=ROOT
-RUN rm -rf /usr/local/tomcat/webapps/$BASE_URL
-COPY --from=buildertomcat /app/target/plantuml.war /usr/local/tomcat/webapps/$BASE_URL.war
-
-COPY --from=graphviz /root/install/usr/bin/dot /usr/bin/
-COPY --from=graphviz /root/install/usr/lib/    /usr/lib/
-
-RUN dot -c
-
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["catalina.sh", "run"]

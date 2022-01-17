@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * Project Info:  http://plantuml.sourceforge.net
+ * Project Info:  https://plantuml.com
  *
  * This file is part of PlantUML.
  *
@@ -26,47 +26,46 @@ package net.sourceforge.plantuml.servlet;
 import java.io.IOException;
 
 import javax.imageio.IIOException;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import net.sourceforge.plantuml.FileFormat;
-
 import net.sourceforge.plantuml.servlet.utility.UmlExtractor;
+import net.sourceforge.plantuml.servlet.utility.UrlDataExtractor;
 
-/*
+/**
  * MAP servlet of the webapp.
  * This servlet produces the image map of the diagram in HTML format.
  */
-@SuppressWarnings("serial")
+@SuppressWarnings("SERIAL")
 public class MapServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         // build the UML source from the compressed request parameter
-        String uml = UmlExtractor.getUmlSource(getSource(request.getRequestURI()));
+        final String url = request.getRequestURI();
+        final String uml = UmlExtractor.getUmlSource(UrlDataExtractor.getEncodedDiagram(url, ""));
+        final int idx = UrlDataExtractor.getIndex(url, 0);
 
         // generate the response
         DiagramResponse dr = new DiagramResponse(response, getOutputFormat(), request);
         try {
-            dr.sendMap(uml);
-        } catch (IIOException iioe) {
+            dr.sendMap(uml, idx);
+        } catch (IIOException e) {
             // Browser has closed the connection, do nothing
         }
-        dr = null;
     }
 
-    public String getSource(String uri) {
-        String[] result = uri.split("/map/", 2);
-        if (result.length != 2) {
-            return "";
-        } else {
-            return result[1];
-        }
-    }
-
+    /**
+     * Gives the wished output format of the diagram.
+     * This value is used by the DiagramResponse class.
+     *
+     * @return the format for map responses
+     */
     public FileFormat getOutputFormat() {
         return FileFormat.UTXT;
     }

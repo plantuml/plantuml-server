@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * Project Info:  http://plantuml.sourceforge.net
+ * Project Info:  https://plantuml.com
  *
  * This file is part of PlantUML.
  *
@@ -28,13 +28,22 @@ import java.io.InputStream;
 
 import java.util.Properties;
 
+/**
+ * Shared PlantUML Server configuration.
+ */
 public final class Configuration {
 
+    /**
+     * Singleton configuration instance.
+     */
     private static Configuration instance;
+    /**
+     * Configuration properties.
+     */
     private Properties config;
 
     /**
-     * Singleton constructor
+     * Singleton constructor.
      */
     private Configuration() {
         config = new Properties();
@@ -57,7 +66,7 @@ public final class Configuration {
     }
 
     /**
-     * Get the configuration
+     * Get the configuration.
      *
      * @return the complete configuration
      */
@@ -69,15 +78,17 @@ public final class Configuration {
     }
 
     /**
-     * Get a boolean configuration value
+     * Get a boolean configuration value.
+     *
+     * @param key config property key
      *
      * @return true if the value is "on"
      */
     public static boolean get(final String key) {
-        if (instance.config.getProperty(key) == null) {
+        if (get().getProperty(key) == null) {
             return false;
         }
-        return instance.config.getProperty(key).startsWith("on");
+        return get().getProperty(key).startsWith("on");
     }
 
 }

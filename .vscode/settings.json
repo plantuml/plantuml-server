@@ -1,0 +1,22 @@
+{
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "cSpell.words": [
+        "Arnaud",
+        "ditaa",
+        "endditaa",
+        "enduml",
+        "epstext",
+        "etag",
+        "Lalloni",
+        "plantuml",
+        "Roques",
+        "servlet",
+        "servlets",
+        "startditaa",
+        "startuml",
+        "utxt",
+        "ghaction",
+        "buildx"
+    ],
+    "cSpell.allowCompoundWords": true
+}

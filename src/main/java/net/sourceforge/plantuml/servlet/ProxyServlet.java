@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * Project Info:  http://plantuml.sourceforge.net
+ * Project Info:  https://plantuml.com
  *
  * This file is part of PlantUML.
  *
@@ -29,11 +29,17 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.cert.Certificate;
+import java.util.List;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.imageio.IIOException;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLPeerUnverifiedException;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import net.sourceforge.plantuml.BlockUml;
 import net.sourceforge.plantuml.FileFormat;
@@ -42,19 +48,12 @@ import net.sourceforge.plantuml.SourceStringReader;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.core.UmlSource;
 
-import java.security.cert.Certificate;
-import java.util.List;
-
-import javax.imageio.IIOException;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLPeerUnverifiedException;
-
-/*
+/**
  * Proxy servlet of the webapp.
  * This servlet retrieves the diagram source of a web resource (web html page)
  * and renders it.
  */
-@SuppressWarnings("serial")
+@SuppressWarnings("SERIAL")
 public class ProxyServlet extends HttpServlet {
 
     static {
@@ -76,6 +75,7 @@ public class ProxyServlet extends HttpServlet {
             srcUrl = new URL(source);
         } catch (MalformedURLException mue) {
             mue.printStackTrace();
+            response.setStatus(400);
             return;
         }
 
@@ -94,13 +94,22 @@ public class ProxyServlet extends HttpServlet {
         DiagramResponse dr = new DiagramResponse(response, getOutputFormat(fmt), request);
         try {
             dr.sendDiagram(uml, 0);
-        } catch (IIOException iioe) {
+        } catch (IIOException e) {
             // Browser has closed the connection, so the HTTP OutputStream is closed
             // Silently catch the exception to avoid annoying log
         }
         dr = null;
     }
 
+    /**
+     * Get textual uml diagram source from URL.
+     *
+     * @param url source URL
+     *
+     * @return textual uml diagram source
+     *
+     * @throws IOException if an input or output exception occurred
+     */
     private String getSource(final URL url) throws IOException {
         String line;
         BufferedReader rd;
@@ -123,6 +132,14 @@ public class ProxyServlet extends HttpServlet {
         return "";
     }
 
+    /**
+     * Get {@link FileFormat} instance from string.
+     *
+     * @param format file format name
+     *
+     * @return corresponding file format instance,
+     *         if {@code format} is null or unknown the default {@link FileFormat#PNG} will be returned
+     */
     private FileFormat getOutputFormat(String format) {
         if (format == null) {
             return FileFormat.PNG;
@@ -142,11 +159,20 @@ public class ProxyServlet extends HttpServlet {
         return FileFormat.PNG;
     }
 
+    /**
+     * Get open http connection from URL.
+     *
+     * @param url URL to open connection
+     *
+     * @return open http connection
+     *
+     * @throws IOException if an input or output exception occurred
+     */
     private HttpURLConnection getConnection(final URL url) throws IOException {
         final HttpURLConnection con = (HttpURLConnection) url.openConnection();
-        if (con instanceof HttpsURLConnection) {
-            // printHttpsCert((HttpsURLConnection) con);
-        }
+        //if (con instanceof HttpsURLConnection) {
+        //    printHttpsCert((HttpsURLConnection) con);
+        //}
         con.setRequestMethod("GET");
         String token = System.getenv("HTTP_AUTHORIZATION");
         if (token != null) {
@@ -158,7 +184,8 @@ public class ProxyServlet extends HttpServlet {
     }
 
     /**
-     * Debug method used to dump the certificate info
+     * Debug method used to dump the certificate info.
+     *
      * @param con the https connection
      */
     @SuppressWarnings("unused")

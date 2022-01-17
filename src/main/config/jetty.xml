@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "https://www.eclipse.org/jetty/configure_10_0.dtd">
+
+<!-- =============================================================== -->
+<!-- Configure a Jetty Server instance with an ID "Server"           -->
+<!-- Other configuration files may also configure the "Server"       -->
+<!-- ID, in which case they are adding configuration to the same     -->
+<!-- instance.  If other configuration have a different ID, they     -->
+<!-- will create and configure another instance of Jetty.            -->
+<!-- Consult the javadoc of o.e.j.server.Server for all              -->
+<!-- configuration that may be set here.                             -->
+<!-- =============================================================== -->
+<Configure id="Server" class="org.eclipse.jetty.server.Server">
+
+  <!-- =========================================================== -->
+  <!-- Http Configuration.                                         -->
+  <!-- This is a common configuration instance used by all         -->
+  <!-- connectors that can carry HTTP semantics (HTTP, HTTPS, etc.)-->
+  <!-- It configures the non wire protocol aspects of the HTTP     -->
+  <!-- semantic.                                                   -->
+  <!--                                                             -->
+  <!-- This configuration is only defined here and is used by      -->
+  <!-- reference from other XML files such as jetty-http.xml,      -->
+  <!-- jetty-https.xml and other configuration files which         -->
+  <!-- instantiate the connectors.                                 -->
+  <!--                                                             -->
+  <!-- Consult the javadoc of o.e.j.server.HttpConfiguration       -->
+  <!-- for all configuration that may be set here.                 -->
+  <!-- =========================================================== -->
+  <New id="httpConfig" class="org.eclipse.jetty.server.HttpConfiguration">
+    <Set name="secureScheme" property="jetty.httpConfig.secureScheme"/>
+    <Set name="securePort" property="jetty.httpConfig.securePort"/>
+    <Set name="outputBufferSize" property="jetty.httpConfig.outputBufferSize"/>
+    <Set name="outputAggregationSize" property="jetty.httpConfig.outputAggregationSize"/>
+    <Set name="requestHeaderSize" property="jetty.httpConfig.requestHeaderSize"/>
+    <Set name="responseHeaderSize" property="jetty.httpConfig.responseHeaderSize"/>
+    <Set name="sendServerVersion" property="jetty.httpConfig.sendServerVersion"/>
+    <Set name="sendDateHeader"><Property name="jetty.httpConfig.sendDateHeader" default="false"/></Set>
+    <Set name="headerCacheSize" property="jetty.httpConfig.headerCacheSize"/>
+    <Set name="delayDispatchUntilContent" property="jetty.httpConfig.delayDispatchUntilContent"/>
+    <Set name="maxErrorDispatches" property="jetty.httpConfig.maxErrorDispatches"/>
+    <Set name="persistentConnectionsEnabled" property="jetty.httpConfig.persistentConnectionsEnabled"/>
+    <Set name="httpCompliance"><Call class="org.eclipse.jetty.http.HttpCompliance" name="from"><Arg><Property name="jetty.httpConfig.compliance" deprecated="jetty.http.compliance" default="RFC7230"/></Arg></Call></Set>
+    <!-- Changed from "SAFE" to "DEFAULT,AMBIGUOUS_EMPTY_SEGMENT" -->
+    <Set name="uriCompliance"><Call class="org.eclipse.jetty.http.UriCompliance" name="from"><Arg><Property name="jetty.httpConfig.uriCompliance" default="DEFAULT,AMBIGUOUS_EMPTY_SEGMENT"/></Arg></Call></Set>
+    <Set name="requestCookieCompliance"><Call class="org.eclipse.jetty.http.CookieCompliance" name="valueOf"><Arg><Property name="jetty.httpConfig.requestCookieCompliance" default="RFC6265"/></Arg></Call></Set>
+    <Set name="responseCookieCompliance"><Call class="org.eclipse.jetty.http.CookieCompliance" name="valueOf"><Arg><Property name="jetty.httpConfig.responseCookieCompliance" default="RFC6265"/></Arg></Call></Set>
+    <Set name="relativeRedirectAllowed"><Property name="jetty.httpConfig.relativeRedirectAllowed" default="false"/></Set>
+    <Set name="useInputDirectByteBuffers" property="jetty.httpConfig.useInputDirectByteBuffers"/>
+    <Set name="useOutputDirectByteBuffers" property="jetty.httpConfig.useOutputDirectByteBuffers"/>
+  </New>
+
+  <New id="httpConnectionFactory" class="org.eclipse.jetty.server.HttpConnectionFactory">
+    <Arg name="config"><Ref refid="httpConfig" /></Arg>
+  </New>
+
+  <New id="httpConnector" class="org.eclipse.jetty.server.ServerConnector">
+    <Arg name="server"><Ref refid="Server" /></Arg>
+    <Arg name="factories">
+      <Array type="org.eclipse.jetty.server.ConnectionFactory">
+        <Item>
+          <Ref refid="httpConnectionFactory" />
+        </Item>
+      </Array>
+    </Arg>
+
+    <!-- Change port according to property. Default is 8080 -->
+    <Set name="port"><Property name="jetty.http.port" deprecated="jetty.port" default="8080" /></Set>
+  </New>
+
+  <!-- =========================================================== -->
+  <!-- Add http Connector                                          -->
+  <!-- =========================================================== -->
+  <Call name="addConnector">
+    <Arg><Ref refid="httpConnector" /></Arg>
+  </Call>
+</Configure>

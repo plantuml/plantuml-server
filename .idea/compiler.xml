@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="plantumlservlet" target="1.7" />
+      <module name="plantumlservlet" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

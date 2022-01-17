@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * Project Info:  http://plantuml.sourceforge.net
+ * Project Info:  https://plantuml.com
  *
  * This file is part of PlantUML.
  *
@@ -23,14 +23,15 @@
  */
 package net.sourceforge.plantuml.servlet;
 
-import net.sourceforge.plantuml.syntax.LanguageDescriptor;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintStream;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import net.sourceforge.plantuml.syntax.LanguageDescriptor;
 
 /**
  * Servlet used to inspect the language keywords of the running PlantUML server.

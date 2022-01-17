@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * Project Info:  http://plantuml.sourceforge.net
+ * Project Info:  https://plantuml.com
  *
  * This file is part of PlantUML.
  *
@@ -26,47 +26,45 @@ package net.sourceforge.plantuml.servlet;
 import java.io.IOException;
 
 import javax.imageio.IIOException;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import net.sourceforge.plantuml.FileFormat;
-
 import net.sourceforge.plantuml.servlet.utility.UmlExtractor;
+import net.sourceforge.plantuml.servlet.utility.UrlDataExtractor;
 
-/*
+/**
  * Check servlet of the webapp.
  * This servlet checks the syntax of the diagram and send a report in TEXT format.
  */
-@SuppressWarnings("serial")
+@SuppressWarnings("SERIAL")
 public class CheckSyntaxServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         // build the UML source from the compressed request parameter
-        String uml = UmlExtractor.getUmlSource(getSource(request.getRequestURI()));
+        final String url = request.getRequestURI();
+        final String uml = UmlExtractor.getUmlSource(UrlDataExtractor.getEncodedDiagram(url, ""));
 
         // generate the response
         DiagramResponse dr = new DiagramResponse(response, getOutputFormat(), request);
         try {
             dr.sendCheck(uml);
-        } catch (IIOException iioe) {
+        } catch (IIOException e) {
             // Browser has closed the connection, do nothing
         }
-        dr = null;
     }
 
-    public String getSource(String uri) {
-        String[] result = uri.split("/check/", 2);
-        if (result.length != 2) {
-            return "";
-        } else {
-            return result[1];
-        }
-    }
-
+    /**
+     * Gives the wished output format of the diagram.
+     * This value is used by the DiagramResponse class.
+     *
+     * @return the format for check responses
+     */
     public FileFormat getOutputFormat() {
         return FileFormat.UTXT;
     }
