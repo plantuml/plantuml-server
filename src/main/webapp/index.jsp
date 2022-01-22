@@ -57,7 +57,7 @@
         <%-- CONTENT --%>
         <form method="post" accept-charset="utf-8"  action="<%= hostpath %>/form">
             <p>
-                <textarea id="text" name="text" cols="120" rows="10"><%= decoded %></textarea>
+                <textarea id="text" name="text" cols="120" rows="10"><%= net.sourceforge.plantuml.servlet.PlantUmlServlet.stringToHTMLString(decoded) %></textarea>
                 <input type="submit" />
             </p>
         </form>
