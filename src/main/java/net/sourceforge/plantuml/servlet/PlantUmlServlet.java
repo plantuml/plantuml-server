@@ -82,7 +82,7 @@ public class PlantUmlServlet extends HttpServlet {
         final StringBuffer sb = new StringBuffer(string.length());
         // true if last char was blank
         final int length = string.length();
-        for (int offset = 0; offset < length; ) {
+        for (int offset = 0; offset < length;) {
             final int c = string.codePointAt(offset);
             if (c == ' ') {
                 sb.append(' ');
@@ -102,7 +102,7 @@ public class PlantUmlServlet extends HttpServlet {
                 int ci = 0xffffff & c;
                 if (ci < 160) {
                     // nothing special only 7 Bit
-                    sb.append((char)c);
+                    sb.append((char) c);
                 } else {
                     // Not 7 Bit use the unicode system
                     sb.append("&#");
