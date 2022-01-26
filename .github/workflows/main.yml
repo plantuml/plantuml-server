@@ -128,7 +128,7 @@ jobs:
             latest=false
             prefix=
             suffix=
-          images: plantuml/plantuml-server
+          images: nikolaidamm/plantuml-server
           tags: |
             type=semver,pattern=tomcat-{{raw}}
             type=raw,value=tomcat
@@ -141,7 +141,7 @@ jobs:
             latest=true
             prefix=
             suffix=
-          images: plantuml/plantuml-server
+          images: nikolaidamm/plantuml-server
           tags: |
             type=semver,pattern={{raw}}
             type=semver,pattern=jetty-{{raw}}
