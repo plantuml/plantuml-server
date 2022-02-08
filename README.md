@@ -132,9 +132,7 @@ You can set all  the following variables:
 ## Alternate: How to build your docker image
 
 This method uses maven to run the application. That requires internet connectivity.
-So, you can use following command to create a self-contained docker image that will "just-work".
-
-*Note: Generate the WAR (instructions further below) prior to running "docker build"*
+So, you can use following command to create a self-contained docker image that will "just work".
 
 ```sh
 docker image build -f Dockerfile.jetty -t plantuml-server:local .
