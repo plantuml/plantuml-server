@@ -74,7 +74,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://plantuml.github.io/plantuml-server/index.html/checkstyle.html#net.sourceforge.plantuml.servlet.UmlDiagramService.java">net/sourceforge/plantuml/servlet/UmlDiagramService.java</a>
+                  <a href="https://plantuml.github.io/plantuml-server/index.html/checkstyle.html#net.sourceforge.plantuml.servlet.CheckSyntaxServlet.java">net/sourceforge/plantuml/servlet/CheckSyntaxServlet.java</a>
                 </td>
                 <td>
                   0
@@ -88,7 +88,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://plantuml.github.io/plantuml-server/index.html/checkstyle.html#net.sourceforge.plantuml.servlet.CheckSyntaxServlet.java">net/sourceforge/plantuml/servlet/CheckSyntaxServlet.java</a>
+                  <a href="https://plantuml.github.io/plantuml-server/index.html/checkstyle.html#net.sourceforge.plantuml.servlet.UmlDiagramService.java">net/sourceforge/plantuml/servlet/UmlDiagramService.java</a>
                 </td>
                 <td>
                   0
