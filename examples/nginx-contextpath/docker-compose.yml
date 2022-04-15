@@ -6,7 +6,7 @@ services:
     container_name: plantuml-server
     environment:
       - TZ="Europe/Berlin"
-      - BASE_URL="plantuml"
+      - BASE_URL=plantuml
 
   nginx:
     image: nginx:alpine
