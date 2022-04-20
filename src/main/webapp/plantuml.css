@@ -26,13 +26,15 @@ h1, p, #content a {
 #content textarea, #content .CodeMirror, #content input[type=text] {
     background-color: #ffc;
     font-family: monospace;
-    font-size: medium;
     width: 100%;
-    resize: vertical;
 }
 
-#content input[type=text] {
-    border: 0;
+#content .code-block {
+    height: 400px;
+}
+
+#content textarea, #content .CodeMirror {
+    height: 100%;
 }
 
 /* Diagram */
@@ -53,4 +55,27 @@ h1, p, #content a {
     padding: 2px;
     text-align: center;
     width: 100%;
+}
+
+.inline-form {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin: 3px 0 5px 0;
+}
+
+.inline-input-wrapper {
+    flex-grow: 10;
+}
+
+#autorefresh {
+    cursor: pointer;
+}
+
+#autorefresh.on {
+    filter: invert(25%) sepia(97%) saturate(2026%) hue-rotate(201deg) brightness(91%) contrast(98%);
+}
+
+#autorefresh.off {
+    filter: invert(94%) sepia(0%) saturate(7471%) hue-rotate(37deg) brightness(91%) contrast(87%);
 }

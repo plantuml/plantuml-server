@@ -57,6 +57,7 @@
     <!-- Please keep the jetty version identical with the docker image -->
     <jetty.version>11.0.7</jetty.version>
     <codemirror.version>5.63.0</codemirror.version>
+    <zopfli.js.version>1.0.0</zopfli.js.version>
 
     <!-- dependencies -->
     <jstl.version>1.2</jstl.version>
@@ -108,6 +109,11 @@
       <groupId>org.webjars.npm</groupId>
       <artifactId>codemirror</artifactId>
       <version>${codemirror.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.webjars.npm</groupId>
+      <artifactId>zopfli.js</artifactId>
+      <version>${zopfli.js.version}</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
@@ -340,6 +346,13 @@
                   <artifactId>codemirror</artifactId>
                   <version>${codemirror.version}</version>
                   <includes>**/lib/*.js,**/lib/*.css</includes>
+                  <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.webjars.npm</groupId>
+                  <artifactId>zopfli.js</artifactId>
+                  <version>${zopfli.js.version}</version>
+                  <includes>**/bin/*.js</includes>
                   <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                 </artifactItem>
               </artifactItems>
