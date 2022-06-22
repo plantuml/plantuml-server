@@ -46,7 +46,7 @@ under the License.
           <tbody>
                           <tr>
                 <td>
-                  <a href="https://plantuml.github.io/plantuml-server/index.html/checkstyle.html#net.sourceforge.plantuml.servlet.PlantUmlServlet.java">net/sourceforge/plantuml/servlet/PlantUmlServlet.java</a>
+                  <a href="https://plantuml.github.io/plantuml-server/index.html/checkstyle.html#net.sourceforge.plantuml.servlet.ProxyServlet.java">net/sourceforge/plantuml/servlet/ProxyServlet.java</a>
                 </td>
                 <td>
                   0
@@ -60,7 +60,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://plantuml.github.io/plantuml-server/index.html/checkstyle.html#net.sourceforge.plantuml.servlet.ProxyServlet.java">net/sourceforge/plantuml/servlet/ProxyServlet.java</a>
+                  <a href="https://plantuml.github.io/plantuml-server/index.html/checkstyle.html#net.sourceforge.plantuml.servlet.PlantUmlServlet.java">net/sourceforge/plantuml/servlet/PlantUmlServlet.java</a>
                 </td>
                 <td>
                   0
