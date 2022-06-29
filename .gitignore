@@ -1,5 +1,13 @@
+# Eclipse Ignores
 target
 .settings
 .classpath
 .project
 .checkstyle
+
+# IntelliJ ignores
+.idea/
+out/
+*.iml
+*.ipr
+*.iws
