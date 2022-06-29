@@ -174,6 +174,7 @@ public class DiagramResponse {
         if (idx < 0) {
             idx = 0;
         }
+        response.addHeader("Access-Control-Allow-Origin", "*");
         response.setContentType(getContentType());
         SourceStringReader reader = new SourceStringReader(uml);
         final BlockUml blockUml = reader.getBlocks().get(0);
