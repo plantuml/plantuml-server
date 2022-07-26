@@ -23,11 +23,15 @@
  */
 package net.sourceforge.plantuml.servlet;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,6 +50,7 @@ import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.error.PSystemError;
+import net.sourceforge.plantuml.preproc.Defines;
 import net.sourceforge.plantuml.version.Version;
 
 /**
@@ -62,6 +67,8 @@ public class DiagramResponse {
      * X-Powered-By http header value included in every response by default.
      */
     private static final String POWERED_BY = "PlantUML Version " + Version.versionString();
+
+    private static final List<String> CONFIG = new ArrayList<>();
 
     static {
         OptionFlags.ALLOW_INCLUDE = false;
@@ -114,7 +121,28 @@ public class DiagramResponse {
     public void sendDiagram(String uml, int idx) throws IOException {
         response.addHeader("Access-Control-Allow-Origin", "*");
         response.setContentType(getContentType());
-        SourceStringReader reader = new SourceStringReader(uml);
+
+        if (CONFIG.size() == 0 && System.getenv("PLANTUML_CONFIG_FILE") != null) {
+            // Read config
+            final BufferedReader br = new BufferedReader(new FileReader(System.getenv("PLANTUML_CONFIG_FILE")));
+            if (br == null) {
+                return;
+            }
+            try {
+                String s = null;
+                while ((s = br.readLine()) != null) {
+                    CONFIG.add(s);
+                }
+            } finally {
+                br.close();
+            }
+        }
+
+        SourceStringReader reader = new SourceStringReader(Defines.createEmpty(), uml, CONFIG);
+        if (CONFIG.size() > 0 && reader.getBlocks().get(0).getDiagram().getWarningOrError() != null) {
+            reader = new SourceStringReader(uml);
+        }
+
         if (format == FileFormat.BASE64) {
             byte[] imageBytes;
             try (ByteArrayOutputStream outstream = new ByteArrayOutputStream()) {

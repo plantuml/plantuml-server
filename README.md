@@ -115,6 +115,9 @@ You can set all  the following variables:
 * `BASE_URL`
   * PlantUML Base URL path
   * Default value: `ROOT`
+* `PLANTUML_CONFIG_FILE`
+  * Local path to a PlantUML configuration file (identical to the `-config` flag on the CLI)
+  * Default value: `null`
 * `PLANTUML_LIMIT_SIZE`
   * Limits image width and height
   * Default value: `4096`
