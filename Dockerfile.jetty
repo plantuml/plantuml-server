@@ -36,3 +36,7 @@ RUN rm -rf $WEBAPP_PATH && \
 COPY --from=builder /app/target/plantuml.war $WEBAPP_PATH/ROOT.war
 
 ENTRYPOINT ["/entrypoint.sh"]
+# Openshift https://docs.openshift.com/container-platform/4.9/openshift_images/create-images.html#images-create-guide-openshift_create-images
+USER root 
+RUN chgrp -R 0 $JETTY_BASE &&   chmod -R g=u $JETTY_BASE
+RUN chgrp -R 0 /tmp &&   chmod -R g=u /tmp
