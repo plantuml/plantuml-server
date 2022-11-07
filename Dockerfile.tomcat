@@ -28,3 +28,6 @@ COPY --from=builder /app/target/plantuml.war $WEBAPP_PATH/ROOT.war
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["catalina.sh", "run"]
+# Openshift https://docs.openshift.com/container-platform/4.9/openshift_images/create-images.html#images-create-guide-openshift_create-images
+USER root 
+RUN chgrp -R 0 $$CATALINA_HOME &&   chmod -R g=u $CATALINA_HOME
