@@ -64,6 +64,9 @@ public class ProxyServlet extends HttpServlet {
     }
 
     public static boolean forbiddenURL(String full) {
+        if (full == null) {
+            return true;
+        }
         if (full.startsWith("https://") == false && full.startsWith("http://") == false) {
             return true;
         }
