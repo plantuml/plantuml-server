@@ -12,6 +12,7 @@ public class TestProxy extends WebappTestCase {
      * Verifies the proxified reception of the default Bob and Alice diagram
      */
     public void testDefaultProxy() throws IOException {
+        net.sourceforge.plantuml.servlet.ProxyServlet.goTest();
         final URL url = new URL(getServerUrl() + "/proxy?src=" + getServerUrl() + "/resource/test2diagrams.txt");
         final URLConnection conn = url.openConnection();
         // Analyze response
