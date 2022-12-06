@@ -63,12 +63,34 @@ public class ProxyServlet extends HttpServlet {
         }
     }
 
+    public static boolean forbiddenURL(String full) {
+        if (full.startsWith("https://") == false && full.startsWith("http://") == false) {
+            return true;
+        }
+        if (full.matches("^https?://[-#.0-9:\\[\\]+]+/.*")) {
+            return true;
+        }
+        if (full.matches("^https?://[^.]+/.*")) {
+            return true;
+        }
+        if (full.matches("^https?://[^.]+$")) {
+            return true;
+        }
+        return false;
+    }
+
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         final String fmt = request.getParameter("fmt");
         final String source = request.getParameter("src");
         final String index = request.getParameter("idx");
+        if (forbiddenURL(source)) {
+            response.setStatus(400);
+            return;
+        }
+
         final URL srcUrl;
         // Check if the src URL is valid
         try {

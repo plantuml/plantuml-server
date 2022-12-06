@@ -68,6 +68,11 @@ public class OldProxyServlet extends HttpServlet {
         String num = proxyMatcher.group(2); // Optional number of the diagram source
         String format = proxyMatcher.group(4); // Expected format of the generated diagram
         String sourceURL = proxyMatcher.group(5);
+        if (ProxyServlet.forbiddenURL(sourceURL)) {
+            response.setStatus(400);
+            return;
+        }
+
         handleImageProxy(response, num, format, sourceURL);
     }
 
