@@ -42,6 +42,7 @@ public abstract class WebappTestCase extends TestCase {
 
     @Override
     public void setUp() throws Exception {
+        net.sourceforge.plantuml.servlet.ProxyServlet.goTest();
         serverUtils.startServer();
         // logger.info(getServerUrl());
     }

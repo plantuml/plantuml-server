@@ -63,7 +63,16 @@ public class ProxyServlet extends HttpServlet {
         }
     }
 
+    private static boolean inTest = false;
+
+    public static void goTest() {
+        inTest = true;
+    }
+
     public static boolean forbiddenURL(String full) {
+        if (inTest) {
+            return false;
+        }
         if (full == null) {
             return true;
         }
