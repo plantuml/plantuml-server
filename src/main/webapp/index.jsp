@@ -86,7 +86,7 @@
                 <%@ include file="resource/socialbuttons2.jspf" %>
             <% } %>
             <p id="diagram">
-                <img src="<%= svgurl %>" alt="PlantUML diagram" />
+                <img src="<%= imgurl %>" alt="PlantUML diagram" />
                 <%= map %>
             </p>
         <% } %>
