@@ -24,15 +24,27 @@ h1, p, #content a {
 
 /* Form inputs */
 #content textarea, #content .CodeMirror, #content input[type=text] {
-    background-color: #ffc;
+    background-color: #ffffff;
     font-family: monospace;
     font-size: medium;
     width: 100%;
     resize: vertical;
+    border: 3px solid #ccc !important;
 }
 
 #content input[type=text] {
     border: 0;
+}
+
+#content input[type="submit"] {
+    margin-top: 10px;
+    padding: 5px;
+    background: #fafafa;
+    border: 1px solid black;
+}
+
+#content input[type="submit"]:hover {
+    background: #f0f0f0;
 }
 
 /* Diagram */
