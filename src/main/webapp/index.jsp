@@ -95,6 +95,7 @@
         var clipboard_write=false;
         var clipboard_read=false;
         
+        if (navigator.permissions){
         navigator.permissions.query({ name: "clipboard-write" }).then((result) => {
             if (result.state == "granted" || result.state == "prompt") {
                 clipboard_write = true;
@@ -105,6 +106,7 @@
                 clipboard_read = true;
             }
         });
+        };
 
     function copyToClipboard(fieldid, fielddesc) {
         if (clipboard_write == true){
