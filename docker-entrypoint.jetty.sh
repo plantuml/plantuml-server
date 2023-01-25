@@ -3,11 +3,8 @@
 # cspell:enableCompoundWords
 ###########################################################
 
-# use environment variables
-if [ "$BASE_URL" != "ROOT" ]; then
-    mkdir -p "$(dirname "$WEBAPP_PATH/$BASE_URL")"
-    mv "$WEBAPP_PATH/ROOT.war" "$WEBAPP_PATH/$BASE_URL.war"
-fi
+# ensure context path starts with a slash
+export CONTEXT_PATH="/${BASE_URL#'/'}"
 
 # base image entrypoint
 if [ -x /docker-entrypoint.sh ]; then
