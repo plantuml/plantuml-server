@@ -53,7 +53,7 @@
     <jetty.contextpath>/${wtp.contextName}</jetty.contextpath>
 
     <!-- main versions -->
-    <plantuml.version>1.2023.0</plantuml.version>
+    <plantuml.version>1.2023.1</plantuml.version>
     <!-- Please keep the jetty version identical with the docker image -->
     <jetty.version>11.0.7</jetty.version>
     <codemirror.version>5.63.0</codemirror.version>
