@@ -112,6 +112,15 @@
   </servlet-mapping>
 
   <servlet>
+    <servlet-name>pdfservlet</servlet-name>
+    <servlet-class>net.sourceforge.plantuml.servlet.PdfServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>pdfservlet</servlet-name>
+    <url-pattern>/pdf/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
     <servlet-name>epsservlet</servlet-name>
     <servlet-class>net.sourceforge.plantuml.servlet.EpsServlet</servlet-class>
   </servlet>
