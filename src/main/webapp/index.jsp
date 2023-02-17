@@ -13,6 +13,7 @@
     String imgurl = request.getAttribute("imgurl").toString();
     String svgurl = request.getAttribute("svgurl").toString();
     String txturl = request.getAttribute("txturl").toString();
+    String pdfurl = request.getAttribute("pdfurl").toString();
     String mapurl = request.getAttribute("mapurl").toString();
     // map for diagram source if necessary
     boolean hasMap = (boolean)request.getAttribute("hasMap");
@@ -79,6 +80,7 @@
             <a href="<%= imgurl %>" title="View diagram as PNG">View as PNG</a>&nbsp;
             <a href="<%= svgurl %>" title="View diagram as SVG">View as SVG</a>&nbsp;
             <a href="<%= txturl %>" title="View diagram as ASCII Art">View as ASCII Art</a>&nbsp;
+            <a href="<%= pdfurl %>" title="View diagram as PDF">View as PDF</a>&nbsp;
             <% if (hasMap) { %>
                 <a href="<%= mapurl %>">View Map Data</a>
             <% } %>

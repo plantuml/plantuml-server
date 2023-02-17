@@ -262,6 +262,7 @@ public class PlantUmlServlet extends HttpServlet {
         request.setAttribute("hasImg", hasImg);
         request.setAttribute("imgurl", hostpath + "/png/" + index + encoded);
         request.setAttribute("svgurl", hostpath + "/svg/" + index + encoded);
+        request.setAttribute("pdfurl", hostpath + "/pdf/" + index + encoded);
         request.setAttribute("txturl", hostpath + "/txt/" + index + encoded);
         request.setAttribute("mapurl", hostpath + "/map/" + index + encoded);
         // map for diagram source if necessary
