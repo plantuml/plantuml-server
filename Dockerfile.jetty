@@ -41,3 +41,5 @@ USER root
 RUN chgrp -R 0 $JETTY_BASE &&   chmod -R g=u $JETTY_BASE
 RUN chgrp -R 0 /tmp &&   chmod -R g=u /tmp
 USER jetty
+
+VOLUME ["/tmp/jetty"]
