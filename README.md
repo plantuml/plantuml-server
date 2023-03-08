@@ -24,6 +24,24 @@ PlantUML Server is a web application to generate UML diagrams on-the-fly.
 To know more about PlantUML, please visit https://plantuml.com.
 
 
+## How to use
+
+Use the docker-compose file
+Notice that only the jetty image has been tweaked to work in the KB network
+
+`docker-compose up`
+
+## Usage
+
+Navigate to localhost:8080/plant-uml
+Paste one of the samples from [plantuml-stdlib/C4-PlantUML](https://github.com/plantuml-stdlib/C4-PlantUML/tree/master/samples)
+
+
+
+
+
+
+
 ## Requirements
 
 - jre/jdk 11 or above

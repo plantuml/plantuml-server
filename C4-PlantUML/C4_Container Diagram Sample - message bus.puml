@@ -1,0 +1,41 @@
+@startuml "messagebus"
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+' uncomment the following line and comment the first to use locally
+' !include C4_Container.puml
+
+AddElementTag("microService", $shape=EightSidedShape(), $bgColor="CornflowerBlue", $fontColor="white", $legendText="micro service\neight sided")
+AddElementTag("storage", $shape=RoundedBoxShape(), $bgColor="lightSkyBlue", $fontColor="white")
+
+SHOW_PERSON_OUTLINE()
+
+Person(customer, Customer, "A customer")
+
+System_Boundary(c1, "Customer Information") {
+    Container(app, "Customer Application", "Javascript, Angular", "Allows customers to manage their profile")
+    Container(customer_service, "Customer Service", "Java, Spring Boot", "The point of access for customer information", $tags = "microService")
+    Container(message_bus, "Message Bus", "RabbitMQ", "Transport for business events")
+    Container(reporting_service, "Reporting Service", "Ruby", "Creates normalised data for reporting purposes", $tags = "microService")
+    Container(audit_service, "Audit Service", "C#/.NET", "Provides organisation-wide auditing facilities", $tags = "microService")
+    ContainerDb(customer_db, "Customer Database", "Oracle 12c", "Stores customer information", $tags = "storage")
+    ContainerDb(reporting_db, "Reporting Database", "MySQL", "Stores a normalized version of all business data for ad hoc reporting purposes", $tags = "storage")
+    Container(audit_store, "Audit Store", "Event Store", "Stores information about events that have happened", $tags = "storage")
+}
+
+Rel_D(customer, app, "Uses", "HTTPS")
+
+Rel_D(app, customer_service, "Updates customer information using", "async, JSON/HTTPS")
+
+Rel_U(customer_service, app, "Sends events to", "WebSocket")
+Rel_U(customer_service, message_bus, "Sends customer update events to")
+Rel(customer_service, customer_db, "Stores data in", "JDBC")
+
+Rel(message_bus, reporting_service, "Sends customer update events to")
+Rel(message_bus, audit_service, "Sends customer update events to")
+
+Rel(reporting_service, reporting_db, "Stores data in")
+Rel(audit_service, audit_store, "Stores events in")
+
+Lay_R(reporting_service, audit_service)
+
+SHOW_LEGEND()
+@enduml
