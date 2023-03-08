@@ -4,11 +4,31 @@ COPY pom.xml /app/
 COPY src/main /app/src/main/
 
 WORKDIR /app
+
+# Refresh zscaler certificates
+RUN set -e; \
+  export DEBIAN_FRONTEND=noninteractive; \
+  apt-get update; \
+  apt-get install -y --no-install-recommends ca-certificates
+
+RUN apt-get install openssl -y
+RUN apt-get install gawk -y
+RUN awk --version
+
+RUN mkdir -p /usr/local/share/ca-certificates/
+ADD refresh-zscaler-certificates.sh .
+RUN sh ./refresh-zscaler-certificates.sh
+RUN ls -lisa /usr/local/share/ca-certificates/*.crt
+RUN chmod 644 /usr/local/share/ca-certificates/*.crt && update-ca-certificates
+
+
 RUN mvn --batch-mode --define java.net.useSystemProxies=true package
 
 ########################################################################################
 
 FROM jetty:11.0.7-jre11-slim
+
+
 
 # Proxy and OldProxy need empty path segments support in URIs
 # Hence: allow AMBIGUOUS_EMPTY_SEGMENT
@@ -16,6 +36,19 @@ FROM jetty:11.0.7-jre11-slim
 RUN sed -i 's/# jetty\.httpConfig\.uriCompliance=DEFAULT/jetty.httpConfig.uriCompliance=DEFAULT,AMBIGUOUS_EMPTY_SEGMENT/g' /var/lib/jetty/start.d/server.ini
 
 USER root
+
+# Refresh zscaler certificates
+COPY --from=builder /usr/local/share/ca-certificates/*.crt /usr/local/share/ca-certificates/
+RUN ls -lisa /usr/local/share/ca-certificates/*.crt
+
+RUN keytool -cacerts -importcert -file /usr/local/share/ca-certificates/zscaler-cert1.crt -storepass changeit -keypass changeit -alias zscaler1 -noprompt
+RUN keytool -cacerts -importcert -file /usr/local/share/ca-certificates/zscaler-cert2.crt -storepass changeit -keypass changeit -alias zscaler2 -noprompt
+RUN keytool -cacerts -importcert -file /usr/local/share/ca-certificates/zscaler-cert3.crt -storepass changeit -keypass changeit -alias zscaler3 -noprompt
+
+#AFTER
+RUN keytool -cacerts -list |grep 'zscaler'
+
+
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         fonts-noto-cjk \
@@ -27,6 +60,7 @@ RUN apt-get update && \
 COPY docker-entrypoint.jetty.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
+
 USER jetty
 
 ENV WEBAPP_PATH=$JETTY_BASE/webapps
@@ -34,6 +68,10 @@ RUN rm -rf $WEBAPP_PATH && \
     mkdir -p $WEBAPP_PATH
 COPY --from=builder /app/target/plantuml.war /plantuml.war
 COPY ROOT.jetty.xml $WEBAPP_PATH/ROOT.xml
+
+
+#RUN chmod 644 /usr/local/share/ca-certificates/*.crt && update-ca-certificates
+
 
 ENTRYPOINT ["/entrypoint.sh"]
 # Openshift https://docs.openshift.com/container-platform/4.9/openshift_images/create-images.html#images-create-guide-openshift_create-images
