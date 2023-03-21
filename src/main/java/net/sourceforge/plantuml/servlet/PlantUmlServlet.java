@@ -254,17 +254,14 @@ public class PlantUmlServlet extends HttpServlet {
         // properties
         request.setAttribute("showSocialButtons", Configuration.get("SHOW_SOCIAL_BUTTONS"));
         request.setAttribute("showGithubRibbon", Configuration.get("SHOW_GITHUB_RIBBON"));
-        // URL base
-        final String contextpath = request.getContextPath();
-        request.setAttribute("contextpath", contextpath);
         // image URLs
         final boolean hasImg = !text.isEmpty();
         request.setAttribute("hasImg", hasImg);
-        request.setAttribute("imgurl", contextpath + "/png/" + index + encoded);
-        request.setAttribute("svgurl", contextpath + "/svg/" + index + encoded);
-        request.setAttribute("pdfurl", contextpath + "/pdf/" + index + encoded);
-        request.setAttribute("txturl", contextpath + "/txt/" + index + encoded);
-        request.setAttribute("mapurl", contextpath + "/map/" + index + encoded);
+        request.setAttribute("imgurl", "png/" + index + encoded);
+        request.setAttribute("svgurl", "svg/" + index + encoded);
+        request.setAttribute("pdfurl", "pdf/" + index + encoded);
+        request.setAttribute("txturl", "txt/" + index + encoded);
+        request.setAttribute("mapurl", "map/" + index + encoded);
         // map for diagram source if necessary
         final boolean hasMap = PlantumlUtils.hasCMapData(text);
         request.setAttribute("hasMap", hasMap);
@@ -312,14 +309,13 @@ public class PlantUmlServlet extends HttpServlet {
         String encoded,
         Integer index
     ) throws IOException {
-        final String result;
+        final String path;
         if (index == null || index < 0) {
-            result = request.getContextPath() + "/uml/" + encoded;
+            path = request.getContextPath() + "/uml/" + encoded;
         } else {
-            result = request.getContextPath() + "/uml/" + index + "/" + encoded;
+            path = request.getContextPath() + "/uml/" + index + "/" + encoded;
         }
-
-        response.sendRedirect(result);
+        response.sendRedirect(path);
     }
 
     /**
