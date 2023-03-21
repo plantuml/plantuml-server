@@ -8,11 +8,11 @@ jobs:
   test-java-8-war-generation:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: "zulu"
           java-version: 8
@@ -29,7 +29,7 @@ jobs:
         run: mvn --batch-mode -f pom.jdk8.xml -D java.net.useSystemProxies=true clean package
 
       - name: temporarily save generated files
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: war-jre8
           path: target/plantuml.war
@@ -42,17 +42,17 @@ jobs:
       matrix:
         java-version: [ 11, 17 ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
       - name: retrieve generated files (jre8)
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: war-jre8
           path: artifacts
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: "zulu"
           java-version: ${{ matrix.java-version }}
@@ -77,11 +77,11 @@ jobs:
       matrix:
         java-version: [ 11, 17 ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: "zulu"
           java-version: ${{ matrix.java-version }}
@@ -119,11 +119,11 @@ jobs:
       matrix:
         java-version: [ 11, 17 ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: "zulu"
           java-version: ${{ matrix.java-version }}
@@ -140,11 +140,11 @@ jobs:
       matrix:
         java-version: [ 11, 17 ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: "zulu"
           java-version: ${{ matrix.java-version }}
@@ -170,11 +170,11 @@ jobs:
       matrix:
         java-version: [ 11, 17 ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: "zulu"
           java-version: ${{ matrix.java-version }}
@@ -200,11 +200,11 @@ jobs:
       matrix:
         java-version: [ 11, 17 ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: "zulu"
           java-version: ${{ matrix.java-version }}
@@ -232,11 +232,11 @@ jobs:
       matrix:
         java-version: [ 11, 17 ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: "zulu"
           java-version: ${{ matrix.java-version }}

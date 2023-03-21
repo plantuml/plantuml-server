@@ -9,11 +9,11 @@ jobs:
   build-jdk11:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: "zulu"
           java-version: 11
@@ -22,7 +22,7 @@ jobs:
 
       - name: get tag name
         id: version
-        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/*/}
+        run: echo "VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
 
       - name: build with maven
         run: mvn --batch-mode --define java.net.useSystemProxies=true package
@@ -37,7 +37,7 @@ jobs:
         run: cp target/plantuml.war target/plantuml-jsp-${{ steps.version.outputs.VERSION }}.war
 
       - name: temporarily save generated war files
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: war-jre11
           path: target/plantuml*-${{ steps.version.outputs.VERSION }}.war
@@ -45,11 +45,11 @@ jobs:
   build-jdk8:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: "zulu"
           java-version: 8
@@ -58,7 +58,7 @@ jobs:
 
       - name: get tag name
         id: version
-        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/*/}
+        run: echo "VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
 
       - name: Remove test code (not java 8 compatible)
         run: rm -rf src/test
@@ -76,7 +76,7 @@ jobs:
         run: cp target/plantuml.war target/plantuml-jre8-jsp-${{ steps.version.outputs.VERSION }}.war
 
       - name: temporarily save generated war files
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: war-jre8
           path: target/plantuml*-${{ steps.version.outputs.VERSION }}.war
@@ -88,13 +88,13 @@ jobs:
       - build-jdk8
     steps:
       - name: retrieve generated war files (jre8)
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: war-jre8
           path: artifacts
 
       - name: retrieve generated war files (jre11)
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: war-jre11
           path: artifacts
@@ -116,7 +116,7 @@ jobs:
     needs:
       - publish-releases
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -186,11 +186,11 @@ jobs:
     needs:
       - publish-releases
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: "zulu"
           java-version: 11
