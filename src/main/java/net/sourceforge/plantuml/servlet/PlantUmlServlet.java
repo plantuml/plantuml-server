@@ -23,29 +23,30 @@
  */
 package net.sourceforge.plantuml.servlet;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.net.ssl.HttpsURLConnection;
-
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.api.PlantumlUtils;
 import net.sourceforge.plantuml.code.Transcoder;
 import net.sourceforge.plantuml.code.TranscoderUtil;
 import net.sourceforge.plantuml.png.MetadataTag;
+import net.sourceforge.plantuml.servlet.utility.Assertions;
 import net.sourceforge.plantuml.servlet.utility.Configuration;
+import net.sourceforge.plantuml.servlet.utility.HtmlUtils;
 import net.sourceforge.plantuml.servlet.utility.UmlExtractor;
 import net.sourceforge.plantuml.servlet.utility.UrlDataExtractor;
+
+import javax.net.ssl.HttpsURLConnection;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Original idea from Achim Abeling for Confluence macro.
@@ -78,64 +79,33 @@ public class PlantUmlServlet extends HttpServlet {
         }
     }
 
-    public static String stringToHTMLString(String string) {
-        final StringBuffer sb = new StringBuffer(string.length());
-        // true if last char was blank
-        final int length = string.length();
-        for (int offset = 0; offset < length;) {
-            final int c = string.codePointAt(offset);
-            if (c == ' ') {
-                sb.append(' ');
-            } else if (c == '"') {
-                sb.append("&quot;");
-            } else if (c == '&') {
-                sb.append("&amp;");
-            } else if (c == '<') {
-                sb.append("&lt;");
-            } else if (c == '>') {
-                sb.append("&gt;");
-            } else if (c == '\r') {
-                sb.append("\r");
-            } else if (c == '\n') {
-                sb.append("\n");
-            } else {
-                int ci = 0xffffff & c;
-                if (ci < 160) {
-                    // nothing special only 7 Bit
-                    sb.append((char) c);
-                } else {
-                    // Not 7 Bit use the unicode system
-                    sb.append("&#");
-                    sb.append(ci);
-                    sb.append(';');
-                }
-            }
-            offset += Character.charCount(c);
-        }
-        return sb.toString();
+    private static String stringToHTMLString(String string) {
+        return HtmlUtils.htmlEscape(string);
     }
 
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         request.setCharacterEncoding("UTF-8");
+        PlantUmlRequestAdapter adapter = new PlantUmlRequestAdapter(request);
 
         // textual diagram source
-        final String text = getText(request).trim();
+        Optional<String> textFromRequest = getTextFromRequest(adapter);
+        Assertions.assertTrimmedIfPresent(textFromRequest, "text parameter from request");
 
         // no Text form has been submitted
-        if (text.isEmpty()) {
+        if (textFromRequest.isEmpty()) {
             redirectNow(request, response, DEFAULT_ENCODED_TEXT);
-            return;
+
+        } else {
+            // diagram index to render
+            final int idx = UrlDataExtractor.getIndex(adapter.getRequest().getRequestURI());
+
+            // forward to index.jsp
+            prepareRequestForDispatch(request, textFromRequest.get(), idx);
+            final RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
+            dispatcher.forward(request, response);
         }
-
-        // diagram index to render
-        final int idx = UrlDataExtractor.getIndex(request.getRequestURI());
-
-        // forward to index.jsp
-        prepareRequestForDispatch(request, text, idx);
-        final RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
-        dispatcher.forward(request, response);
     }
 
     @Override
@@ -145,19 +115,23 @@ public class PlantUmlServlet extends HttpServlet {
     ) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
 
+        PlantUmlRequestAdapter adapter = new PlantUmlRequestAdapter(request);
         // diagram index to render
         final int idx = UrlDataExtractor.getIndex(request.getRequestURI());
 
         // encoded diagram source
-        String encoded;
+        String encoded = DEFAULT_ENCODED_TEXT;
+        //TODO reveal intention: do not hide the error.
         try {
-            String text = getText(request).trim();
-            encoded = getTranscoder().encode(text);
+            Optional<String> text = getTextFromRequest(adapter);
+            Assertions.assertTrimmedIfPresent(text, "text request parameter");
+            if (text.isPresent()) {
+                encoded = getTranscoder().encode(text.get());
+            }
         } catch (Exception e) {
             encoded = DEFAULT_ENCODED_TEXT;
             e.printStackTrace();
         }
-
         redirectNow(request, response, encoded, idx);
     }
 
@@ -174,36 +148,33 @@ public class PlantUmlServlet extends HttpServlet {
      *
      * @throws IOException if an input or output exception occurred
      */
-    private String getText(final HttpServletRequest request) throws IOException {
-        String text;
+    private Optional<String> getTextFromRequest(PlantUmlRequestAdapter request) throws IOException {
+        Optional<String> text;
         // 1. URL
         try {
             text = getTextFromUrl(request);
-            if (text != null && !text.isEmpty()) {
+            if (text.isPresent()) {
                 return text;
             }
         } catch (Exception e) {
+            //TODO can we remove this try/catch
             e.printStackTrace();
         }
         // 2. metadata
-        String metadata = request.getParameter("metadata");
-        if (metadata != null) {
-            try (InputStream img = getImage(new URL(metadata))) {
+        Optional<String> metadata = request.getMetadata();
+        if (metadata.isPresent()) {
+            try (InputStream img = getImage(new URL(metadata.get()))) {
                 MetadataTag metadataTag = new MetadataTag(img, "plantuml");
-                String data = metadataTag.getData();
-                if (data != null) {
+                Optional<String> data = Optional.ofNullable(metadataTag.getData());
+                if (data.isPresent()) {
                     return data;
                 }
             }
         }
         // 3. request parameter text
-        text = request.getParameter("text");
-        if (text != null && !text.isEmpty()) {
-            return text;
-        }
-        // nothing found
-        return "";
+        return request.getCleanedText();
     }
+
 
     /**
      * Get textual diagram source from URL.
@@ -235,6 +206,41 @@ public class PlantUmlServlet extends HttpServlet {
         }
         // nothing found
         return "";
+    }
+
+    /**
+     * Get textual diagram source from URL.
+     *
+     * @param request http request which contains the source URL
+     * @return if successful textual diagram source from URL; otherwise empty string
+     * @throws IOException if an input or output exception occurred
+     */
+    private Optional<String> getTextFromUrl(PlantUmlRequestAdapter adapter) throws IOException {
+        // textual diagram source from request URI
+        PlantUmlUrlProcessor processor = new PlantUmlUrlProcessor(adapter);
+        Optional<String> url = adapter.getRequestURI();
+        if (url.isPresent() && processor.isUml()) {
+            final String encoded = UrlDataExtractor.getEncodedDiagram(url.get(), "");
+            if (!encoded.isEmpty()) {
+                //not sure if a null value can be returned : we are defensive programming here
+                return Optional.ofNullable(getTranscoder().decode(encoded));
+            }
+        }
+        // textual diagram source from "url" parameter
+        url = adapter.getCleanedUrl();
+        if (url.isPresent()) {
+            // Catch the last part of the URL if necessary
+            final Matcher matcher = URL_PATTERN.matcher(url.get());
+            if (matcher.find()) {
+                url = Optional.ofNullable(matcher.group(1));
+            }
+            if (url.isPresent()) {
+                //not sure if a null value can be returned : we are defensive programming here
+                return Optional.ofNullable(getTranscoder().decode(url.get()));
+            }
+        }
+        // nothing found
+        return Optional.empty();
     }
 
     /**

@@ -96,6 +96,7 @@
     <jetty-maven-plugin.version>${jetty.version}</jetty-maven-plugin.version>
     <duplicate-finder-maven-plugin.version>1.5.0</duplicate-finder-maven-plugin.version>
     <maven-javadoc-plugin.version>3.3.1</maven-javadoc-plugin.version>
+    <lombok.version>1.18.26</lombok.version>
   </properties>
 
   <dependencies>
@@ -173,6 +174,12 @@
       <version>2.7</version>
       <type>pom</type>
     </dependency>
+      <dependency>
+          <groupId>org.projectlombok</groupId>
+          <artifactId>lombok</artifactId>
+          <version>${lombok.version}</version>
+          <scope>provided</scope>
+      </dependency>
   </dependencies>
 
   <build>
