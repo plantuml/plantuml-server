@@ -24,6 +24,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* && \
     /generate-jetty-start.sh
 
+# Build Graphviz from source because there are no binary distributions for recent versions
 ARG GRAPHVIZ_VERSION=7.1.0
 ARG GRAPHVIZ_BUILD_DIR=/tmp/graphiz-build
 RUN apt-get update && \
@@ -42,8 +43,6 @@ RUN apt-get update && \
     apt-get remove -y curl build-essential && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf $GRAPHVIZ_BUILD_DIR
-
-RUN dot -V
 
 COPY docker-entrypoint.jetty.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
