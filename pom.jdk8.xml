@@ -64,6 +64,7 @@
     <jetty-annotations.version>${jetty.version}</jetty-annotations.version>
     <glassfish-jstl.version>${jetty.version}</glassfish-jstl.version>
     <batik-all.version>1.14</batik-all.version>
+    <lombok.version>1.18.26</lombok.version>
     <!-- jlatexmath -->
     <jlatexmath.version>1.0.7</jlatexmath.version>
     <jlatexmath-font-greek.version>${jlatexmath.version}</jlatexmath-font-greek.version>
@@ -165,6 +166,12 @@
       <groupId>org.scilab.forge</groupId>
       <artifactId>jlatexmath-font-cyrillic</artifactId>
       <version>${jlatexmath-font-cyrillic.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>${lombok.version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <!-- Testing -->
