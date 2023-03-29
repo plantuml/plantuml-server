@@ -19,15 +19,19 @@ USER root
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         fonts-noto-cjk \
-        curl \
-        build-essential \
+        libgd3 \
         && \
     rm -rf /var/lib/apt/lists/* && \
     /generate-jetty-start.sh
 
 ARG GRAPHVIZ_VERSION=7.1.0
 ARG GRAPHVIZ_BUILD_DIR=/tmp/graphiz-build
-RUN mkdir -p $GRAPHVIZ_BUILD_DIR && \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        curl \
+        build-essential \
+        && \
+    mkdir -p $GRAPHVIZ_BUILD_DIR && \
     cd $GRAPHVIZ_BUILD_DIR && \
     curl -o graphviz.tar.gz https://gitlab.com/api/v4/projects/4207231/packages/generic/graphviz-releases/${GRAPHVIZ_VERSION}/graphviz-${GRAPHVIZ_VERSION}.tar.gz && \
     tar -xzf graphviz.tar.gz && \
@@ -36,6 +40,7 @@ RUN mkdir -p $GRAPHVIZ_BUILD_DIR && \
     make && \
     make install && \
     apt-get remove -y curl build-essential && \
+    rm -rf /var/lib/apt/lists/* && \
     rm -rf $GRAPHVIZ_BUILD_DIR
 
 RUN dot -V
