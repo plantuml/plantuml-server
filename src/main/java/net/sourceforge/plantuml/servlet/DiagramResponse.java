@@ -45,7 +45,7 @@ import net.sourceforge.plantuml.NullOutputStream;
 import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.SourceStringReader;
 import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.code.Base64Coder;
+import net.sourceforge.plantuml.utils.Base64Coder;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
