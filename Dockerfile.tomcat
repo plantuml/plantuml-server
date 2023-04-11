@@ -18,12 +18,13 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Build Graphviz from source because there are no binary distributions for recent versions
-ARG GRAPHVIZ_VERSION=7.1.0
+ARG GRAPHVIZ_VERSION=8.0.2
 ARG GRAPHVIZ_BUILD_DIR=/tmp/graphiz-build
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         curl \
         build-essential \
+        libexpat1-dev \
         && \
     mkdir -p $GRAPHVIZ_BUILD_DIR && \
     cd $GRAPHVIZ_BUILD_DIR && \
