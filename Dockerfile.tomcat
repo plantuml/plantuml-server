@@ -25,6 +25,8 @@ RUN apt-get update && \
         curl \
         build-essential \
         libexpat1-dev \
+        libgd-dev \
+        zlib1g-dev \
         && \
     mkdir -p $GRAPHVIZ_BUILD_DIR && \
     cd $GRAPHVIZ_BUILD_DIR && \
@@ -34,7 +36,13 @@ RUN apt-get update && \
     ./configure && \
     make && \
     make install && \
-    apt-get remove -y curl build-essential && \
+    apt-get remove -y \
+        curl \
+        build-essential \
+        libexpat1-dev \
+        libgd-dev \
+        zlib1g-dev \
+        && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf $GRAPHVIZ_BUILD_DIR
 
