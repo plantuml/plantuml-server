@@ -37,7 +37,6 @@ RUN apt-get update && \
     make && \
     make install && \
     apt-get remove -y \
-        curl \
         build-essential \
         libexpat1-dev \
         libgd-dev \
