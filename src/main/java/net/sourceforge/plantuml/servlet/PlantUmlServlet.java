@@ -27,21 +27,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javax.net.ssl.HttpsURLConnection;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.api.PlantumlUtils;
-import net.sourceforge.plantuml.code.Transcoder;
-import net.sourceforge.plantuml.code.TranscoderUtil;
 import net.sourceforge.plantuml.png.MetadataTag;
 import net.sourceforge.plantuml.servlet.utility.Configuration;
 import net.sourceforge.plantuml.servlet.utility.UmlExtractor;
@@ -58,7 +52,7 @@ import net.sourceforge.plantuml.servlet.utility.UrlDataExtractor;
  * Modified by Maxime Sinclair
  */
 @SuppressWarnings("SERIAL")
-public class PlantUmlServlet extends HttpServlet {
+public class PlantUmlServlet extends AsciiCoderServlet {
 
     /**
      * Default encoded uml text.
@@ -66,10 +60,10 @@ public class PlantUmlServlet extends HttpServlet {
      */
     private static final String DEFAULT_ENCODED_TEXT = "SyfFKj2rKt3CoKnELR1Io4ZDoSa70000";
 
-    /**
-     * Regex pattern to fetch last part of the URL.
-     */
-    private static final Pattern URL_PATTERN = Pattern.compile("^.*[^a-zA-Z0-9\\-\\_]([a-zA-Z0-9\\-\\_]+)");
+    @Override
+    protected String getServletContextPath() {
+        return "uml";
+    }
 
     static {
         OptionFlags.ALLOW_INCLUDE = false;
@@ -78,11 +72,19 @@ public class PlantUmlServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Encode arbitrary string to HTML string.
+     *
+     * @param string arbitrary string
+     *
+     * @return html encoded string
+     */
     public static String stringToHTMLString(String string) {
-        final StringBuffer sb = new StringBuffer(string.length());
+        final StringBuilder sb = new StringBuilder(string.length());
         // true if last char was blank
         final int length = string.length();
-        for (int offset = 0; offset < length;) {
+        int offset = 0;
+        while (offset < length) {
             final int c = string.codePointAt(offset);
             if (c == ' ') {
                 sb.append(' ');
@@ -114,7 +116,6 @@ public class PlantUmlServlet extends HttpServlet {
         }
         return sb.toString();
     }
-
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -215,26 +216,7 @@ public class PlantUmlServlet extends HttpServlet {
      * @throws IOException if an input or output exception occurred
      */
     private String getTextFromUrl(HttpServletRequest request) throws IOException {
-        // textual diagram source from request URI
-        String url = request.getRequestURI();
-        if (url.contains("/uml/") && !url.endsWith("/uml/")) {
-            final String encoded = UrlDataExtractor.getEncodedDiagram(request.getRequestURI(), "");
-            if (!encoded.isEmpty()) {
-                return getTranscoder().decode(encoded);
-            }
-        }
-        // textual diagram source from "url" parameter
-        url = request.getParameter("url");
-        if (url != null && !url.trim().isEmpty()) {
-            // Catch the last part of the URL if necessary
-            final Matcher matcher = URL_PATTERN.matcher(url);
-            if (matcher.find()) {
-                url = matcher.group(1);
-            }
-            return getTranscoder().decode(url);
-        }
-        // nothing found
-        return "";
+        return getTranscoder().decode(getEncodedTextFromUrl(request));
     }
 
     /**
@@ -319,15 +301,6 @@ public class PlantUmlServlet extends HttpServlet {
     }
 
     /**
-     * Get PlantUML transcoder.
-     *
-     * @return transcoder instance
-     */
-    private Transcoder getTranscoder() {
-        return TranscoderUtil.getDefaultTranscoder();
-    }
-
-    /**
      * Get open http connection from URL.
      *
      * @param url URL to open connection
@@ -341,7 +314,6 @@ public class PlantUmlServlet extends HttpServlet {
             HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             con.setReadTimeout(10000); // 10 seconds
-            // printHttpsCert(con);
             con.connect();
             return con;
         } else {
