@@ -16,8 +16,18 @@ public abstract class TestUtils {
     public static final String VERSION = "AqijAixCpmC0";
 
     /**
+     * version
+     */
+    public static final String VERSIONCODE = "@startuml\nversion\n@enduml";
+
+    /**
      * Bob -> Alice : hello
      */
     public static final String SEQBOB = "SyfFKj2rKt3CoKnELR1Io4ZDoSa70000";
+
+    /**
+     * Bob -> Alice : hello
+     */
+    public static final String SEQBOBCODE = "@startuml\nBob -> Alice : hello\n@enduml";
 
 }

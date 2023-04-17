@@ -201,6 +201,15 @@
     <url-pattern>/language</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>asciicoder</servlet-name>
+    <servlet-class>net.sourceforge.plantuml.servlet.AsciiCoderServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>asciicoder</servlet-name>
+    <url-pattern>/coder/*</url-pattern>
+  </servlet-mapping>
+
 
   <!-- ========================================================== -->
   <!-- Error Handler -->

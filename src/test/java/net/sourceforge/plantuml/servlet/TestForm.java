@@ -28,7 +28,7 @@ public class TestForm extends WebappTestCase {
             assertEquals(2, forms.size());
             // Ensure the Text field is correct
             String text = ((HtmlTextArea)(forms.get(0).getFirstByXPath("//textarea[contains(@name, 'text')]"))).getTextContent();
-            assertEquals("@startuml\nBob -> Alice : hello\n@enduml", text);
+            assertEquals(TestUtils.SEQBOBCODE, text);
             // Ensure the URL field is correct
             HtmlInput url = forms.get(1).getInputByName("url");
             assertNotNull(url);
@@ -57,7 +57,7 @@ public class TestForm extends WebappTestCase {
             assertEquals(2, forms.size());
             // Ensure the Text field is correct
             String text = ((HtmlTextArea)(forms.get(0).getFirstByXPath("//textarea[contains(@name, 'text')]"))).getTextContent();
-            assertEquals("@startuml\nversion\n@enduml", text);
+            assertEquals(TestUtils.VERSIONCODE, text);
             // Ensure the URL field is correct
             HtmlInput url = forms.get(1).getInputByName("url");
             assertNotNull(url);
@@ -86,7 +86,7 @@ public class TestForm extends WebappTestCase {
             assertEquals(2, forms.size());
             // Ensure the Text field is correct
             String text = ((HtmlTextArea)(forms.get(0).getFirstByXPath("//textarea[contains(@name, 'text')]"))).getTextContent();
-            assertEquals("@startuml\nBob -> Alice : hello\n@enduml", text);
+            assertEquals(TestUtils.SEQBOBCODE, text);
             // Ensure the URL field is correct
             HtmlInput url = forms.get(1).getInputByName("url");
             assertNotNull(url);
@@ -116,7 +116,7 @@ public class TestForm extends WebappTestCase {
             assertEquals(2, forms.size());
             // Ensure the Text field is correct
             String text = ((HtmlTextArea)(forms.get(0).getFirstByXPath("//textarea[contains(@name, 'text')]"))).getTextContent();
-            assertEquals("@startuml\nBob -> Alice : hello\n@enduml", text);
+            assertEquals(TestUtils.SEQBOBCODE, text);
             // Ensure the URL field is correct
             url = forms.get(1).getInputByName("url");
             assertNotNull(url);
@@ -204,7 +204,7 @@ public class TestForm extends WebappTestCase {
             assertEquals(2, forms.size());
             // Ensure the Text field is correct
             String text = ((HtmlTextArea)(forms.get(0).getFirstByXPath("//textarea[contains(@name, 'text')]"))).getTextContent();
-            assertEquals("@startuml\nBob -> Alice : hello\n@enduml", text);
+            assertEquals(TestUtils.SEQBOBCODE, text);
             // Ensure the URL field is correct
             HtmlInput url = forms.get(1).getInputByName("url");
             assertNotNull(url);
