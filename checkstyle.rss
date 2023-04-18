@@ -25,7 +25,7 @@ under the License.
     <language>en-us</language>
     <copyright>&#169;2023</copyright>
     <item>
-      <title>File: 11,
+      <title>File: 12,
              Errors: 0,
              Warnings: 0,
              Infos: 0
@@ -117,6 +117,20 @@ under the License.
                           <tr>
                 <td>
                   <a href="https://plantuml.github.io/plantuml-server/index.html/checkstyle.html#net.sourceforge.plantuml.servlet.LanguageServlet.java">net/sourceforge/plantuml/servlet/LanguageServlet.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://plantuml.github.io/plantuml-server/index.html/checkstyle.html#net.sourceforge.plantuml.servlet.AsciiCoderServlet.java">net/sourceforge/plantuml/servlet/AsciiCoderServlet.java</a>
                 </td>
                 <td>
                   0
