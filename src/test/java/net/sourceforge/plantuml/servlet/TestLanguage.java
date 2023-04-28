@@ -3,6 +3,8 @@ package net.sourceforge.plantuml.servlet;
 import java.io.IOException;
 import java.net.URL;
 
+import net.sourceforge.plantuml.servlet.utils.WebappTestCase;
+
 
 public class TestLanguage extends WebappTestCase {
 

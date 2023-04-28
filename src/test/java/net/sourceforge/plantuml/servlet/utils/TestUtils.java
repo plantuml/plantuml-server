@@ -1,4 +1,4 @@
-package net.sourceforge.plantuml.servlet;
+package net.sourceforge.plantuml.servlet.utils;
 
 
 /**

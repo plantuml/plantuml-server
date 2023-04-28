@@ -8,7 +8,7 @@ public class AllTests extends TestSuite {
     public static Test suite() {
         TestSuite suite = new TestSuite(AllTests.class.getName());
         // $JUnit-BEGIN$
-        suite.addTestSuite(TestForm.class);
+        suite.addTestSuite(TestWebUI.class);
         suite.addTestSuite(TestImage.class);
         suite.addTestSuite(TestAsciiArt.class);
         suite.addTestSuite(TestSVG.class);

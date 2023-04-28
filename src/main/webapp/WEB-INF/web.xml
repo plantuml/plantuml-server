@@ -60,11 +60,11 @@
     <servlet-class>org.eclipse.jetty.jsp.JettyJspServlet</servlet-class>
     <init-param>
       <param-name>compilerSourceVM</param-name>
-      <param-value>1.7</param-value>
+      <param-value>1.8</param-value>
     </init-param>
     <init-param>
       <param-name>compilerTargetVM</param-name>
-      <param-value>1.7</param-value>
+      <param-value>1.8</param-value>
     </init-param>
   </servlet>
 
@@ -202,12 +202,21 @@
   </servlet-mapping>
 
   <servlet>
-    <servlet-name>asciicoder</servlet-name>
+    <servlet-name>asciicoderservlet</servlet-name>
     <servlet-class>net.sourceforge.plantuml.servlet.AsciiCoderServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>asciicoder</servlet-name>
+    <servlet-name>asciicoderservlet</servlet-name>
     <url-pattern>/coder/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>plantumluihelperservlet</servlet-name>
+    <servlet-class>net.sourceforge.plantuml.servlet.PlantUmlUIHelperServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>plantumluihelperservlet</servlet-name>
+    <url-pattern>/ui-helper/*</url-pattern>
   </servlet-mapping>
 
 

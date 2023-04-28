@@ -56,7 +56,7 @@
     <plantuml.version>1.2023.6</plantuml.version>
     <!-- Please keep the jetty version identical with the docker image -->
     <jetty.version>11.0.7</jetty.version>
-    <codemirror.version>5.63.0</codemirror.version>
+    <monaco-editor.version>0.36.1</monaco-editor.version>
 
     <!-- dependencies -->
     <jstl.version>1.2</jstl.version>
@@ -71,7 +71,9 @@
 
     <!-- Testing -->
     <junit.version>4.13.2</junit.version>
-    <htmlunit.version>2.53.0</htmlunit.version>
+    <selenium.version>4.8.3</selenium.version>
+    <selenium-webdrivermanager.version>5.3.2</selenium-webdrivermanager.version>
+    <commons-io.version>2.11.0</commons-io.version>
     <jetty-server.version>${jetty.version}</jetty-server.version>
 
     <!-- build plugin management -->
@@ -106,8 +108,8 @@
     </dependency>
     <dependency>
       <groupId>org.webjars.npm</groupId>
-      <artifactId>codemirror</artifactId>
-      <version>${codemirror.version}</version>
+      <artifactId>monaco-editor</artifactId>
+      <version>${monaco-editor.version}</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
@@ -153,9 +155,21 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>net.sourceforge.htmlunit</groupId>
-      <artifactId>htmlunit</artifactId>
-      <version>${htmlunit.version}</version>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-java</artifactId>
+      <version>${selenium.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.github.bonigarcia</groupId>
+      <artifactId>webdrivermanager</artifactId>
+      <version>${selenium-webdrivermanager.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>${commons-io.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -346,9 +360,9 @@
               <artifactItems>
                 <artifactItem>
                   <groupId>org.webjars.npm</groupId>
-                  <artifactId>codemirror</artifactId>
-                  <version>${codemirror.version}</version>
-                  <includes>**/lib/*.js,**/lib/*.css</includes>
+                  <artifactId>monaco-editor</artifactId>
+                  <version>${monaco-editor.version}</version>
+                  <includes>**/min/vs/loader.js,**/min/vs/**/*,**/min-maps/vs/**/*</includes>
                   <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                 </artifactItem>
               </artifactItems>
