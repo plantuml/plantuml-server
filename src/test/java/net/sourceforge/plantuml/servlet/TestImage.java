@@ -8,6 +8,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import net.sourceforge.plantuml.servlet.utils.TestUtils;
+import net.sourceforge.plantuml.servlet.utils.WebappTestCase;
+
 
 public class TestImage extends WebappTestCase {
 

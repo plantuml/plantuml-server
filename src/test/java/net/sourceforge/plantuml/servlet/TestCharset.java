@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 
+import net.sourceforge.plantuml.servlet.utils.WebappTestCase;
+
 
 public class TestCharset extends WebappTestCase {
 

@@ -8,6 +8,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Scanner;
 
+import net.sourceforge.plantuml.servlet.utils.TestUtils;
+import net.sourceforge.plantuml.servlet.utils.WebappTestCase;
+
 
 public class TestSVG extends WebappTestCase {
 

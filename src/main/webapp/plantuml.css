@@ -2,67 +2,394 @@
 * PlantUMLServlet style sheet *
 ******************************/
 
-/* Font */
-h1, p, #content a {
-    font-family: arial,helvetica,sans-serif;
-    /* font-size: medium; */
+/************* variables *************/
+:root {
+  color-scheme: light dark;
+  --border-color: #ccc;
+  --bg-color: inherit;
+  --font-color: inherit;
+  --settings-bg-color: #fefefe;
+}
+[data-theme="dark"] {
+  --border-color: #848484;
+  --bg-color: #212121;
+  --settings-bg-color: #424242;
+  --font-color: #ccc;
 }
 
-/* Header */
-#header {
-    margin-left: auto;
-    margin-right: auto;    
-    text-align: center;
+/************* default settings *************/
+html, body {
+  margin: 0;
+  padding: 0;
+}
+html {
+  font-family: arial,helvetica,sans-serif;
+}
+body {
+  background-color: var(--bg-color);
+  color: var(--font-color);
+  overflow: auto;
+}
+@media screen and (min-width: 900px) {
+  body {
+    height: 100vh;
+    overflow: hidden;
+  }
+  .app {
+    height: 100%;
+  }
 }
 
-/* Content */
-#content {
-    margin-left: auto;
-    margin-right: auto;
-    width: 95%;    
+/************* ruler *************/
+.hr {
+  padding: 1rem 0;
+  width: 100%;
+}
+.flex-columns > .hr {
+  padding: 0 1rem;
+  width: initial;
+  height: 100%;
+}
+.hr:after {
+  content: "";
+  display: block;
+  background-color: var(--border-color);
+  height: 100%;
+  width: 100%;
+  min-height: 3px;
+  min-width: 3px;
 }
 
-/* Form inputs */
-#content textarea, #content .CodeMirror, #content input[type=text] {
-    background-color: #ffffff;
-    font-family: monospace;
-    font-size: medium;
-    width: 100%;
-    resize: vertical;
-    border: 3px solid #ccc !important;
+/************* flex rows and columns *************/
+.flex-columns {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.flex-rows {
+  display: flex;
+  flex-direction: column;
+}
+.flex-main {
+  flex: 1 1 1px;
+  overflow: auto;
+}
+.flex-columns > *, .flex-rows > * {
+  flex-shrink: 0;
 }
 
-#content input[type=text] {
-    border: 0;
+/*******************************************************************/
+/************* header, main, footer *************/
+.header {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+.main {
+  margin: 1% 5%;
+  z-index: 1;
+}
+.main > div {
+  margin: 0 1.75%;
+}
+.main > div:first-child {
+  margin-left: 0;
+}
+.main > div:last-child {
+  margin-right: 0;
+}
+@media screen and (max-width: 900px) {
+  .main {
+    display: block;
+    overflow: inherit;
+  }
+  .main > div {
+    margin: 1.75% 0;
+  }
+  .main > div:first-child {
+    margin-top: 0;
+  }
+  .main > div:last-child {
+    margin-bottom: 0;
+  }
+}
+.footer p {
+  background-color: #eee;
+  color: #666;
+  font-size: 0.7em;
+  margin: 0;
+  padding: 0.5em;
+  text-align: center;
 }
 
-#content input[type="submit"] {
-    margin-top: 10px;
-    padding: 5px;
-    background: #fafafa;
-    border: 1px solid black;
+/*******************************************************************/
+/************* editor *************/
+.editor {
+  border: 3px solid var(--border-color);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+@media screen and (max-width: 900px) {
+  .editor {
+    height: 20em;
+  }
+}
+.monaco-editor-container {
+  overflow: hidden;
+  position: relative;
+}
+#monaco-editor {
+  height: 100%;
+}
+/* Hack to display the icons in the icon auto completion documentation in a visible size.
+ * (see PlantUmlLanguageFeatures.registerIconCompletion) */
+#monaco-editor .overlayWidgets .suggest-details p img[alt="icon"] {
+  height: 1.2rem;
 }
 
-#content input[type="submit"]:hover {
-    background: #f0f0f0;
+/************* URL input + copy button *************/
+.btn-input {
+  align-items: center;
+  border-bottom: 3px solid var(--border-color);
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+}
+.btn-input input[type=text] {
+  border: 0;
+  flex: 1 1 1px;
+  font-family: monospace;
+  font-size: medium;
+  padding: 0.2em;
+  text-overflow: ellipsis;
+}
+.btn-input input[type=text]:focus {
+  border: 0;
+  box-shadow: none;
+  outline: none;
+}
+.btn-input input[type=image] {
+  height: 1rem;
+  margin-left: 0.7em;
+  padding: 0 0.3em;
 }
 
-/* Diagram */
-#content #diagram {
-    text-align: center;
+/************* Monaco editor copy button *************/
+.monaco-editor-container input[type=image] {
+  height: 1.5rem;
+  position: absolute;
+  right: 2rem;
+  top: 1rem;
+  opacity: 0.5;
+}
+.monaco-editor-container input[type=image]:hover {
+  opacity: 1;
 }
 
-#content #diagram img {
-    border: medium solid green;
-    padding: 10px;
+/*******************************************************************/
+/************* previewer *************/
+.content.viewer-content {
+  margin: 5%;
+}
+.content.viewer-content, .previewer-container {
+  height: 100%;
+}
+@media screen and (max-width: 900px) {
+  .previewer-container {
+    height: initial;
+  }
+  .previewer-main {
+    flex: none;
+  }
 }
 
-/* Footer */
-#footer p {
-    background-color: #eee;
-    color: #666;
-    font-size: 0.7em;
-    padding: 2px;
-    text-align: center;
-    width: 100%;
+/************* menu *************/
+.preview-menu {
+  margin-left: 5%;
+  margin-right: 5%;
+}
+.diagram-link img, .btn-dock {
+  width: 2.5rem;
+}
+.btn-settings {
+  width: 2.2rem;
+  margin-left: auto;
+  margin-right: 0.25rem;
+}
+.menu-r {
+  min-width: 3rem;
+}
+.menu-r .btn-float-r {
+  float: right;
+  margin-left: 0.25rem;
+  text-align: right;
+}
+.diagram-links {
+  align-items: center;
+  display: flex;
+}
+.diagram-link {
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
+}
+.diagram-links .diagram-link:first-of-type {
+  margin-left: 0.5rem;
+}
+.diagram-links .diagram-link:last-of-type {
+  margin-right: 0;
+}
+
+/************* paginator *************/
+#paginator {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/************* diagram *************/
+.diagram {
+  height: 100%;
+  overflow: auto;
+}
+.diagram[data-diagram-type="pdf"] {
+  overflow: hidden;
+}
+.diagram > div {
+  margin: 1rem 0;
+  text-align: center;
+}
+.diagram[data-diagram-type="pdf"] > div {
+  height: 20em;
+  width: 100%;
+}
+.diagram img, .diagram svg, .diagram pre {
+  border: 3px solid var(--border-color);
+  box-sizing: border-box;
+  padding: 10px;
+}
+@media screen and (min-width: 900px) {
+  .diagram {
+    position: relative;
+  }
+  .diagram > div {
+    margin: 0;
+  }
+  .diagram:not([data-diagram-type="pdf"]) > div {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-height: 100%;
+    max-width: 100%;
+  }
+  .diagram[data-diagram-type="pdf"] > div {
+    height: 100%;
+  }
+}
+
+/*******************************************************************/
+/************* settings *************/
+/************* modal *************/
+.modal {
+  display: block;
+  position: fixed;
+  z-index: 1;
+  padding: 5%;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  overflow: auto;
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.4);
+}
+.modal-content {
+  background-color: var(--settings-bg-color);
+  margin: auto;
+  padding: 2rem;
+  border: 3px solid var(--border-color);
+  max-width: 30rem;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 0.4s;
+  animation-name: animatetop;
+  animation-duration: 0.4s;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
+@-webkit-keyframes animatetop {
+  from { top: -50%; opacity: 0; }
+  to { top: 50%; opacity: 1; }
+}
+@keyframes animatetop {
+  from { top: -50%; opacity: 0; }
+  to { top: 50%; opacity: 1; }
+}
+/************* header, main, footer *************/
+#settings .settings-header h2 {
+  margin: 0;
+}
+#settings .settings-main {
+  flex: 1;
+}
+#settings .settings-footer {
+  text-align: right;
+}
+/************* label + input *************/
+#settings .setting {
+  margin: 1rem 0;
+  overflow: hidden;
+}
+#settings .setting:first-child {
+  margin: 0;
+}
+#settings .setting label {
+  display: inline-block;
+  min-width: 15rem;
+}
+#settings .setting label + input, #settings .setting label + select {
+  box-sizing: border-box;
+  display: inline-block;
+  min-width: 10rem;
+}
+#settings input, #settings select {
+  border: 1px solid var(--border-color);
+}
+#settings input:not(:focus):invalid {
+  border-bottom-color: red;
+}
+/************* settings editor *************/
+#settings #settings-monaco-editor {
+  height: 17rem;
+  border: 1px solid var(--border-color);
+}
+/************* ok + cancel buttons *************/
+#settings input.ok, #settings input.cancel {
+  min-width: 5rem;
+}
+#settings input.ok:hover {
+  border-bottom-color: green;
+}
+#settings input.cancel:hover {
+  border-bottom-color: darkred;
+}
+
+/*******************************************************************/
+/************* color themes *************/
+[data-theme="dark"] img:not(#diagram-png):not(.no-filter) {
+  filter: invert() contrast(30%);
+}
+[data-theme="dark"] input[type=image] {
+  filter: invert() contrast(30%);
+}
+[data-theme="dark"] input:not([type=image]) {
+  background-color: var(--bg-color);
+  color: var(--font-color);
+}
+[data-theme="dark"] .footer p {
+  background-color: black;
+  color: var(--font-color);
+}
+[data-theme="dark"] a {
+  color: white;
 }

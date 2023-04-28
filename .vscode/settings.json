@@ -2,21 +2,23 @@
     "java.configuration.updateBuildConfiguration": "automatic",
     "cSpell.words": [
         "Arnaud",
+        "buildx",
         "ditaa",
         "endditaa",
         "enduml",
         "epstext",
         "etag",
+        "ghaction",
         "Lalloni",
+        "monaco",
         "plantuml",
         "Roques",
         "servlet",
         "servlets",
         "startditaa",
         "startuml",
-        "utxt",
-        "ghaction",
-        "buildx"
+        "undock",
+        "utxt"
     ],
     "cSpell.allowCompoundWords": true
 }

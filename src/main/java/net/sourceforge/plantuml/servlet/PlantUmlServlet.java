@@ -36,6 +36,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.api.PlantumlUtils;
+import net.sourceforge.plantuml.code.NoPlantumlCompressionException;
 import net.sourceforge.plantuml.png.MetadataTag;
 import net.sourceforge.plantuml.servlet.utility.Configuration;
 import net.sourceforge.plantuml.servlet.utility.UmlExtractor;
@@ -134,8 +135,15 @@ public class PlantUmlServlet extends AsciiCoderServlet {
         final int idx = UrlDataExtractor.getIndex(request.getRequestURI());
 
         // forward to index.jsp
+        final String path;
+        final String view = request.getParameter("view");
+        if (view != null && view.equalsIgnoreCase("previewer")) {
+            path = "/previewer.jsp";
+        } else {
+            path = "/index.jsp";
+        }
         prepareRequestForDispatch(request, text, idx);
-        final RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
+        final RequestDispatcher dispatcher = request.getRequestDispatcher(path);
         dispatcher.forward(request, response);
     }
 
@@ -183,6 +191,10 @@ public class PlantUmlServlet extends AsciiCoderServlet {
             if (text != null && !text.isEmpty()) {
                 return text;
             }
+        } catch (NoPlantumlCompressionException e) {
+            // no textual diagram source available from Url
+            // ignore and try 2. method (metadata) below
+            // do not spam output console
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -229,26 +241,16 @@ public class PlantUmlServlet extends AsciiCoderServlet {
      */
     private void prepareRequestForDispatch(HttpServletRequest request, String text, int idx) throws IOException {
         final String encoded = getTranscoder().encode(text);
-        final String index = (idx < 0) ? "" : idx + "/";
         // diagram sources
+        request.setAttribute("encoded", encoded);
         request.setAttribute("decoded", text);
-        request.setAttribute("index", idx);
+        request.setAttribute("index", (idx < 0) ? "" : idx);
         // properties
         request.setAttribute("showSocialButtons", Configuration.get("SHOW_SOCIAL_BUTTONS"));
         request.setAttribute("showGithubRibbon", Configuration.get("SHOW_GITHUB_RIBBON"));
-        // image URLs
-        final boolean hasImg = !text.isEmpty();
-        request.setAttribute("hasImg", hasImg);
-        request.setAttribute("imgurl", "png/" + index + encoded);
-        request.setAttribute("svgurl", "svg/" + index + encoded);
-        request.setAttribute("pdfurl", "pdf/" + index + encoded);
-        request.setAttribute("txturl", "txt/" + index + encoded);
-        request.setAttribute("mapurl", "map/" + index + encoded);
         // map for diagram source if necessary
-        final boolean hasMap = PlantumlUtils.hasCMapData(text);
-        request.setAttribute("hasMap", hasMap);
         String map = "";
-        if (hasMap) {
+        if (PlantumlUtils.hasCMapData(text)) {
             try {
                 map = UmlExtractor.extractMap(text);
             } catch (Exception e) {

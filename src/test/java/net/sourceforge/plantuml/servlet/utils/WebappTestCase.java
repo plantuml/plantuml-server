@@ -1,4 +1,4 @@
-package net.sourceforge.plantuml.servlet;
+package net.sourceforge.plantuml.servlet.utils;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -9,6 +9,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import junit.framework.TestCase;
+
 import net.sourceforge.plantuml.servlet.server.EmbeddedJettyServer;
 import net.sourceforge.plantuml.servlet.server.ExternalServer;
 import net.sourceforge.plantuml.servlet.server.ServerUtils;
@@ -23,27 +24,19 @@ public abstract class WebappTestCase extends TestCase {
     }
 
     public WebappTestCase(String name) {
-        super(name);
-        // logger = LoggerFactory.getLogger(this.getClass());
-
         String uri = System.getProperty("system.test.server", "");
-        //uri = "http://localhost:8080/plantuml";
         if (!uri.isEmpty()) {
             // mvn test -DskipTests=false -DargLine="-Dsystem.test.server=http://localhost:8080/plantuml"
-            // logger.info("Test against external server: " + uri);
             serverUtils = new ExternalServer(uri);
             return;
         }
-
         // mvn test -DskipTests=false
-        // logger.info("Test against embedded jetty server.");
         serverUtils = new EmbeddedJettyServer();
     }
 
     @Override
     public void setUp() throws Exception {
         serverUtils.startServer();
-        // logger.info(getServerUrl());
     }
 
     @Override
@@ -51,7 +44,7 @@ public abstract class WebappTestCase extends TestCase {
         serverUtils.stopServer();
     }
 
-    protected String getServerUrl() {
+    public String getServerUrl() {
         return serverUtils.getServerUrl();
     }
 
@@ -104,5 +97,4 @@ public abstract class WebappTestCase extends TestCase {
             return byteStream.toByteArray();
         }
     }
-
 }
