@@ -19,7 +19,9 @@ PlantUML Server is a web application to generate UML diagrams on-the-fly.
 [PlantUML is **not** affected by the log4j vulnerability.](https://github.com/plantuml/plantuml/issues/826)
 
 
-![PlantUML Server](https://raw.githubusercontent.com/plantuml/plantuml-server/master/screenshots/screenshot.png)
+![PlantUML Server](https://raw.githubusercontent.com/plantuml/plantuml-server/master/docs/screenshot.png)
+
+More examples and features about the Web UI can be found in [docs/WebUI](https://github.com/HeinrichAD/plantuml-server/tree/master/docs/WebUI).
 
 To know more about PlantUML, please visit https://plantuml.com.
 
