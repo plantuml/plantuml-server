@@ -17,6 +17,7 @@ public class EmbeddedJettyServer implements ServerUtils {
     private Server server;
 
     public EmbeddedJettyServer() {
+        String[] virtualHosts = new String[]{"localhost", "test.localhost"};
         server = new Server();
 
         ServerConnector connector = new ServerConnector(server);
@@ -30,6 +31,7 @@ public class EmbeddedJettyServer implements ServerUtils {
 
         // PlantUML server web application
         WebAppContext context = new WebAppContext(server, "src/main/webapp", EmbeddedJettyServer.contextPath);
+        context.addVirtualHosts(virtualHosts);
 
         // Add static webjars resource files
         // The maven-dependency-plugin in the pom.xml provides these files.
@@ -38,6 +40,7 @@ public class EmbeddedJettyServer implements ServerUtils {
             "target/classes/META-INF/resources/webjars",
             EmbeddedJettyServer.contextPath + "/webjars"
         );
+        res.addVirtualHosts(virtualHosts);
 
         // Create server handler
         HandlerList handlers = new HandlerList();

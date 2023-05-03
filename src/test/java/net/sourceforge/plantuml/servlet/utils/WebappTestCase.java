@@ -48,6 +48,12 @@ public abstract class WebappTestCase extends TestCase {
         return serverUtils.getServerUrl();
     }
 
+    public String getTestDiagramUrl() {
+        // NOTE: [Old]ProxyServlet.forbiddenURL do not allow URL with IP-Addresses or localhost.
+        String serverUrl = getServerUrl().replace("/localhost", "/test.localhost");
+        return serverUrl + "/resource/test2diagrams.txt";
+    }
+
     public String getContentText(final URL url) throws IOException {
         try (final InputStream responseStream = url.openStream()) {
             return getContentText(responseStream);

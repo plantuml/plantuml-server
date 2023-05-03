@@ -93,7 +93,7 @@ jobs:
 
       - name: Lifecycle - Step 2/8 - mvn validate
         run: mvn --batch-mode validate
-        
+
       - name: Lifecycle - Step 3/8 - mvn compile
         run: mvn --batch-mode compile
 
@@ -111,7 +111,7 @@ jobs:
 
       - name: Lifecycle - Step 8/8 - mvn site
         run: mvn --batch-mode site
-        
+
   test-embedded:
     runs-on: ubuntu-latest
     needs: test-mvn-livecycle
@@ -217,7 +217,7 @@ jobs:
       - name: Build the jetty docker stack
         run: |
           docker image build -f Dockerfile.jetty -t plantuml-server:local .
-          docker run -d -p 8080:8080 -e BASE_URL=plantuml plantuml-server:local
+          docker run -d --hostname=test.localhost -p 8080:8080 -e BASE_URL=plantuml plantuml-server:local
 
       - name: Check running containers
         run: docker ps
@@ -249,7 +249,7 @@ jobs:
       - name: Build the tomcat docker stack
         run: |
           docker image build -f Dockerfile.tomcat -t plantuml-server:local .
-          docker run -d -p 8080:8080 -e BASE_URL=plantuml plantuml-server:local
+          docker run -d --hostname=test.localhost -p 8080:8080 -e BASE_URL=plantuml plantuml-server:local
 
       - name: Check running containers
         run: docker ps
