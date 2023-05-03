@@ -30,4 +30,18 @@ public abstract class TestUtils {
      */
     public static final String SEQBOBCODE = "@startuml\nBob -> Alice : hello\n@enduml";
 
+    /**
+     * Encoded/compressed diagram source to text multipage uml diagrams.
+     *
+     * Bob -> Alice : hello
+     * newpage
+     * Bob <- Alice : hello
+     * Bob -> Alice : let's talk [[tel:0123456789]]
+     * Bob <- Alice : better not
+     * Bob -> Alice : <&rain> bye
+     * newpage
+     * Bob <- Alice : bye
+     */
+    public static final String SEQMULTIPAGE = "SoWkIImgAStDuNBAJrBGjLDmpCbCJbMmKiX8pSd9vyfBBIz8J4y5IzheeagYwyX9BL4lLYX9pCbMY8ukISsnCZ0qCZOnDJEti8oDHJSXARMa9BL88I-_1DqO6xMYnCmyEuMaobGSreEb75BpKe3E1W00";
+
 }

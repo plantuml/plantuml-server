@@ -21,7 +21,7 @@ PlantUML Server is a web application to generate UML diagrams on-the-fly.
 
 ![PlantUML Server](https://raw.githubusercontent.com/plantuml/plantuml-server/master/docs/screenshot.png)
 
-More examples and features about the Web UI can be found in [docs/WebUI](https://github.com/HeinrichAD/plantuml-server/tree/master/docs/WebUI).
+More examples and features about the Web UI can be found in [docs/WebUI](https://github.com/plantuml/plantuml-server/tree/master/docs/WebUI).
 
 To know more about PlantUML, please visit https://plantuml.com.
 
@@ -129,6 +129,9 @@ You can set all  the following variables:
 * `HTTP_AUTHORIZATION`
   * when calling the `proxy` endpoint, the value of `HTTP_AUTHORIZATION` will be used to set the HTTP Authorization header
   * Default value: `null`
+* `HTTP_PROXY_READ_TIMEOUT`
+  * when calling the `proxy` endpoint, the value of `HTTP_PROXY_READ_TIMEOUT` will be the connection read timeout in milliseconds
+  * Default value: `10000` (10 seconds)
 * `ALLOW_PLANTUML_INCLUDE`
   * Enables `!include` processing which can read files from the server into diagrams. Files are read relative to the current working directory.
   * Default value: `false`
@@ -171,4 +174,4 @@ mvn package -f pom.jdk8.xml [-Dapache-jsp.scope=compile]
 
 It is possible to use PlantUML with a reverse proxy.
 
-You can find this and other examples [here](./examples).
+You can find this and other examples [here](https://github.com/plantuml/plantuml-server/tree/master/examples).

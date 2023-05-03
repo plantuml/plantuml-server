@@ -150,6 +150,12 @@ public class OldProxyServlet extends HttpServlet {
         if (format.equals("txt")) {
             return FileFormat.ATXT;
         }
+        if (format.equals("map")) {
+            return FileFormat.ATXT;
+        }
+        if (format.equals("pdf")) {
+            return FileFormat.PDF;
+        }
         return FileFormat.PNG;
     }
 

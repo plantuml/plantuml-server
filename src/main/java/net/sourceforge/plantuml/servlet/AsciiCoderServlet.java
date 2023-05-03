@@ -67,7 +67,7 @@ public class AsciiCoderServlet extends HttpServlet {
         try {
             text = getTranscoder().decode(encodedText);
         } catch (Exception e) {
-            response.setStatus(500);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             e.printStackTrace();
         }
 
@@ -97,7 +97,7 @@ public class AsciiCoderServlet extends HttpServlet {
         try {
             encoded = getTranscoder().encode(uml.toString());
         } catch (Exception e) {
-            response.setStatus(500);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             e.printStackTrace();
         }
 
