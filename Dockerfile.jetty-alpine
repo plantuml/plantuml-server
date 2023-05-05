@@ -1,4 +1,4 @@
-FROM maven:3-eclipse-temurin-11 AS builder
+FROM maven:3-eclipse-temurin-11-alpine AS builder
 
 COPY pom.xml /app/
 COPY src/main /app/src/main/
@@ -8,7 +8,7 @@ RUN mvn --batch-mode --define java.net.useSystemProxies=true package
 
 ########################################################################################
 
-FROM jetty:11.0.15-jre11
+FROM jetty:11.0.15-jre11-alpine-eclipse-temurin
 
 # Proxy and OldProxy need empty path segments support in URIs
 # Hence: allow AMBIGUOUS_EMPTY_SEGMENT
@@ -17,24 +17,21 @@ RUN sed -i 's/# jetty\.httpConfig\.uriCompliance=DEFAULT/jetty.httpConfig.uriCom
 
 USER root
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
+RUN apk add --no-cache \
         curl \
-        fonts-noto-cjk \
-        libgd3 \
+        font-noto-cjk \
+        libgd \
         && \
-    rm -rf /var/lib/apt/lists/* && \
     /generate-jetty-start.sh
 
-# Build Graphviz from source because there are no binary distributions for recent versions
+#RUN apk add --no-cache graphviz
 ARG GRAPHVIZ_VERSION=8.0.2
 ARG GRAPHVIZ_BUILD_DIR=/tmp/graphiz-build
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        build-essential \
-        libexpat1-dev \
-        libgd-dev \
-        zlib1g-dev \
+RUN apk add --no-cache \
+        g++ \
+        libexpat \
+        make \
+        zlib \
         && \
     mkdir -p $GRAPHVIZ_BUILD_DIR && \
     cd $GRAPHVIZ_BUILD_DIR && \
@@ -44,15 +41,12 @@ RUN apt-get update && \
     ./configure && \
     make && \
     make install && \
-    apt-get remove -y \
-        build-essential \
-        libexpat1-dev \
-        libgd-dev \
-        zlib1g-dev \
+    apk del --no-cache \
+        g++ \
+        libexpat \
+        make \
+        zlib \
         && \
-    apt-get autoremove -y && \
-    apt-get clean & \
-    rm -rf /var/lib/apt/lists/* && \
     rm -rf $GRAPHVIZ_BUILD_DIR
 
 COPY docker-entrypoint.jetty.sh /entrypoint.sh
@@ -68,8 +62,10 @@ COPY ROOT.jetty.xml $WEBAPP_PATH/ROOT.xml
 
 # Openshift https://docs.openshift.com/container-platform/4.9/openshift_images/create-images.html#images-create-guide-openshift_create-images
 USER root
-RUN chgrp -R 0 $JETTY_BASE &&   chmod -R g=u $JETTY_BASE
-RUN chgrp -R 0 /tmp &&   chmod -R g=u /tmp
+RUN chgrp -R 0 $JETTY_BASE && \
+    chmod -R g=u $JETTY_BASE
+RUN chgrp -R 0 /tmp && \
+    chmod -R g=u /tmp
 USER jetty
 
 ENTRYPOINT ["/entrypoint.sh"]

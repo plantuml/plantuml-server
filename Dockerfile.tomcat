@@ -1,4 +1,4 @@
-FROM maven:3-jdk-11-slim AS builder
+FROM maven:3-eclipse-temurin-11 AS builder
 
 COPY pom.xml /app/
 COPY src/main /app/src/main/
@@ -8,10 +8,11 @@ RUN mvn --batch-mode --define java.net.useSystemProxies=true -Dapache-jsp.scope=
 
 ########################################################################################
 
-FROM tomcat:10-jdk11-openjdk-slim
+FROM tomcat:10-jdk11
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+        curl \
         fonts-noto-cjk \
         libgd3 \
         && \
@@ -22,7 +23,6 @@ ARG GRAPHVIZ_VERSION=8.0.2
 ARG GRAPHVIZ_BUILD_DIR=/tmp/graphiz-build
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        curl \
         build-essential \
         libexpat1-dev \
         libgd-dev \
@@ -42,6 +42,8 @@ RUN apt-get update && \
         libgd-dev \
         zlib1g-dev \
         && \
+    apt-get autoremove -y && \
+    apt-get clean & \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf $GRAPHVIZ_BUILD_DIR
 
@@ -53,8 +55,8 @@ RUN rm -rf $WEBAPP_PATH && \
     mkdir -p $WEBAPP_PATH
 COPY --from=builder /app/target/plantuml.war /plantuml.war
 
+# Openshift https://docs.openshift.com/container-platform/4.9/openshift_images/create-images.html#images-create-guide-openshift_create-images
+RUN chgrp -R 0 $CATALINA_HOME &&  chmod -R g=u $CATALINA_HOME
+
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["catalina.sh", "run"]
-# Openshift https://docs.openshift.com/container-platform/4.9/openshift_images/create-images.html#images-create-guide-openshift_create-images
-USER root 
-RUN chgrp -R 0 $CATALINA_HOME &&  chmod -R g=u $CATALINA_HOME
