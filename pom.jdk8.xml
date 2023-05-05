@@ -93,7 +93,7 @@
     <maven-site-plugin.version>3.12.1</maven-site-plugin.version>
     <maven-project-info-reports-plugin.version>3.4.3</maven-project-info-reports-plugin.version>
     <maven-checkstyle-plugin.version>3.2.2</maven-checkstyle-plugin.version>
-    <checkstyle.version>10.10.0</checkstyle.version>
+    <checkstyle.version>9.3</checkstyle.version><!-- no JDK8 support starting version 10.0.0 -->
 
     <!-- plugins -->
     <maven-eclipse-plugin.version>2.10</maven-eclipse-plugin.version>
