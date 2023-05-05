@@ -8,7 +8,7 @@ RUN mvn --batch-mode --define java.net.useSystemProxies=true package
 
 ########################################################################################
 
-FROM jetty:11.0.7-jre11-slim
+FROM jetty:11.0.15-jre11-slim
 
 # Proxy and OldProxy need empty path segments support in URIs
 # Hence: allow AMBIGUOUS_EMPTY_SEGMENT
@@ -65,7 +65,7 @@ COPY ROOT.jetty.xml $WEBAPP_PATH/ROOT.xml
 
 ENTRYPOINT ["/entrypoint.sh"]
 # Openshift https://docs.openshift.com/container-platform/4.9/openshift_images/create-images.html#images-create-guide-openshift_create-images
-USER root 
+USER root
 RUN chgrp -R 0 $JETTY_BASE &&   chmod -R g=u $JETTY_BASE
 RUN chgrp -R 0 /tmp &&   chmod -R g=u /tmp
 USER jetty

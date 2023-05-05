@@ -55,7 +55,7 @@
     <!-- main versions -->
     <plantuml.version>1.2023.6</plantuml.version>
     <!-- Please keep the jetty version identical with the docker image -->
-    <jetty.version>11.0.7</jetty.version>
+    <jetty.version>11.0.15</jetty.version>
     <monaco-editor.version>0.36.1</monaco-editor.version>
 
     <!-- dependencies -->
@@ -63,41 +63,44 @@
     <apache-jsp.version>${jetty.version}</apache-jsp.version>
     <jetty-annotations.version>${jetty.version}</jetty-annotations.version>
     <glassfish-jstl.version>${jetty.version}</glassfish-jstl.version>
-    <batik-all.version>1.14</batik-all.version>
     <!-- jlatexmath -->
     <jlatexmath.version>1.0.7</jlatexmath.version>
     <jlatexmath-font-greek.version>${jlatexmath.version}</jlatexmath-font-greek.version>
     <jlatexmath-font-cyrillic.version>${jlatexmath.version}</jlatexmath-font-cyrillic.version>
+    <!-- PDF -->
+    <batik-all.version>1.16</batik-all.version>
+    <fop.version>2.8</fop.version>
 
     <!-- Testing -->
-    <junit.version>4.13.2</junit.version>
-    <selenium.version>4.8.3</selenium.version>
+    <junit.version>5.9.3</junit.version>
+    <junit-suite.version>1.9.3</junit-suite.version>
+    <selenium.version>4.9.0</selenium.version>
     <selenium-webdrivermanager.version>5.3.2</selenium-webdrivermanager.version>
     <commons-io.version>2.11.0</commons-io.version>
     <jetty-server.version>${jetty.version}</jetty-server.version>
 
     <!-- build plugin management -->
     <!-- lock down plugins versions to avoid using Maven defaults -->
-    <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
-    <maven-dependency-plugin.version>3.2.0</maven-dependency-plugin.version>
-    <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
-    <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-    <versions-maven-plugin.version>2.8.1</versions-maven-plugin.version>
-    <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+    <maven-clean-plugin.version>3.2.0</maven-clean-plugin.version>
+    <maven-dependency-plugin.version>3.5.0</maven-dependency-plugin.version>
+    <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+    <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+    <versions-maven-plugin.version>2.15.0</versions-maven-plugin.version>
+    <maven-surefire-plugin.version>3.0.0</maven-surefire-plugin.version>
     <maven-war-plugin.version>3.3.2</maven-war-plugin.version>
-    <maven-install-plugin.version>2.5.2</maven-install-plugin.version>
-    <maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
-    <maven-site-plugin.version>3.9.1</maven-site-plugin.version>
-    <maven-project-info-reports-plugin.version>3.1.2</maven-project-info-reports-plugin.version>
-    <maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
-    <checkstyle.version>9.0.1</checkstyle.version>
+    <maven-install-plugin.version>3.1.1</maven-install-plugin.version>
+    <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
+    <maven-site-plugin.version>3.12.1</maven-site-plugin.version>
+    <maven-project-info-reports-plugin.version>3.4.3</maven-project-info-reports-plugin.version>
+    <maven-checkstyle-plugin.version>3.2.2</maven-checkstyle-plugin.version>
+    <checkstyle.version>10.10.0</checkstyle.version>
 
     <!-- plugins -->
     <maven-eclipse-plugin.version>2.10</maven-eclipse-plugin.version>
     <jetty-runner.version>${jetty.version}</jetty-runner.version>
     <jetty-maven-plugin.version>${jetty.version}</jetty-maven-plugin.version>
-    <duplicate-finder-maven-plugin.version>1.5.0</duplicate-finder-maven-plugin.version>
-    <maven-javadoc-plugin.version>3.3.1</maven-javadoc-plugin.version>
+    <duplicate-finder-maven-plugin.version>1.5.1</duplicate-finder-maven-plugin.version>
+    <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
   </properties>
 
   <dependencies>
@@ -145,13 +148,6 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <dependency>
-      <!-- batik-all generally tends to provide duplicate resources on the classpath -->
-      <groupId>org.apache.xmlgraphics</groupId>
-      <artifactId>batik-all</artifactId>
-      <version>${batik-all.version}</version>
-      <type>pom</type>
-    </dependency>  
     <!-- jlatexmath -->
     <dependency>
       <groupId>org.scilab.forge</groupId>
@@ -168,12 +164,33 @@
       <artifactId>jlatexmath-font-cyrillic</artifactId>
       <version>${jlatexmath-font-cyrillic.version}</version>
     </dependency>
+    <!-- PDF -->
+    <dependency>
+      <!-- batik-all generally tends to provide duplicate resources on the classpath -->
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>batik-all</artifactId>
+      <version>${batik-all.version}</version>
+      <type>pom</type>
+    </dependency>
+    <dependency>
+      <!-- fop generally tends to provide duplicate resources on the classpath -->
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>fop</artifactId>
+      <version>${fop.version}</version>
+      <type>pom</type>
+    </dependency>
 
     <!-- Testing -->
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
       <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-suite-api</artifactId>
+      <version>${junit-suite.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -220,7 +237,7 @@
         <plugin>
           <artifactId>maven-dependency-plugin</artifactId>
           <version>${maven-dependency-plugin.version}</version>
-        </plugin>      
+        </plugin>
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
           <version>${maven-resources-plugin.version}</version>
