@@ -17,3 +17,6 @@ trim_trailing_whitespace = false
 
 [*.puml]
 insert_final_newline = false
+
+[{Dockerfile,Dockerfile.*}]
+indent_size = 4
