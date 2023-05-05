@@ -2,6 +2,8 @@ package net.sourceforge.plantuml.servlet.utils;
 
 import java.time.Duration;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
@@ -16,14 +18,14 @@ public abstract class WebappUITestCase extends WebappTestCase {
     public WebDriver driver;
     public JavascriptExecutor js;
 
-    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         driver = JUnitWebDriver.getDriver();
         js = (JavascriptExecutor)driver;
     }
 
-    @Override
+    @AfterEach
     public void tearDown() throws Exception {
         driver.close();
         super.tearDown();

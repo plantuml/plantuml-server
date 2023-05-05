@@ -7,15 +7,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.stream.Collectors;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 import net.sourceforge.plantuml.servlet.server.EmbeddedJettyServer;
 import net.sourceforge.plantuml.servlet.server.ExternalServer;
 import net.sourceforge.plantuml.servlet.server.ServerUtils;
 
 
-public abstract class WebappTestCase extends TestCase {
+public abstract class WebappTestCase {
 
     private final ServerUtils serverUtils;
 
@@ -34,12 +36,12 @@ public abstract class WebappTestCase extends TestCase {
         serverUtils = new EmbeddedJettyServer();
     }
 
-    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         serverUtils.startServer();
     }
 
-    @Override
+    @AfterEach
     public void tearDown() throws Exception {
         serverUtils.stopServer();
     }
@@ -67,17 +69,8 @@ public abstract class WebappTestCase extends TestCase {
     }
 
     public String getContentText(final InputStream stream) throws IOException {
-        try (
-            final InputStreamReader isr = new InputStreamReader(stream);
-            final BufferedReader br = new BufferedReader(isr);
-        ) {
-            String line;
-            StringBuffer sb = new StringBuffer();
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
-                sb.append("\n");
-            }
-            return sb.toString().trim();
+        try (final BufferedReader br = new BufferedReader(new InputStreamReader(stream))) {
+            return br.lines().collect(Collectors.joining("\n"));
         }
     }
 
