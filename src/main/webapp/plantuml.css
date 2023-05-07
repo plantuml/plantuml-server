@@ -5,16 +5,20 @@
 /************* variables *************/
 :root {
   color-scheme: light dark;
+  --font-color: black;
+  --bg-color: white;
   --border-color: #ccc;
-  --bg-color: inherit;
-  --font-color: inherit;
+  --footer-font-color: #666;
+  --footer-bg-color: #eee;
   --settings-bg-color: #fefefe;
 }
 [data-theme="dark"] {
-  --border-color: #848484;
-  --bg-color: #212121;
-  --settings-bg-color: #424242;
   --font-color: #ccc;
+  --bg-color: #212121;
+  --border-color: #848484;
+  --footer-font-color: #ccc;
+  --footer-bg-color: black;
+  --settings-bg-color: #424242;
 }
 
 /************* default settings *************/
@@ -38,6 +42,14 @@ body {
   .app {
     height: 100%;
   }
+}
+input:not([type=image]) {
+  background-color: var(--bg-color);
+  color: var(--font-color);
+}
+select {
+  background-color: var(--bg-color);
+  color: var(--font-color);
 }
 
 /************* ruler *************/
@@ -114,8 +126,8 @@ body {
   }
 }
 .footer p {
-  background-color: #eee;
-  color: #666;
+  background-color: var(--footer-bg-color);
+  color: var(--footer-font-color);
   font-size: 0.7em;
   margin: 0;
   padding: 0.5em;
@@ -381,14 +393,6 @@ body {
 }
 [data-theme="dark"] input[type=image] {
   filter: invert() contrast(30%);
-}
-[data-theme="dark"] input:not([type=image]) {
-  background-color: var(--bg-color);
-  color: var(--font-color);
-}
-[data-theme="dark"] .footer p {
-  background-color: black;
-  color: var(--font-color);
 }
 [data-theme="dark"] a {
   color: white;
