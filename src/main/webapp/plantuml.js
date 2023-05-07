@@ -503,6 +503,7 @@ async function initializeApp(view) {
     hidePreview();
   }
   document.appConfig.autoRefreshState = "complete";
+  document.editor?.focus();
 }
 
 function loadCodeEditor() {
