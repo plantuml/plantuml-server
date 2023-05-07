@@ -91,7 +91,6 @@ public class ProxyServlet extends HttpServlet {
         try {
             srcUrl = new URL(source);
         } catch (MalformedURLException mue) {
-            mue.printStackTrace();
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "URL malformed.");
             return;
         }

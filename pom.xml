@@ -74,7 +74,7 @@
     <!-- Testing -->
     <junit.version>5.9.3</junit.version>
     <junit-suite.version>1.9.3</junit-suite.version>
-    <selenium.version>4.9.0</selenium.version>
+    <selenium.version>4.9.1</selenium.version>
     <selenium-webdrivermanager.version>5.3.2</selenium-webdrivermanager.version>
     <commons-io.version>2.11.0</commons-io.version>
     <jetty-server.version>${jetty.version}</jetty-server.version>
@@ -86,7 +86,7 @@
     <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
     <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
     <versions-maven-plugin.version>2.15.0</versions-maven-plugin.version>
-    <maven-surefire-plugin.version>3.0.0</maven-surefire-plugin.version>
+    <maven-surefire-plugin.version>3.1.0</maven-surefire-plugin.version>
     <maven-war-plugin.version>3.3.2</maven-war-plugin.version>
     <maven-install-plugin.version>3.1.1</maven-install-plugin.version>
     <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
@@ -108,11 +108,13 @@
       <groupId>net.sourceforge.plantuml</groupId>
       <artifactId>plantuml</artifactId>
       <version>${plantuml.version}</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.webjars.npm</groupId>
       <artifactId>monaco-editor</artifactId>
       <version>${monaco-editor.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
@@ -131,31 +133,44 @@
       <groupId>org.scilab.forge</groupId>
       <artifactId>jlatexmath</artifactId>
       <version>${jlatexmath.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.scilab.forge</groupId>
       <artifactId>jlatexmath-font-greek</artifactId>
       <version>${jlatexmath-font-greek.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.scilab.forge</groupId>
       <artifactId>jlatexmath-font-cyrillic</artifactId>
       <version>${jlatexmath-font-cyrillic.version}</version>
+      <scope>runtime</scope>
     </dependency>
-    <!-- PDF -->
+    <!-- PDF
+      PlantUMLs PDF generation requires:
+      - batik-dom
+      - batik-svgrasterizer (includes batik-dom)
+      - batik-svggen
+      - fop
+    -->
     <dependency>
-      <!-- batik-all generally tends to provide duplicate resources on the classpath -->
       <groupId>org.apache.xmlgraphics</groupId>
-      <artifactId>batik-all</artifactId>
+      <artifactId>batik-svgrasterizer</artifactId>
       <version>${batik-all.version}</version>
-      <type>pom</type>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
-      <!-- fop generally tends to provide duplicate resources on the classpath -->
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>batik-svggen</artifactId>
+      <version>${batik-all.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.xmlgraphics</groupId>
       <artifactId>fop</artifactId>
       <version>${fop.version}</version>
-      <type>pom</type>
+      <scope>runtime</scope>
     </dependency>
 
    <!-- Testing -->
@@ -181,12 +196,6 @@
       <groupId>io.github.bonigarcia</groupId>
       <artifactId>webdrivermanager</artifactId>
       <version>${selenium-webdrivermanager.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>${commons-io.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
