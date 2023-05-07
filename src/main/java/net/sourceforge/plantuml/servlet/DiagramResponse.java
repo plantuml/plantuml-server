@@ -29,10 +29,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -60,10 +57,6 @@ import net.sourceforge.plantuml.version.Version;
 public class DiagramResponse {
 
     /**
-     * {@link FileFormat} to http content type mapping.
-     */
-    private static final Map<FileFormat, String> CONTENT_TYPE;
-    /**
      * X-Powered-By http header value included in every response by default.
      */
     private static final String POWERED_BY = "PlantUML Version " + Version.versionString();
@@ -75,13 +68,6 @@ public class DiagramResponse {
         if ("true".equalsIgnoreCase(System.getenv("ALLOW_PLANTUML_INCLUDE"))) {
             OptionFlags.ALLOW_INCLUDE = true;
         }
-        CONTENT_TYPE = Collections.unmodifiableMap(new HashMap<FileFormat, String>() {{
-            put(FileFormat.PNG, "image/png");
-            put(FileFormat.SVG, "image/svg+xml");
-            put(FileFormat.EPS, "application/postscript");
-            put(FileFormat.UTXT, "text/plain;charset=UTF-8");
-            put(FileFormat.BASE64, "text/plain; charset=x-user-defined");
-        }});
     }
 
     /**
@@ -282,7 +268,7 @@ public class DiagramResponse {
      * @return response content type
      */
     private String getContentType() {
-        return CONTENT_TYPE.get(format);
+        return format.getMimeType();
     }
 
 }
