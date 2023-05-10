@@ -549,10 +549,21 @@ function initializeCodeEditor() {
       }, document.appConfig.editorWatcherTimeout);
     }
   });
+  // create storage service to expand suggestion documentation by default
+  const storageService = {
+    get() {},
+    getBoolean(key) { return key === 'expandSuggestionDocs'; },
+    getNumber() { return 0; },
+    remove() {},
+    store() {},
+    onWillSaveState() {},
+    onDidChangeStorage() {},
+    onDidChangeValue() {},
+  };
   // create editor
   document.editor = monaco.editor.create(document.getElementById("monaco-editor"), {
     model, ...document.appConfig.editorCreateOptions
-  });
+  }, { storageService });
   // sometimes the monaco editor has resize problems
   document.addEventListener("resize", () => document.editor.layout());
 }

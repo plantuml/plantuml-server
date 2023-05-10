@@ -30,12 +30,11 @@ import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -50,7 +49,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
+import net.sourceforge.plantuml.FileFormat;
+import net.sourceforge.plantuml.emoji.data.Dummy;
+import net.sourceforge.plantuml.json.Json;
+import net.sourceforge.plantuml.json.JsonArray;
 import net.sourceforge.plantuml.theme.ThemeUtils;
 import net.sourceforge.plantuml.openiconic.data.DummyIcon;
 
@@ -73,6 +75,7 @@ public class PlantUmlUIHelperServlet extends HttpServlet {
 
     public PlantUmlUIHelperServlet() {
         // add all supported request items/helper methods
+        helpers.put("emojis", this::sendEmojis);
         helpers.put("icons.svg", this::sendIconsSprite);
         helpers.put("icons", this::sendIcons);
         helpers.put("themes", this::sendThemes);
@@ -91,8 +94,7 @@ public class PlantUmlUIHelperServlet extends HttpServlet {
             errorMsg = "Unknown requested item: " + requestItem;
         }
         if (errorMsg != null) {
-            response.addHeader("Access-Control-Allow-Origin", "*");
-            response.setContentType("text/plain;charset=UTF-8");
+            setDefaultHeader(response, FileFormat.UTXT);
             response.getWriter().write(errorMsg);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
@@ -101,29 +103,36 @@ public class PlantUmlUIHelperServlet extends HttpServlet {
         requestHelper.accept(request, response);
     }
 
-    private String toJson(List<String> list) {
-        return "[" + list.stream()
-            .map(item -> "\"" + item.replace("\"", "\\\"") + "\"")
-            .collect(Collectors.joining(",")) + "]";
+    private void setDefaultHeader(HttpServletResponse response, FileFormat fileFormat) {
+        setDefaultHeader(response, fileFormat.getMimeType());
+    }
+
+    private HttpServletResponse setDefaultHeader(HttpServletResponse response, String contentType) {
+        response.addHeader("Access-Control-Allow-Origin", "*");
+        response.setContentType(contentType);
+        return response;
     }
 
     private void sendJson(HttpServletResponse response, String json) throws IOException {
-        response.addHeader("Access-Control-Allow-Origin", "*");
-        response.setContentType("application/json;charset=UTF-8");
+        setDefaultHeader(response, "application/json;charset=UTF-8");
         response.getWriter().write(json);
     }
 
-    private List<String> getIcons() throws IOException {
+    private String[] getIcons() throws IOException {
         InputStream in = DummyIcon.class.getResourceAsStream("all.txt");
         try (BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
-            return br.lines().collect(Collectors.toList());
+            return br.lines().toArray(String[]::new);
         }
+    }
+
+    private void sendIcons(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        sendJson(response, Json.array(getIcons()).toString());
     }
 
     private void sendIconsSprite(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (svgIconsSpriteCache == null) {
             // NOTE: all icons has the following svg tag attributes: width="8" height="8" viewBox="0 0 8 8"
-            List<String> iconNames = getIcons();
+            String[] iconNames = getIcons();
             StringBuilder sprite = new StringBuilder();
             sprite.append("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"8\" height=\"8\" viewBox=\"0 0 8 8\">\n");
             sprite.append("<defs>\n");
@@ -134,12 +143,19 @@ public class PlantUmlUIHelperServlet extends HttpServlet {
             sprite.append("</defs>\n");
             for (String name : iconNames) {
                 try (InputStream in = DummyIcon.class.getResourceAsStream(name + ".svg")) {
-                    DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+                    DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+                    docFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+                    docFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+                    DocumentBuilder db = docFactory.newDocumentBuilder();
                     Document doc = db.parse(in);
+
                     Writer out = new StringWriter();
                     out.write("<g class=\"sprite\" id=\"" + name + "\">");
 
-                    Transformer tf = TransformerFactory.newInstance().newTransformer();
+                    TransformerFactory tfFactory = TransformerFactory.newInstance();
+                    tfFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+                    tfFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+                    Transformer tf = tfFactory.newTransformer();
                     tf.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
                     tf.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
                     tf.setOutputProperty(OutputKeys.INDENT, "no");
@@ -153,22 +169,34 @@ public class PlantUmlUIHelperServlet extends HttpServlet {
                 } catch (ParserConfigurationException | SAXException | TransformerException ex) {
                     // skip icons which can not be parsed/read
                     Logger logger = Logger.getLogger("com.plantuml");
-                    logger.log(Level.WARNING, "SVG icon '{0}' could not be parsed. Skip!", name);
+                    logger.log(Level.WARNING, "SVG icon \"{0}\" could not be parsed. Skip!", name);
                 }
             }
             sprite.append("</svg>\n");
             svgIconsSpriteCache = sprite.toString();
         }
-        response.addHeader("Access-Control-Allow-Origin", "*");
-        response.setContentType("image/svg+xml;charset=UTF-8");
+        setDefaultHeader(response, FileFormat.SVG);
         response.getWriter().write(svgIconsSpriteCache);
     }
 
-    private void sendIcons(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        sendJson(response, toJson(getIcons()));
+    private String[][] getEmojis() throws IOException {
+        InputStream in = Dummy.class.getResourceAsStream("emoji.txt");
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
+            return br.lines().map(line -> line.split(";")).toArray(String[][]::new);
+        }
+    }
+
+    private void sendEmojis(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String[][] emojis = getEmojis();
+        JsonArray json = new JsonArray();
+        for (String[] emojiUnicodeNamePair : emojis) {
+            json.add(Json.array(emojiUnicodeNamePair));
+        }
+        sendJson(response, json.toString());
     }
 
     private void sendThemes(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        sendJson(response, toJson(ThemeUtils.getAllThemeNames()));
+        String[] themes = ThemeUtils.getAllThemeNames().toArray(new String[0]);
+        sendJson(response, Json.array(themes).toString());
     }
 }

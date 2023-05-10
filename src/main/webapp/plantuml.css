@@ -153,9 +153,10 @@ select {
 #monaco-editor {
   height: 100%;
 }
-/* Hack to display the icons in the icon auto completion documentation in a visible size.
- * (see PlantUmlLanguageFeatures.registerIconCompletion) */
-#monaco-editor .overlayWidgets .suggest-details p img[alt="icon"] {
+/* Hack to display the icons and emojis in the auto completion documentation in a visible size.
+ * (see PlantUmlLanguageFeatures.register{Icon,Emoji}Completion) */
+#monaco-editor .overlayWidgets .suggest-details p img[alt="icon"],
+#monaco-editor .overlayWidgets .suggest-details p img[alt="emoji"] {
   height: 1.2rem;
 }
 
