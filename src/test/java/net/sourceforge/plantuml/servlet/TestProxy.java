@@ -12,12 +12,14 @@ import net.sourceforge.plantuml.servlet.utils.WebappTestCase;
 
 public class TestProxy extends WebappTestCase {
 
+    private static final String TEST_RESOURCE = "test2diagrams.txt";
+
     /**
      * Verifies the proxified reception of the default Bob and Alice diagram
      */
     @Test
     public void testDefaultProxy() throws IOException {
-        final URL url = new URL(getServerUrl() + "/proxy?src=" + getTestDiagramUrl());
+        final URL url = new URL(getServerUrl() + "/proxy?src=" + getTestResourceUrl(TEST_RESOURCE));
         final HttpURLConnection conn = (HttpURLConnection)url.openConnection();
         // Analyze response
         // Verifies HTTP status code and the Content-Type
@@ -39,7 +41,7 @@ public class TestProxy extends WebappTestCase {
      */
     @Test
     public void testProxyWithFormat() throws IOException {
-        final URL url = new URL(getServerUrl() + "/proxy?fmt=svg&src=" + getTestDiagramUrl());
+        final URL url = new URL(getServerUrl() + "/proxy?fmt=svg&src=" + getTestResourceUrl(TEST_RESOURCE));
         final HttpURLConnection conn = (HttpURLConnection)url.openConnection();
         // Analyze response
         // Verifies HTTP status code and the Content-Type
@@ -61,7 +63,7 @@ public class TestProxy extends WebappTestCase {
      */
     @Test
     public void testProxyWithFormatIdx0() throws IOException {
-        final URL url = new URL(getServerUrl() + "/proxy?fmt=svg&idx=0&src=" + getTestDiagramUrl());
+        final URL url = new URL(getServerUrl() + "/proxy?fmt=svg&idx=0&src=" + getTestResourceUrl(TEST_RESOURCE));
         final HttpURLConnection conn = (HttpURLConnection)url.openConnection();
         // Analyze response
         // Verifies HTTP status code and the Content-Type
@@ -83,7 +85,7 @@ public class TestProxy extends WebappTestCase {
      */
     @Test
     public void testProxyWithFormatIdx1() throws IOException {
-        final URL url = new URL(getServerUrl() + "/proxy?fmt=svg&idx=1&src=" + getTestDiagramUrl());
+        final URL url = new URL(getServerUrl() + "/proxy?fmt=svg&idx=1&src=" + getTestResourceUrl(TEST_RESOURCE));
         final HttpURLConnection conn = (HttpURLConnection)url.openConnection();
         // Analyze response
         // Verifies HTTP status code and the Content-Type

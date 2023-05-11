@@ -12,12 +12,14 @@ import net.sourceforge.plantuml.servlet.utils.WebappTestCase;
 
 public class TestOldProxy extends WebappTestCase {
 
+    private static final String TEST_RESOURCE = "test2diagrams.txt";
+
     /**
      * Verifies the proxified reception of the default Bob and Alice diagram
      */
     @Test
     public void testDefaultProxy() throws IOException {
-        final URL url = new URL(getServerUrl() + "/proxy/" + getTestDiagramUrl());
+        final URL url = new URL(getServerUrl() + "/proxy/" + getTestResourceUrl(TEST_RESOURCE));
         final HttpURLConnection conn = (HttpURLConnection)url.openConnection();
         // Analyze response
         // Verifies HTTP status code and the Content-Type
@@ -39,7 +41,7 @@ public class TestOldProxy extends WebappTestCase {
      */
     @Test
     public void testProxyWithFormat() throws IOException {
-        final URL url = new URL(getServerUrl() + "/proxy/svg/" + getTestDiagramUrl());
+        final URL url = new URL(getServerUrl() + "/proxy/svg/" + getTestResourceUrl(TEST_RESOURCE));
         final HttpURLConnection conn = (HttpURLConnection)url.openConnection();
         // Analyze response
         // Verifies HTTP status code and the Content-Type
