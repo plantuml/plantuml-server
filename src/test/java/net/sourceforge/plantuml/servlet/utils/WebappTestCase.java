@@ -50,10 +50,10 @@ public abstract class WebappTestCase {
         return serverUtils.getServerUrl();
     }
 
-    public String getTestDiagramUrl() {
+    public String getTestResourceUrl(String resource) {
         // NOTE: [Old]ProxyServlet.forbiddenURL do not allow URL with IP-Addresses or localhost.
         String serverUrl = getServerUrl().replace("/localhost", "/test.localhost");
-        return serverUrl + "/resource/test2diagrams.txt";
+        return serverUrl + "/resource/test/" + resource;
     }
 
     public String getContentText(final URL url) throws IOException {

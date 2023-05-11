@@ -219,6 +219,14 @@
     <url-pattern>/ui-helper/*</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>metadataservlet</servlet-name>
+    <servlet-class>net.sourceforge.plantuml.servlet.MetadataServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>metadataservlet</servlet-name>
+    <url-pattern>/metadata/*</url-pattern>
+  </servlet-mapping>
 
   <!-- ========================================================== -->
   <!-- Error Handler -->

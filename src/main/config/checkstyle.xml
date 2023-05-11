@@ -15,6 +15,8 @@
   <module name="LineLength">
     <property name="max" value="120" />
     <property name="tabWidth" value="4" />
+    <!-- ignore java doc including links, e.g.: `* @see <a href="https://...">PlantUML Code</a>` -->
+    <property name="ignorePattern" value="^\s*(\*|//).*@see\s.*?\shref=.*$"/>
   </module>
   <module name="NewlineAtEndOfFile">
     <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit" />
@@ -25,6 +27,7 @@
     <property name="message" value="Line has trailing spaces." />
   </module>
   <module name="Translation" />
+  <module name="SuppressWarningsFilter" />
   <module name="TreeWalker">
     <module name="ArrayTypeStyle" />
     <module name="AvoidInlineConditionals">
@@ -113,5 +116,6 @@
     <module name="VisibilityModifier" />
     <module name="WhitespaceAfter" />
     <module name="WhitespaceAround" />
+    <module name="SuppressWarningsHolder" />
   </module>
 </module>

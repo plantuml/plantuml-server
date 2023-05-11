@@ -80,25 +80,45 @@ public class ProxyServlet extends HttpServlet {
         return false;
     }
 
+    /**
+     * Validate external URL.
+     *
+     * @param url URL to validate
+     * @param response  response object to `sendError` including error message; if `null` no error will be send
+     *
+     * @return valid URL; otherwise `null`
+     *
+     * @throws IOException  `response.sendError` can result in a `IOException`
+     */
+    public static URL validateURL(String url, HttpServletResponse response) throws IOException {
+        final URL parsedUrl;
+        try {
+            parsedUrl = new URL(url);
+        } catch (MalformedURLException mue) {
+            if (response != null) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "URL malformed.");
+            }
+            return null;
+        }
+        // Check if URL is in a forbidden format (e.g. IP-Address)
+        if (forbiddenURL(url)) {
+            if (response != null) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Forbidden URL format.");
+            }
+            return null;
+        }
+        return parsedUrl;
+    }
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         final String fmt = request.getParameter("fmt");
         final String source = request.getParameter("src");
         final String index = request.getParameter("idx");
 
-        // Check if the src URL is valid
-        final URL srcUrl;
-        try {
-            srcUrl = new URL(source);
-        } catch (MalformedURLException mue) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "URL malformed.");
-            return;
-        }
-
-        // Check if URL is in a forbidden format (e.g. IP-Address)
-        if (forbiddenURL(source)) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Forbidden URL format.");
-            return;
+        final URL srcUrl = validateURL(source, response);
+        if (srcUrl == null) {
+            return;  // error is already set/handled inside `validateURL`
         }
 
         // generate the response
@@ -175,7 +195,7 @@ public class ProxyServlet extends HttpServlet {
      *
      * @throws IOException if an input or output exception occurred
      */
-    private HttpURLConnection getConnection(final URL url) throws IOException {
+    public static HttpURLConnection getConnection(final URL url) throws IOException {
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         String token = System.getenv("HTTP_AUTHORIZATION");
