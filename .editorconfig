@@ -20,3 +20,6 @@ insert_final_newline = false
 
 [{Dockerfile,Dockerfile.*}]
 indent_size = 4
+
+[.vscode/*.json]
+indent_size = 4

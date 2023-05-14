@@ -43,7 +43,7 @@ function isVisible(el) {
   // `offsetParent` returns `null` if the element, or any of its parents,
   // is hidden via the display style property.
   // see: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetParent
-  return (el.offsetParent === null)
+  return (el.offsetParent !== null);
 }
 
 function setVisibility(el, visibility, focus=false) {
@@ -54,6 +54,11 @@ function setVisibility(el, visibility, focus=false) {
     el.style.display = "none";
   }
 }
+
+const isMac = (function() {
+	const PLATFORM = navigator?.userAgentData?.platform || navigator?.platform || "unknown";
+  return PLATFORM.match("Mac");
+})();
 
 
 // ==========================================================================================================
@@ -184,27 +189,81 @@ function requestDiagramMap(encodedDiagram, index, callback) {
   requestDiagram("map", encodedDiagram, index, callback);
 }
 
+function requestMetadata(file) {
+  return new Promise((resolve, reject) => {
+    const fd = new FormData();
+    fd.append("diagram", file, file.name);
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status >= 200 && xhr.status <= 300) {
+          resolve(xhr.response);
+        } else {
+          reject({ status: xhr.status, response: xhr.response });
+        }
+      }
+    }
+    xhr.open("POST", "metadata", true);
+    xhr.setRequestHeader("Accept", "application/json");
+    xhr.responseType = "json";
+    xhr.send(fd);
+  });
+}
+
+
+// ==========================================================================================================
+// == modal ==
+
+const { registerModalListener, openModal, closeModal } = (function() {
+  const modalListener = {};
+  return {
+    registerModalListener: (id, fnOpen=undefined, fnClose=undefined) => modalListener[id] = { fnOpen, fnClose },
+    openModal: (id, ...args) => {
+      modalListener[id]?.fnOpen?.call(...args) || setVisibility(document.getElementById(id), true, true)
+    },
+    closeModal: (id, ...args) => {
+      modalListener[id]?.fnClose?.call(...args) || setVisibility(document.getElementById(id), false);
+    },
+  };
+})();
+
+function initModals() {
+  document.querySelectorAll(".modal").forEach(modal => {
+    modal.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" || event.key === "Esc") {
+        event.preventDefault();
+        closeModal(modal.id);
+      } else if (event.key === "Enter") {
+        event.preventDefault();
+        const okBtn = modal.querySelector('input.ok[type="button"]');
+        if (okBtn && !okBtn.disabled) {
+          okBtn.click();
+        }
+      }
+    }, false);
+  });
+}
+
+function isModalOpen(id) {
+  return isVisible(document.getElementById(id));
+}
+
+function closeAllModals() {
+  document.querySelectorAll(".modal").forEach(modal => closeModal(modal.id));
+}
+
 
 // ==========================================================================================================
 // == settings ==
 
 function initSettings() {
-  document.getElementById("settings").addEventListener("keydown", (event) => {
-    event.preventDefault();
-    console.log(event);
-    if (event.key === "Escape" || event.key === "Esc") {
-      closeSettings();
-    }
-  }, false);
   document.getElementById("theme").addEventListener("change", (event) => {
     const theme = event.target.value;
     const editorCreateOptionsString = document.settingsEditor.getValue();
     const replaceTheme = (theme === "dark") ? "vs" : "vs-dark";
     const substituteTheme = (theme === "dark") ? "vs-dark" : "vs";
     const regex = new RegExp('("theme"\\s*:\\s*)"' + replaceTheme + '"', "gm");
-    document.settingsEditor.getModel().setValue(
-      editorCreateOptionsString.replace(regex, '$1"' + substituteTheme + '"')
-    );
+    setEditorValue(document.settingsEditor, editorCreateOptionsString.replace(regex, '$1"' + substituteTheme + '"'));
   });
   document.settingsEditor = monaco.editor.create(document.getElementById("settings-monaco-editor"), {
 		language: "json", ...document.appConfig.editorCreateOptions
@@ -220,13 +279,7 @@ function openSettings() {
   document.getElementById("theme").value = document.appConfig.theme;
   document.getElementById("diagramPreviewType").value = document.appConfig.diagramPreviewType;
   document.getElementById("editorWatcherTimeout").value = document.appConfig.editorWatcherTimeout;
-  document.settingsEditor.getModel().setValue(
-    JSON.stringify(document.appConfig.editorCreateOptions, null, "  ")
-  );
-}
-
-function closeSettings() {
-  setVisibility(document.getElementById("settings"), false);
+  setEditorValue(document.settingsEditor, JSON.stringify(document.appConfig.editorCreateOptions, null, "  "));
 }
 
 function saveSettings() {
@@ -236,7 +289,7 @@ function saveSettings() {
   appConfig.diagramPreviewType = document.getElementById("diagramPreviewType").value;
   appConfig.editorCreateOptions = JSON.parse(document.settingsEditor.getValue());
   broadcastSettings(appConfig);
-  closeSettings();
+  closeModal("settings");
 }
 
 function broadcastSettings(appConfig) {
@@ -252,6 +305,248 @@ function applySettings() {
   setTheme(document.appConfig.theme);
   document.editor?.updateOptions(document.appConfig.editorCreateOptions);
   document.settingsEditor?.updateOptions(document.appConfig.editorCreateOptions);
+}
+
+
+// ==========================================================================================================
+// == diagram import ==
+
+function openDiagramImportDialog(isOpenManually = true) {
+  const diagramImportDialog = document.getElementById("diagram-import");
+  setVisibility(diagramImportDialog, true, true);
+  diagramImportDialog.dataset.isOpenManually = isOpenManually.toString();
+}
+
+function onDiagramImportInputChange(fileInput) {
+  document.getElementById("diagram-import-error-message").innerText = "";
+  document.getElementById("diagram-import-ok-btn").disabled = fileInput.files?.length < 1;
+}
+
+function initDiagramImportDiaglog() {
+  const diagramImportDialog = document.getElementById("diagram-import");
+  const diagramInputElement = document.getElementById("diagram-import-input");
+  const errorMessageElement = document.getElementById("diagram-import-error-message");
+
+  function closeDiagramImportDialog() {
+    diagramInputElement.value = "";  // reset or clear
+    onDiagramImportInputChange(diagramInputElement);
+    diagramImportDialog.removeAttribute("data-is-open-manually");
+    setVisibility(diagramImportDialog, false);
+  }
+  function checkFileLocally(file) {
+    function getImageFileType({name, type}) {
+      const supported = ["png", "svg"];
+      // get type by mime type
+      let fileType = supported.filter(t => type.toLowerCase().indexOf(t) !== -1)[0];
+      if (fileType) return fileType;
+      // fallback: get type by filename extension
+      if (name.indexOf(".") === -1) return undefined;
+      const ext = name.substring(name.lastIndexOf(".")+1).toLowerCase();
+      return supported.filter(t => ext === t)[0];
+    }
+    function isDiagramCode({name, type}) {
+      // get type by mime type
+      let supported = ["plain", "text", "plantuml", "puml"];
+      if (supported.filter(t => type.toLowerCase().indexOf(t) !== -1).length > 0) {
+        return true;
+      }
+      // fallback: get type by filename extension
+      if (name.indexOf(".") === -1) return false;
+      const ext = name.substring(name.lastIndexOf('.')+1).toLowerCase();
+      supported = ["txt", "puml", "plantuml"];
+      return supported.filter(t => ext === t).length > 0;
+    }
+
+    const type = getImageFileType(file);
+    const isCode = type === undefined ? isDiagramCode(file) : false;
+    if (!type && !isCode) {
+      errorMessageElement.innerText = "File not supported. " +
+        "Only PNG and SVG diagram images as well as PlantUML code text files are supported."
+    }
+    return { type, isDiagramCode: isCode, valid: type || isCode };
+  }
+
+  function importDiagram(file, fileCheck) {
+    function loadDiagram(code) {
+      syncCodeEditor(code);
+      broadcastCodeEditorChanges("file-drop", code);
+    }
+
+    diagramImportDialog.classList.add("wait");
+    return new Promise((resolve, reject) => {
+      if (fileCheck.type) {
+        // upload diagram image, get meta data from server and load diagram from result
+        requestMetadata(file).then(
+          metadata => { loadDiagram(metadata.decoded); resolve(); },
+          ({ response }) => { errorMessageElement.innerText = response.message || response; reject(); }
+        );
+      } else if (fileCheck.isDiagramCode) {
+        // read code (text) file
+        const reader = new FileReader();
+        reader.onload = event => loadDiagram(event.target.result);
+        reader.readAsText(file);
+        resolve();
+      } else {
+        // this error should already be handled.
+        errorMessageElement.innerText = "File not supported. " +
+          "Only PNG and SVG diagram images as well as PlantUML code text files are supported.";
+        reject();
+      }
+    }).then(() => closeDiagramImportDialog(), () => {}).finally(() => diagramImportDialog.classList.remove("wait"));
+  }
+
+  function onGlobalDragEnter(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    if (!isVisible(diagramImportDialog)) {
+      openDiagramImportDialog(false);
+    }
+  }
+
+  function onDiagramImportDragOver(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    if (event.dataTransfer !== null) {
+      event.dataTransfer.dropEffect = "copy";
+    }
+  }
+  function onDiagramImportDrop(event) {
+    function stop() {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+    const files = event.dataTransfer.files || event.target.files;
+    if (!files || files.length < 1) {
+      return stop();
+    }
+    const file = files[0];
+    const fileCheck = checkFileLocally(file);
+    if (!fileCheck.valid) {
+      return stop();
+    }
+    if (diagramImportDialog.dataset.isOpenManually === "true") {
+      return;  // let file input handle this event => no `stop()`!
+    }
+    // drop and go - close modal without additional ok button click
+    stop();
+    importDiagram(file, fileCheck);
+  }
+
+  // global drag&drop events
+  window.addEventListener("dragenter", onGlobalDragEnter, false);
+  // diagram import dialog drag&drop events
+  diagramImportDialog.addEventListener("dragenter", event => event.target.classList.add("drop-able"), false);
+  diagramImportDialog.addEventListener("dragover", onDiagramImportDragOver, false);
+  diagramImportDialog.addEventListener("dragexit", event => event.target.classList.remove("drop-able"), false);
+  diagramImportDialog.addEventListener("drop", onDiagramImportDrop, false);
+  // ok button
+  document.getElementById("diagram-import-ok-btn").addEventListener("click", () => {
+    const file = diagramInputElement.files[0];  // should be always a valid file
+    importDiagram(file, checkFileLocally(file));  // otherwise button should be disabled
+  });
+  // reset or clear file input
+  diagramInputElement.value = "";
+  onDiagramImportInputChange(diagramInputElement);
+  // register model listeners
+  registerModalListener("diagram-import", openDiagramImportDialog, closeDiagramImportDialog);
+}
+
+
+// ==========================================================================================================
+// == diagram export ==
+
+function initFileExportDialog() {
+  const filenameInput = document.getElementById("download-name");
+  const fileTypeSelect = document.getElementById("download-type");
+
+  function openDiagramExportDialog() {
+    setVisibility(document.getElementById("diagram-export"), true, true);
+    const code = document.editor.getValue();
+    const name = Array.from(
+      code.matchAll(/^\s*@start[a-zA-Z]*\s+([a-zA-Z-_äöüÄÖÜß ]+)\s*$/gm),
+      m => m[1]
+    )[0] || "diagram";
+    filenameInput.value = name + ".puml";
+    fileTypeSelect.value = "code";
+    filenameInput.focus();
+  }
+  function splitFilename(filename) {
+    const idx = filename.lastIndexOf(".");
+    if (idx < 1) {
+      return { name: filename, ext: null };
+    }
+    if (idx === filename.length - 1) {
+      return { name: filename.slice(0, -1), ext: null };
+    }
+    return {
+        name: filename.substring(0, idx),
+        ext: filename.substring(idx + 1),
+    };
+  }
+  function getExtensionByType(type) {
+    switch (type) {
+      case "epstext": return "eps";
+      case "code": return "puml";
+      default: return type;
+    }
+  }
+  function getTypeByExtension(ext) {
+    if (!ext) return ext;
+    ext = ext.toLowerCase();
+    switch (ext) {
+      case "puml":
+      case "plantuml":
+      case "code":
+        return "code";
+      case "ascii": return "txt"
+      default: return ext;
+    }
+  }
+  function onTypeChanged(event) {
+    const type = event.target.value;
+    const ext = getExtensionByType(type);
+    const { name } = splitFilename(filenameInput.value);
+    filenameInput.value = name + "." + ext;
+  }
+  function onFilenameChanged(event) {
+    const { ext } = splitFilename(event.target.value);
+    const type = getTypeByExtension(ext);
+    if (!type) return;
+    fileTypeSelect.value = type;
+  }
+  function downloadFile() {
+    const filename = filenameInput.value;
+    const type = fileTypeSelect.value;
+    const link = document.createElement("a");
+    link.download = filename;
+    if (type === "code") {
+      const code = document.editor.getValue();
+      link.href = "data:," + encodeURIComponent(code);
+    } else {
+      if (document.appData.index !== undefined) {
+        link.href = type + "/" + document.appData.index + "/" + document.appData.encodedDiagram;
+      } else {
+        link.href = type + "/" + document.appData.encodedDiagram;
+      }
+    }
+    link.click();
+  }
+
+  // register modal
+  registerModalListener("diagram-export", openDiagramExportDialog);
+  // add listener
+  filenameInput.addEventListener("change", onFilenameChanged);
+  fileTypeSelect.addEventListener("change", onTypeChanged);
+  document.getElementById("diagram-export-ok-btn").addEventListener("click", downloadFile);
+  // add Ctrl+S or Meta+S (Mac) key shortcut to open export dialog
+  window.addEventListener("keydown", event => {
+    if (event.key === "s" && (isMac ? event.metaKey : event.ctrlKey)) {
+      event.preventDefault();
+      if (!isModalOpen("diagram-export")) {
+        openDiagramExportDialog();
+      }
+    }
+  }, false);
 }
 
 
@@ -353,6 +648,11 @@ function updatePaginatorSelection() {
 // ==========================================================================================================
 // == sync data ==
 
+function setEditorValue(editor, text, forceMoveMarkers=undefined) {
+  // replace editor value but preserve undo stack
+  editor.executeEdits('', [{ range: editor.getModel().getFullModelRange(),  text, forceMoveMarkers }]);
+}
+
 function updateDiagramMap(mapString, mapEl) {
   const mapBtn = document.getElementById("map-diagram-link");
   mapEl = mapEl || document.getElementById("plantuml_map");
@@ -433,7 +733,7 @@ function syncUrlTextInput(encodedDiagram, index) {
 
 function syncCodeEditor(code) {
   document.appConfig.changeEventsEnabled = false;
-  document.editor.getModel().setValue(code);
+  setEditorValue(document.editor, code);
   document.appConfig.changeEventsEnabled = true;
 }
 
@@ -496,7 +796,10 @@ async function initializeApp(view) {
   initTheme();
   await initializeDiagram();
   initializePaginator();
+  initModals();
   if (view !== "previewer") {
+    initDiagramImportDiaglog();
+    initFileExportDialog();
     addSavePlantumlDocumentEvent();
   }
   if (["previewer", "editor"].includes(view)) {
@@ -514,6 +817,31 @@ function loadCodeEditor() {
   });
 }
 
+const broadcastCodeEditorChanges = (function() {
+  let plantumlFeatures;
+  return function(sender, code) {
+    plantumlFeatures = plantumlFeatures || new PlantUmlLanguageFeatures();
+    document.appConfig.autoRefreshState = "started";
+    const numberOfDiagramPages = getNumberOfDiagramPagesFromCode(code);
+    let index = document.appData.index;
+    if (index === undefined || numberOfDiagramPages === 1) {
+      index = undefined;
+    } else if (index >= numberOfDiagramPages) {
+      index = numberOfDiagramPages - 1;
+    }
+    encodeDiagram(code, (encodedDiagram) => {
+      sendMessage({
+        sender,
+        data: { encodedDiagram, numberOfDiagramPages, index },
+        synchronize: true,
+      });
+    });
+    const model = document.editor.getModel();
+    plantumlFeatures.validateCode(model)
+      .then(markers => monaco.editor.setModelMarkers(model, "plantuml", markers));
+  };
+})();
+
 function initializeCodeEditor() {
   // create editor model including editor watcher
   let timer = 0;
@@ -521,32 +849,15 @@ function initializeCodeEditor() {
   const initCodeEl = document.getElementById("initCode");
   const initCode = initCodeEl.value;
   initCodeEl.remove();
-  const plantumlFeatures = new PlantUmlLanguageFeatures();
   const model = monaco.editor.createModel(initCode, "apex", uri);
   model.onDidChangeContent(() => {
     clearTimeout(timer);
     if (document.appConfig.changeEventsEnabled) {
       document.appConfig.autoRefreshState = "waiting";
-      timer = setTimeout(() => {
-        document.appConfig.autoRefreshState = "started";
-        const code = model.getValue();
-        const numberOfDiagramPages = getNumberOfDiagramPagesFromCode(code);
-        let index = document.appData.index;
-        if (index === undefined || numberOfDiagramPages === 1) {
-          index = undefined;
-        } else if (index >= numberOfDiagramPages) {
-          index = numberOfDiagramPages - 1;
-        }
-        encodeDiagram(code, (encodedDiagram) => {
-          sendMessage({
-            sender: "editor",
-            data: { encodedDiagram, numberOfDiagramPages, index },
-            synchronize: true,
-          });
-        });
-        plantumlFeatures.validateCode(model)
-          .then(markers => monaco.editor.setModelMarkers(model, "plantuml", markers));
-      }, document.appConfig.editorWatcherTimeout);
+      timer = setTimeout(
+        () => broadcastCodeEditorChanges("editor", model.getValue()),
+        document.appConfig.editorWatcherTimeout
+      );
     }
   });
   // create storage service to expand suggestion documentation by default
@@ -648,26 +959,11 @@ function initializePaginator() {
 }
 
 function addSavePlantumlDocumentEvent() {
-  const PLATFORM = navigator?.userAgentData?.platform || navigator?.platform || "unknown";
-  document.addEventListener("keydown", function(e) {
-    if (e.key === "s" && (PLATFORM.match("Mac") ? e.metaKey : e.ctrlKey)) {
-      // support Ctrl+S to download diagram
-      e.preventDefault();
-      const code = document.editor.getValue();
-      const name = Array.from(
-        code.matchAll(/^\s*@start[a-zA-Z]*\s+([a-zA-Z-_äöüÄÖÜß ]+)\s*$/gm),
-        m => m[1]
-      )[0] || "diagram";
-      // download via link
-      const link = document.createElement("a");
-      link.download = name + ".puml";
-      link.href = "data:," + encodeURIComponent(code);
-      link.click();
-    }
-    if (e.key === "," && (PLATFORM.match("Mac") ? e.metaKey : e.ctrlKey)) {
+  window.addEventListener("keydown", function(e) {
+    if (e.key === "," && (isMac ? e.metaKey : e.ctrlKey)) {
       // support Ctrl+, to open the settings
       e.preventDefault();
-      if (document.getElementById("settings")?.style?.display === "none") {
+      if (!isModalOpen("settings")) {
         openSettings();
       }
     }
@@ -679,7 +975,7 @@ function addSavePlantumlDocumentEvent() {
 // == communication ==
 //
 // send and receive data: {
-//   sender: string = ["editor"|"url"|"paginator"|"settings"],
+//   sender: string = ["editor"|"url"|"paginator"|"settings"|"file-drop"],
 //   data: {
 //     encodedDiagram: string | undefined,
 //     index: integer | undefined,
