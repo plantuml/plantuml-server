@@ -12,6 +12,7 @@
         "Lalloni",
         "monaco",
         "plantuml",
+        "puml",
         "Roques",
         "servlet",
         "servlets",
@@ -20,5 +21,6 @@
         "undock",
         "utxt"
     ],
-    "cSpell.allowCompoundWords": true
+    "cSpell.allowCompoundWords": true,
+    "svg.preview.background": "transparent"
 }

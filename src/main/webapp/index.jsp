@@ -36,13 +36,26 @@
         <div>
           <div class="btn-input">
             <input id="url" type="text" name="url" value="png/<%= diagramUrl %>" />
-            <input type="image" alt="copy" src="assets/copy.svg" onclick="copyUrlToClipboard()" />
+            <input type="image" alt="copy" src="assets/actions/copy.svg" onclick="copyUrlToClipboard()" />
           </div>
         </div>
         <div class="flex-main monaco-editor-container">
           <textarea id="initCode" name="initCode" style="display: none;"><%= net.sourceforge.plantuml.servlet.PlantUmlServlet.stringToHTMLString(decoded) %></textarea>
           <div id="monaco-editor"></div>
-          <input type="image" alt="copy" src="assets/copy.svg" onclick="copyCodeToClipboard()" />
+          <div class="editor-menu" tabindex="-1">
+            <div class="menu-kebab">
+              <div class="kebab-circle"></div>
+              <div class="kebab-circle"></div>
+              <div class="kebab-circle"></div>
+              <div class="kebab-circle"></div>
+              <div class="kebab-circle"></div>
+            </div>
+            <div class="menu-items">
+              <input class="menu-item" type="image" alt="copy" title="Copy code" src="assets/actions/copy.svg" onclick="copyCodeToClipboard()" />
+              <input class="menu-item" type="image" alt="import" title="Import diagram" src="assets/actions/upload.svg" onclick="openModal('diagram-import')" />
+              <input class="menu-item" type="image" alt="export" title="Export diagram" src="assets/actions/download.svg" onclick="openModal('diagram-export')" />
+            </div>
+          </div>
         </div>
       </div>
       <div id="previewer-main-container" class="previewer flex-main">
@@ -52,6 +65,9 @@
     <div class="footer">
       <%@ include file="resource/footer.jsp" %>
     </div>
+    <!-- editor modals -->
+    <%@ include file="resource/diagram-import.jsp" %>
+    <%@ include file="resource/diagram-export.jsp" %>
   </div>
 </body>
 </html>

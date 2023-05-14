@@ -32,7 +32,7 @@
             id="btn-settings"
             class="btn-settings"
             type="image"
-            src="assets/settings.svg"
+            src="assets/actions/settings.svg"
             alt="settings"
             onclick="openSettings();"
           />
@@ -40,7 +40,7 @@
             id="btn-undock"
             class="btn-dock"
             type="image"
-            src="assets/undock.svg"
+            src="assets/actions/undock.svg"
             alt="undock"
             onclick="undock();"
           />
@@ -48,7 +48,7 @@
             id="btn-dock"
             class="btn-dock"
             type="image"
-            src="assets/dock.svg"
+            src="assets/actions/dock.svg"
             alt="dock"
             onclick="window.close();"
             style="display: none;"

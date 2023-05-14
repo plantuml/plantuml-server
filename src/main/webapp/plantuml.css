@@ -6,19 +6,25 @@
 :root {
   color-scheme: light dark;
   --font-color: black;
+  --font-color-disabled: #888;
   --bg-color: white;
   --border-color: #ccc;
+  --border-color-2: #aaa;
   --footer-font-color: #666;
   --footer-bg-color: #eee;
-  --settings-bg-color: #fefefe;
+  --modal-bg-color: #fefefe;
+  --file-drop-color: #eee;
 }
 [data-theme="dark"] {
   --font-color: #ccc;
+  --font-color-disabled: #777;
   --bg-color: #212121;
   --border-color: #848484;
+  --border-color-2: #aaa;
   --footer-font-color: #ccc;
   --footer-bg-color: black;
-  --settings-bg-color: #424242;
+  --modal-bg-color: #424242;
+  --file-drop-color: #212121;
 }
 
 /************* default settings *************/
@@ -43,7 +49,11 @@ body {
     height: 100%;
   }
 }
-input:not([type=image]) {
+input:not([type="image"]) {
+  background-color: var(--bg-color);
+  color: var(--font-color);
+}
+input[type="file"]::file-selector-button {
   background-color: var(--bg-color);
   color: var(--font-color);
 }
@@ -70,6 +80,14 @@ select {
   width: 100%;
   min-height: 3px;
   min-width: 3px;
+}
+
+/************* wait cursor *************/
+.wait {
+  cursor: wait;
+}
+.wait > * {
+  pointer-events: none;
 }
 
 /************* flex rows and columns *************/
@@ -181,22 +199,100 @@ select {
   box-shadow: none;
   outline: none;
 }
-.btn-input input[type=image] {
+.btn-input input[type="image"] {
   height: 1rem;
   margin-left: 0.7em;
   padding: 0 0.3em;
 }
 
-/************* Monaco editor copy button *************/
-.monaco-editor-container input[type=image] {
-  height: 1.5rem;
+/************* Monaco editor action menu *************/
+.monaco-editor-container .editor-menu {
   position: absolute;
-  right: 2rem;
-  top: 1rem;
-  opacity: 0.5;
+  right: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
 }
-.monaco-editor-container input[type=image]:hover {
+.monaco-editor-container .editor-menu > div.menu-kebab {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  scale: 0.5;
+}
+.monaco-editor-container .editor-menu:hover > div.menu-kebab,
+.monaco-editor-container .editor-menu:focus > div.menu-kebab {
+  outline: none;
+  scale: 0.65;
+}
+.monaco-editor-container .menu-kebab .kebab-circle {
+  width: 12px;
+  height: 12px;
+  margin: 3px;
+  background: var(--font-color);
+  border-radius: 50%;
+  display: block;
+  opacity: 0.8;
+}
+.monaco-editor-container .menu-kebab {
+  flex-direction: column;
+  position: relative;
+  transition: all 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.monaco-editor-container .menu-kebab .kebab-circle:nth-child(4),
+.monaco-editor-container .menu-kebab .kebab-circle:nth-child(5) {
+  position: absolute;
+  opacity: 0;
+  top: 50%;
+  margin-top: -6px;
+  left: 50%;
+}
+.monaco-editor-container .menu-kebab .kebab-circle:nth-child(4) {
+  margin-left: -25px;
+}
+.monaco-editor-container .menu-kebab .kebab-circle:nth-child(5) {
+  margin-left: 13px;
+}
+.monaco-editor-container .editor-menu:hover .menu-kebab,
+.monaco-editor-container .editor-menu:focus .menu-kebab {
+  transform: rotate(45deg);
+}
+.monaco-editor-container .editor-menu:hover .menu-kebab .kebab-circle,
+.monaco-editor-container .editor-menu:focus .menu-kebab .kebab-circle {
   opacity: 1;
+}
+
+.monaco-editor-container .editor-menu .menu-item {
+  display: none;
+  margin: 1rem 0;
+  height: 1.75rem;
+  opacity: 0.5;
+  position: relative;
+  -webkit-animation-name: animateitem;
+  -webkit-animation-duration: 0.4s;
+  animation-name: animateitem;
+  animation-duration: 0.4s;
+}
+@-webkit-keyframes animateitem {
+  from { top: -50%; opacity: 0; }
+  to { top: 0; opacity: 0.5; }
+}
+@keyframes animateitem {
+  from { top: -50%; opacity: 0; }
+  to { top: 0; opacity: 0.5; }
+}
+.monaco-editor-container .editor-menu .menu-item:hover {
+  opacity: 1;
+}
+.monaco-editor-container .editor-menu:hover .menu-item,
+.monaco-editor-container .editor-menu:focus .menu-item {
+  display: block;
 }
 
 /*******************************************************************/
@@ -300,7 +396,6 @@ select {
 }
 
 /*******************************************************************/
-/************* settings *************/
 /************* modal *************/
 .modal {
   display: block;
@@ -315,8 +410,8 @@ select {
   background-color: rgb(0, 0, 0);
   background-color: rgba(0, 0, 0, 0.4);
 }
-.modal-content {
-  background-color: var(--settings-bg-color);
+.modal .modal-content {
+  background-color: var(--modal-bg-color);
   margin: auto;
   padding: 2rem;
   border: 3px solid var(--border-color);
@@ -339,52 +434,96 @@ select {
   to { top: 50%; opacity: 1; }
 }
 /************* header, main, footer *************/
-#settings .settings-header h2 {
+.modal .modal-header h2 {
   margin: 0;
 }
-#settings .settings-main {
+.modal .modal-main {
   flex: 1;
 }
-#settings .settings-footer {
+.modal .modal-footer {
+  margin-top: 1rem;
   text-align: right;
 }
-/************* label + input *************/
-#settings .setting {
+/************* inputs *************/
+.modal input, .modal select {
+  border: 1px solid var(--border-color);
+}
+.modal input:not(:focus):invalid {
+  border-bottom-color: red;
+}
+.modal input[type="file"]::file-selector-button {
+  border: 1px solid var(--border-color);
+}
+/************* ok + cancel buttons *************/
+.modal input.ok, .modal input.cancel {
+  min-width: 5rem;
+}
+.modal input.ok[disabled], .modal input.cancel[disabled] {
+  color: var(--font-color-disabled);
+}
+.modal input.ok:not([disabled]):hover {
+  border-bottom-color: green;
+}
+.modal input.cancel:not([disabled]):hover {
+  border-bottom-color: darkred;
+}
+/************* label + input pair *************/
+.modal .label-input-pair {
   margin: 1rem 0;
   overflow: hidden;
 }
-#settings .setting:first-child {
-  margin: 0;
+.modal .label-input-pair:first-child {
+  margin-top: 0;
 }
-#settings .setting label {
+.modal .label-input-pair:last-child {
+  margin-bottom: 0;
+}
+.modal .label-input-pair label {
   display: inline-block;
   min-width: 15rem;
 }
-#settings .setting label + input, #settings .setting label + select {
+.modal .label-input-pair label + input,
+.modal .label-input-pair label + select {
   box-sizing: border-box;
   display: inline-block;
   min-width: 10rem;
 }
-#settings input, #settings select {
-  border: 1px solid var(--border-color);
-}
-#settings input:not(:focus):invalid {
-  border-bottom-color: red;
-}
-/************* settings editor *************/
+
+/************* settings *************/
 #settings #settings-monaco-editor {
   height: 17rem;
   border: 1px solid var(--border-color);
 }
-/************* ok + cancel buttons *************/
-#settings input.ok, #settings input.cancel {
-  min-width: 5rem;
+/************* diagram import *************/
+#diagram-import p.error-message {
+  color: darkred;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
-#settings input.ok:hover {
-  border-bottom-color: green;
+#diagram-import input[type="file"] {
+  display: block;
+  width: 100%;
+  border: 0.2rem dashed var(--border-color);
+  border-radius: 0.4rem;
+  box-sizing: border-box;
+  padding: 5rem 2rem;
 }
-#settings input.cancel:hover {
-  border-bottom-color: darkred;
+#diagram-import input[type="file"],
+#diagram-import input[type="file"]::file-selector-button {
+  background-color: var(--modal-bg-color);
+}
+#diagram-import input[type="file"]:hover,
+#diagram-import input[type="file"].drop-able {
+  border-color: var(--border-color-2);
+  background-color: var(--file-drop-color);
+}
+#diagram-import input[type="file"]:hover::file-selector-button,
+#diagram-import input[type="file"].drop-able::file-selector-button {
+  background-color: var(--file-drop-color);
+}
+/************* diagram export *************/
+#diagram-export.modal .label-input-pair label {
+  min-width: 8rem;
 }
 
 /*******************************************************************/
@@ -392,7 +531,7 @@ select {
 [data-theme="dark"] img:not(#diagram-png):not(.no-filter) {
   filter: invert() contrast(30%);
 }
-[data-theme="dark"] input[type=image] {
+[data-theme="dark"] input[type="image"] {
   filter: invert() contrast(30%);
 }
 [data-theme="dark"] a {
