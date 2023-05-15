@@ -35,11 +35,11 @@ table.bodyTable th, table.bodyTable td {
   padding: 2px 4px 2px 4px;
   vertical-align: top;
 }
-div.clear{
+div.clear {
   clear:both;
   visibility: hidden;
 }
-div.clear hr{
+div.clear hr {
   display: none;
 }
 #bannerLeft, #bannerRight {
