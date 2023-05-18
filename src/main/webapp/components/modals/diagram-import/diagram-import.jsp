@@ -5,7 +5,7 @@
       <div class="hr"></div>
     </div>
     <div class="modal-main flex-main">
-      <input id="diagram-import-input" type="file" name="diagram" onchange="onDiagramImportInputChange(this);" />
+      <input id="diagram-import-input" type="file" name="diagram" />
       <p id="diagram-import-error-message" class="error-message"></p>
     </div>
     <div class="modal-footer">

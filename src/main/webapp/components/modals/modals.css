@@ -1,0 +1,95 @@
+/*************
+* Modals CSS *
+**************/
+
+.modal {
+  display: block;
+  position: fixed;
+  z-index: 1;
+  padding: 5%;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  overflow: auto;
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.4);
+}
+.modal .modal-content {
+  background-color: var(--modal-bg-color);
+  margin: auto;
+  padding: 2rem;
+  border: 3px solid var(--border-color);
+  max-width: 30rem;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  -webkit-animation-name: modal-animatetop;
+  -webkit-animation-duration: 0.4s;
+  animation-name: modal-animatetop;
+  animation-duration: 0.4s;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
+@-webkit-keyframes modal-animatetop {
+  from { top: -50%; opacity: 0; }
+  to { top: 50%; opacity: 1; }
+}
+@keyframes modal-animatetop {
+  from { top: -50%; opacity: 0; }
+  to { top: 50%; opacity: 1; }
+}
+/************* header, main, footer *************/
+.modal .modal-header h2 {
+  margin: 0;
+}
+.modal .modal-main {
+  flex: 1;
+}
+.modal .modal-footer {
+  margin-top: 1rem;
+  text-align: right;
+}
+/************* inputs *************/
+.modal input, .modal select {
+  border: 1px solid var(--border-color);
+}
+.modal input:not(:focus):invalid {
+  border-bottom-color: red;
+}
+.modal input[type="file"]::file-selector-button {
+  border: 1px solid var(--border-color);
+}
+/************* ok + cancel buttons *************/
+.modal input.ok, .modal input.cancel {
+  min-width: 5rem;
+}
+.modal input.ok[disabled], .modal input.cancel[disabled] {
+  color: var(--font-color-disabled);
+}
+.modal input.ok:not([disabled]):hover {
+  border-bottom-color: green;
+}
+.modal input.cancel:not([disabled]):hover {
+  border-bottom-color: darkred;
+}
+/************* label + input pair *************/
+.modal .label-input-pair {
+  margin: 1rem 0;
+  overflow: hidden;
+}
+.modal .label-input-pair:first-child {
+  margin-top: 0;
+}
+.modal .label-input-pair:last-child {
+  margin-bottom: 0;
+}
+.modal .label-input-pair label {
+  display: inline-block;
+  min-width: 15rem;
+}
+.modal .label-input-pair label + input,
+.modal .label-input-pair label + select {
+  box-sizing: border-box;
+  display: inline-block;
+  min-width: 10rem;
+}

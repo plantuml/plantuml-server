@@ -16,58 +16,26 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <%@ include file="resource/htmlheadbase.jsp" %>
+  <%@ include file="/components/app-head.jsp" %>
   <title>PlantUML Server</title>
 </head>
 <body>
   <div class="app flex-rows">
     <div class="header">
-      <h1>PlantUML Server</h1>
-      <% if (showSocialButtons) { %>
-        <%@ include file="resource/socialbuttons1.html" %>
-      <% } %>
-      <% if (showGithubRibbon) { %>
-        <%@ include file="resource/githubribbon.html" %>
-      <% } %>
-      <p>Create your <a href="https://plantuml.com">PlantUML</a> diagrams directly in your browser!</p>
+      <%@ include file="/components/header/header.jsp" %>
     </div>
     <div class="main flex-main flex-columns">
-      <div id="editor-main-container" class="editor flex-main flex-rows">
-        <div>
-          <div class="btn-input">
-            <input id="url" type="text" name="url" value="png/<%= diagramUrl %>" />
-            <input type="image" alt="copy" src="assets/actions/copy.svg" onclick="copyUrlToClipboard()" />
-          </div>
-        </div>
-        <div class="flex-main monaco-editor-container">
-          <textarea id="initCode" name="initCode" style="display: none;"><%= net.sourceforge.plantuml.servlet.PlantUmlServlet.stringToHTMLString(decoded) %></textarea>
-          <div id="monaco-editor"></div>
-          <div class="editor-menu" tabindex="-1">
-            <div class="menu-kebab">
-              <div class="kebab-circle"></div>
-              <div class="kebab-circle"></div>
-              <div class="kebab-circle"></div>
-              <div class="kebab-circle"></div>
-              <div class="kebab-circle"></div>
-            </div>
-            <div class="menu-items">
-              <input class="menu-item" type="image" alt="copy" title="Copy code" src="assets/actions/copy.svg" onclick="copyCodeToClipboard()" />
-              <input class="menu-item" type="image" alt="import" title="Import diagram" src="assets/actions/upload.svg" onclick="openModal('diagram-import')" />
-              <input class="menu-item" type="image" alt="export" title="Export diagram" src="assets/actions/download.svg" onclick="openModal('diagram-export')" />
-            </div>
-          </div>
-        </div>
-      </div>
+      <%@ include file="/components/editor/editor.jsp" %>
       <div id="previewer-main-container" class="previewer flex-main">
-        <%@ include file="resource/preview.jsp" %>
+        <%@ include file="/components/preview/preview.jsp" %>
       </div>
     </div>
     <div class="footer">
-      <%@ include file="resource/footer.jsp" %>
+      <%@ include file="/components/footer/footer.jsp" %>
     </div>
     <!-- editor modals -->
-    <%@ include file="resource/diagram-import.jsp" %>
-    <%@ include file="resource/diagram-export.jsp" %>
+    <%@ include file="/components/modals/diagram-import/diagram-import.jsp" %>
+    <%@ include file="/components/modals/diagram-export/diagram-export.jsp" %>
   </div>
 </body>
 </html>

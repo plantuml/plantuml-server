@@ -28,6 +28,10 @@
         - mvn test -DskipTests=false -DargLine="-Dsystem.test.server=http://localhost:8080/plantuml"
     -->
     <skipTests>true</skipTests>
+    <!--
+      JS and CSS compression / minify
+    -->
+    <withoutCSSJSCompress>false</withoutCSSJSCompress>
 
     <!--
       This artifact is required for:
@@ -75,7 +79,7 @@
     <junit.version>5.9.3</junit.version>
     <junit-suite.version>1.9.3</junit-suite.version>
     <selenium.version>4.9.1</selenium.version>
-    <selenium-webdrivermanager.version>5.3.2</selenium-webdrivermanager.version>
+    <selenium-webdrivermanager.version>5.3.3</selenium-webdrivermanager.version>
     <commons-io.version>2.11.0</commons-io.version>
     <jetty-server.version>${jetty.version}</jetty-server.version>
 
@@ -101,6 +105,7 @@
     <jetty-maven-plugin.version>${jetty.version}</jetty-maven-plugin.version>
     <duplicate-finder-maven-plugin.version>1.5.1</duplicate-finder-maven-plugin.version>
     <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
+    <resources-optimizer-maven-plugin.version>2.4.4</resources-optimizer-maven-plugin.version><!-- no JDK8 support starting version 2.5.0 -->
   </properties>
 
   <dependencies>
@@ -477,6 +482,95 @@
               <filtering>true</filtering>
             </resource>
           </webResources>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>clean-minified-resources</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+            <configuration>
+              <excludeDefaultDirectories>true</excludeDefaultDirectories>
+              <filesets>
+                <fileset>
+                  <directory>${basedir}/src/main/webapp/min</directory>
+                </fileset>
+              </filesets>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.primefaces.extensions</groupId>
+        <artifactId>resources-optimizer-maven-plugin</artifactId>
+        <version>${resources-optimizer-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>optimize</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>optimize</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <warningLevel>DEFAULT</warningLevel>
+          <failOnWarning>true</failOnWarning>
+          <suffix>.min</suffix>
+          <languageIn>ECMASCRIPT_2020</languageIn>
+          <languageOut>ECMASCRIPT5_STRICT</languageOut>
+          <emitUseStrict>true</emitUseStrict>
+          <resourcesSets>
+            <resourcesSet>
+              <inputDir>${basedir}/src/main/webapp</inputDir>
+              <includes>
+                <include>components/**/*.js</include>
+                <include>js/**/*.js</include>
+              </includes>
+              <excludes>
+                <exclude>js/language/**</exclude>
+              </excludes>
+              <aggregations>
+                <aggregation>
+                  <withoutCompress>${withoutCSSJSCompress}</withoutCompress>
+                  <removeIncluded>false</removeIncluded>
+                  <outputFile>${basedir}/src/main/webapp/min/plantuml.min.js</outputFile>
+                </aggregation>
+              </aggregations>
+            </resourcesSet>
+            <resourcesSet>
+              <inputDir>${basedir}/src/main/webapp/js/language</inputDir>
+              <includes>
+                <include>language.js</include>
+                <include>validation/validation.js</include>
+                <include>**/*.js</include>
+              </includes>
+              <aggregations>
+                <aggregation>
+                  <withoutCompress>${withoutCSSJSCompress}</withoutCompress>
+                  <removeIncluded>false</removeIncluded>
+                  <outputFile>${basedir}/src/main/webapp/min/plantuml-language.min.js</outputFile>
+                </aggregation>
+              </aggregations>
+            </resourcesSet>
+            <resourcesSet>
+              <inputDir>${basedir}/src/main/webapp/components</inputDir>
+              <includes>
+                <include>**/*.css</include>
+              </includes>
+              <aggregations>
+                <aggregation>
+                  <withoutCompress>${withoutCSSJSCompress}</withoutCompress>
+                  <removeIncluded>false</removeIncluded>
+                  <outputFile>${basedir}/src/main/webapp/min/plantuml.min.css</outputFile>
+                </aggregation>
+              </aggregations>
+            </resourcesSet>
+          </resourcesSets>
         </configuration>
       </plugin>
     </plugins>

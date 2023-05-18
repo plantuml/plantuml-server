@@ -1,0 +1,165 @@
+/**********************************
+* PlantUML Server Application CSS *
+***********************************/
+
+/************* variables *************/
+:root {
+  color-scheme: light dark;
+  --font-color: black;
+  --font-color-disabled: #888;
+  --bg-color: white;
+  --border-color: #ccc;
+  --border-color-2: #aaa;
+  --footer-font-color: #666;
+  --footer-bg-color: #eee;
+  --modal-bg-color: #fefefe;
+  --file-drop-color: #eee;
+}
+[data-theme="dark"] {
+  --font-color: #ccc;
+  --font-color-disabled: #777;
+  --bg-color: #212121;
+  --border-color: #848484;
+  --border-color-2: #aaa;
+  --footer-font-color: #ccc;
+  --footer-bg-color: black;
+  --modal-bg-color: #424242;
+  --file-drop-color: #212121;
+}
+
+/************* default settings *************/
+html, body {
+  margin: 0;
+  padding: 0;
+}
+html {
+  font-family: arial,helvetica,sans-serif;
+}
+body {
+  background-color: var(--bg-color);
+  color: var(--font-color);
+  overflow: auto;
+}
+@media screen and (min-width: 900px) {
+  body {
+    height: 100vh;
+    overflow: hidden;
+  }
+  .app {
+    height: 100%;
+  }
+}
+input:not([type="image"]) {
+  background-color: var(--bg-color);
+  color: var(--font-color);
+}
+input[type="file"]::file-selector-button {
+  background-color: var(--bg-color);
+  color: var(--font-color);
+}
+select {
+  background-color: var(--bg-color);
+  color: var(--font-color);
+}
+
+/************* ruler *************/
+.hr {
+  padding: 1rem 0;
+  width: 100%;
+}
+.flex-columns > .hr {
+  padding: 0 1rem;
+  width: initial;
+  height: 100%;
+}
+.hr:after {
+  content: "";
+  display: block;
+  background-color: var(--border-color);
+  height: 100%;
+  width: 100%;
+  min-height: 3px;
+  min-width: 3px;
+}
+
+/************* wait cursor *************/
+.wait {
+  cursor: wait;
+}
+.wait > * {
+  pointer-events: none;
+}
+
+/************* flex rows and columns *************/
+.flex-columns {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.flex-rows {
+  display: flex;
+  flex-direction: column;
+}
+.flex-main {
+  flex: 1 1 1px;
+  overflow: auto;
+}
+.flex-columns > *, .flex-rows > * {
+  flex-shrink: 0;
+}
+
+/*******************************************************************/
+/************* header, main, footer *************/
+.header {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+.main {
+  margin: 1% 5%;
+  z-index: 1;
+}
+.main > div {
+  margin: 0 1.75%;
+}
+.main > div:first-child {
+  margin-left: 0;
+}
+.main > div:last-child {
+  margin-right: 0;
+}
+@media screen and (max-width: 900px) {
+  .main {
+    display: block;
+    overflow: inherit;
+  }
+  .main > div {
+    margin: 1.75% 0;
+  }
+  .main > div:first-child {
+    margin-top: 0;
+  }
+  .main > div:last-child {
+    margin-bottom: 0;
+  }
+}
+.footer p {
+  background-color: var(--footer-bg-color);
+  color: var(--footer-font-color);
+  font-size: 0.7em;
+  margin: 0;
+  padding: 0.5em;
+  text-align: center;
+}
+
+/*******************************************************************/
+/************* color themes *************/
+[data-theme="dark"] img:not(#diagram-png):not(.no-filter) {
+  filter: invert() contrast(30%);
+}
+[data-theme="dark"] input[type="image"] {
+  filter: invert() contrast(30%);
+}
+[data-theme="dark"] a {
+  color: white;
+}

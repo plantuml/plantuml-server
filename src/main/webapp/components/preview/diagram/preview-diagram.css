@@ -1,0 +1,43 @@
+/**********************
+* Preview Diagram CSS *
+***********************/
+
+.diagram {
+  height: 100%;
+  overflow: auto;
+}
+.diagram[data-diagram-type="pdf"] {
+  overflow: hidden;
+}
+.diagram > div {
+  margin: 1rem 0;
+  text-align: center;
+}
+.diagram[data-diagram-type="pdf"] > div {
+  height: 20em;
+  width: 100%;
+}
+.diagram img, .diagram svg, .diagram pre {
+  border: 3px solid var(--border-color);
+  box-sizing: border-box;
+  padding: 10px;
+}
+@media screen and (min-width: 900px) {
+  .diagram {
+    position: relative;
+  }
+  .diagram > div {
+    margin: 0;
+  }
+  .diagram:not([data-diagram-type="pdf"]) > div {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-height: 100%;
+    max-width: 100%;
+  }
+  .diagram[data-diagram-type="pdf"] > div {
+    height: 100%;
+  }
+}

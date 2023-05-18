@@ -9,6 +9,7 @@
         "epstext",
         "etag",
         "ghaction",
+        "inmemory",
         "Lalloni",
         "monaco",
         "plantuml",
@@ -22,5 +23,8 @@
         "utxt"
     ],
     "cSpell.allowCompoundWords": true,
-    "svg.preview.background": "transparent"
+    "svg.preview.background": "dark-transparent",
+    "files.associations": {
+        "*.jspf": "html"
+    }
 }

@@ -8,7 +8,7 @@
 <meta name="color-scheme" content="light dark" />
 <link rel="icon" href="favicon.ico" type="image/x-icon"/>
 <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
-<link rel="stylesheet" href="plantuml.css" />
+<link rel="stylesheet" href="min/plantuml.min.css" />
+<script src="min/plantuml.min.js"></script>
+<script src="min/plantuml-language.min.js"></script>
 <script src="webjars/monaco-editor/0.36.1/min/vs/loader.js"></script>
-<script src="plantumllanguage.js"></script>
-<script src="plantuml.js"></script>
