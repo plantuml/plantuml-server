@@ -1,0 +1,15 @@
+/**************
+* Preview CSS *
+***************/
+
+.previewer-container {
+  height: 100%;
+}
+@media screen and (max-width: 900px) {
+  .previewer-container {
+    height: initial;
+  }
+  .previewer-main {
+    flex: none;
+  }
+}

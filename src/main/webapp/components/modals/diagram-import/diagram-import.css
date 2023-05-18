@@ -1,0 +1,30 @@
+/*********************
+* Diagram Import CSS *
+**********************/
+
+#diagram-import p.error-message {
+  color: darkred;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+#diagram-import input[type="file"] {
+  display: block;
+  width: 100%;
+  border: 0.2rem dashed var(--border-color);
+  border-radius: 0.4rem;
+  box-sizing: border-box;
+  padding: 5rem 2rem;
+}
+#diagram-import input[type="file"],
+#diagram-import input[type="file"]::file-selector-button {
+  background-color: var(--modal-bg-color);
+}
+#diagram-import input[type="file"]:hover,
+#diagram-import input[type="file"].drop-able {
+  border-color: var(--border-color-2);
+  background-color: var(--file-drop-color);
+}
+#diagram-import input[type="file"]:hover::file-selector-button,
+#diagram-import input[type="file"].drop-able::file-selector-button {
+  background-color: var(--file-drop-color);
+}

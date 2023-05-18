@@ -32,7 +32,7 @@
       </div>
     </div>
     <div class="modal-footer">
-      <input class="ok" type="button" value="Save" onclick="saveSettings();" />
+      <input id="settings-ok-btn" class="ok" type="button" value="Save" />
       <input class="cancel" type="button" value="Cancel" onclick="closeModal('settings');" />
     </div>
   </div>

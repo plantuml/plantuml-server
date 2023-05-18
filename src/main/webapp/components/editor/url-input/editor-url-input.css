@@ -1,0 +1,29 @@
+/***********************
+* Editor URL Input CSS *
+************************/
+
+.editor .btn-input {
+  align-items: center;
+  border-bottom: 3px solid var(--border-color);
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+}
+.editor .btn-input input[type=text] {
+  border: 0;
+  flex: 1 1 1px;
+  font-family: monospace;
+  font-size: medium;
+  padding: 0.2em;
+  text-overflow: ellipsis;
+}
+.editor .btn-input input[type=text]:focus {
+  border: 0;
+  box-shadow: none;
+  outline: none;
+}
+.editor .btn-input input[type="image"] {
+  height: 1rem;
+  margin-left: 0.7em;
+  padding: 0 0.3em;
+}
