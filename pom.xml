@@ -62,6 +62,13 @@
     <plantuml.version>1.2023.7</plantuml.version>
     <!-- Please keep the jetty version identical with the docker image -->
     <jetty.version>11.0.15</jetty.version>
+    <!--
+      While changing the version, please update the versions in the following files as well:
+      - src/main/webapp/components/app-head.jsp (script import)
+      - src/main/webapp/components/editor/editor.js : loadMonacoCodeEditorAsync (require.config)
+      - src/test/java/net/sourceforge/plantuml/servlet/TestDependencies.java : testMonacoEditorWebJar (JUnit Test)
+      as well as inside the pom.jdk8.xml :D
+    -->
     <monaco-editor.version>0.36.1</monaco-editor.version>
 
     <!-- dependencies -->
