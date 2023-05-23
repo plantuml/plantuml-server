@@ -2,7 +2,7 @@
 
 PlantUML Server is mobile ready.
 
-## Alice and Bob
+## First example: "Alice and Bob"
 
 ![alice-bob](https://raw.githubusercontent.com/plantuml/plantuml-server/master/docs/WebUI/gifs/mobile-alice-bob.gif)
 
