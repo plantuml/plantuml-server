@@ -5,7 +5,7 @@ Similar to [draw.io](https://app.diagrams.net) it is possible to load and contin
 
 # Export a diagram
 
-Via the editor menu or Ctrl+S (or Meta+S in the case of a Mac) you can open the file save dialog.
+Via the editor menu or <kbd>Ctrl</kbd> + <kbd>S</kbd> (or <kbd>Meta</kbd> + <kbd>S</kbd> in the case of a Mac) you can open the file save dialog.
 Here you can edit the file name, choose a file/diagram type and download the diagram.
 The default is to download the PlantUML code.
 

@@ -1,6 +1,6 @@
 # PlantUML Server Web UI
 
-## Alice and Bob
+## First example: "Alice and Bob"
 
 ![alice-bob](https://raw.githubusercontent.com/plantuml/plantuml-server/master/docs/WebUI/gifs/alice-bob.gif)
 
@@ -19,6 +19,7 @@ You have multiple monitors? You want to share your Window but only show the diag
 
 ## More
 
-- [Settings](https://raw.githubusercontent.com/plantuml/plantuml-server/master/docs/WebUI/settings.md)
-- [PlantUML Language Features](https://raw.githubusercontent.com/plantuml/plantuml-server/master/docs/WebUI/language-features.md)
-- [Mobile Version](https://raw.githubusercontent.com/plantuml/plantuml-server/master/docs/WebUI/mobile.md)
+- [Settings](https://github.com/plantuml/plantuml-server/blob/master/docs/WebUI/settings.md)
+- [PlantUML Language Features](https://github.com/plantuml/plantuml-server/blob/master/docs/WebUI/language-features.md)
+- [Mobile Version](https://github.com/plantuml/plantuml-server/blob/master/docs/WebUI/mobile.md)
+- [Import/Export](https://github.com/plantuml/plantuml-server/blob/master/docs/WebUI/import-export.md)
