@@ -21,5 +21,5 @@ You have multiple monitors? You want to share your Window but only show the diag
 
 - [Settings](https://github.com/plantuml/plantuml-server/blob/master/docs/WebUI/settings.md)
 - [PlantUML Language Features](https://github.com/plantuml/plantuml-server/blob/master/docs/WebUI/language-features.md)
-- [Mobile Version](https://github.com/plantuml/plantuml-server/blob/master/docs/WebUI/mobile.md)
 - [Import/Export](https://github.com/plantuml/plantuml-server/blob/master/docs/WebUI/import-export.md)
+- [Mobile Version](https://github.com/plantuml/plantuml-server/blob/master/docs/WebUI/mobile.md)
