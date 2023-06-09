@@ -1,6 +1,6 @@
 FROM maven:3-eclipse-temurin-11-alpine AS builder
 
-COPY pom.xml /app/
+COPY pom.xml pom.parent.xml /app/
 COPY src/main /app/src/main/
 
 WORKDIR /app
