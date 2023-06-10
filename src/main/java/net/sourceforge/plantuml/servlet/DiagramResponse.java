@@ -48,6 +48,8 @@ import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.error.PSystemError;
 import net.sourceforge.plantuml.preproc.Defines;
+import net.sourceforge.plantuml.security.SecurityProfile;
+import net.sourceforge.plantuml.security.SecurityUtils;
 import net.sourceforge.plantuml.version.Version;
 
 /**
@@ -61,13 +63,18 @@ public class DiagramResponse {
      */
     private static final String POWERED_BY = "PlantUML Version " + Version.versionString();
 
+    /**
+     * PLANTUML_CONFIG_FILE content.
+     */
     private static final List<String> CONFIG = new ArrayList<>();
 
+    /**
+     * Cache/flag to ensure that the `init()` method is called only once.
+     */
+    private static boolean initialized = false;
+
     static {
-        OptionFlags.ALLOW_INCLUDE = false;
-        if ("true".equalsIgnoreCase(System.getenv("ALLOW_PLANTUML_INCLUDE"))) {
-            OptionFlags.ALLOW_INCLUDE = true;
-        }
+        init();
     }
 
     /**
@@ -97,6 +104,43 @@ public class DiagramResponse {
     }
 
     /**
+     * Initialize PlantUML configurations and properties as well as loading the PlantUML config file.
+     */
+    public static void init() {
+        if (initialized) {
+            return;
+        }
+        initialized = true;
+        // set allow include to false by default
+        OptionFlags.ALLOW_INCLUDE = false;
+        if ("true".equalsIgnoreCase(System.getenv("ALLOW_PLANTUML_INCLUDE"))) {
+            OptionFlags.ALLOW_INCLUDE = true;
+        }
+        // set security profile to INTERNET by default
+        // NOTE: this property is cached inside PlantUML and cannot be changed after the first call of PlantUML
+        System.setProperty("PLANTUML_SECURITY_PROFILE", SecurityProfile.INTERNET.toString());
+        if (System.getenv("PLANTUML_SECURITY_PROFILE") != null) {
+            System.setProperty("PLANTUML_SECURITY_PROFILE", System.getenv("PLANTUML_SECURITY_PROFILE"));
+        }
+        // load properties from file
+        if (System.getenv("PLANTUML_PROPERTY_FILE") != null) {
+            try (FileReader propertyFileReader = new FileReader(System.getenv("PLANTUML_PROPERTY_FILE"))) {
+                System.getProperties().load(propertyFileReader);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        // load PlantUML config file
+        if (System.getenv("PLANTUML_CONFIG_FILE") != null) {
+            try (BufferedReader br = new BufferedReader(new FileReader(System.getenv("PLANTUML_CONFIG_FILE")))) {
+                br.lines().forEach(CONFIG::add);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
      * Render and send a specific uml diagram.
      *
      * @param uml textual UML diagram(s) source
@@ -108,23 +152,8 @@ public class DiagramResponse {
         response.addHeader("Access-Control-Allow-Origin", "*");
         response.setContentType(getContentType());
 
-        if (CONFIG.size() == 0 && System.getenv("PLANTUML_CONFIG_FILE") != null) {
-            // Read config
-            final BufferedReader br = new BufferedReader(new FileReader(System.getenv("PLANTUML_CONFIG_FILE")));
-            if (br == null) {
-                return;
-            }
-            try {
-                String s = null;
-                while ((s = br.readLine()) != null) {
-                    CONFIG.add(s);
-                }
-            } finally {
-                br.close();
-            }
-        }
-
-        SourceStringReader reader = new SourceStringReader(Defines.createEmpty(), uml, CONFIG);
+        final Defines defines = getPreProcDefines();
+        SourceStringReader reader = new SourceStringReader(defines, uml, CONFIG);
         if (CONFIG.size() > 0 && reader.getBlocks().get(0).getDiagram().getWarningOrError() != null) {
             reader = new SourceStringReader(uml);
         }
@@ -154,6 +183,23 @@ public class DiagramResponse {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
         diagram.exportDiagram(response.getOutputStream(), idx, new FileFormatOption(format));
+    }
+
+    /**
+     * Get PlantUML preprocessor defines.
+     *
+     * @return preprocessor defines
+     */
+    private Defines getPreProcDefines() {
+        final Defines defines;
+        if (SecurityUtils.getSecurityProfile() == SecurityProfile.UNSECURE) {
+            // set dirpath to current dir but keep filename and filenameNoExtension undefined
+            defines = Defines.createWithFileName(new java.io.File("dummy.puml"));
+            defines.overrideFilename("");
+        } else {
+            defines = Defines.createEmpty();
+        }
+        return defines;
     }
 
     /**
