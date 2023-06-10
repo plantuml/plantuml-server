@@ -16,7 +16,12 @@
 
 PlantUML Server is a web application to generate UML diagrams on-the-fly.
 
-[PlantUML is **not** affected by the log4j vulnerability.](https://github.com/plantuml/plantuml/issues/826)
+> [PlantUML is **not** affected by the log4j vulnerability.](https://github.com/plantuml/plantuml/issues/826)
+
+> **Breaking changes**:
+> PlantUML Server sets `PLANTUML_SECURITY_PROFILE` to `INTERNET` by default starting with version `v1.2023.9`.
+> You can change its behavior back to work like before if you set the environment variable `PLANTUML_SECURITY_PROFILE` to `LEGACY`.
+> But before you do that, please take a look to [PlantUMLs Security](https://plantuml.com/security) page.
 
 
 ![PlantUML Server](https://raw.githubusercontent.com/plantuml/plantuml-server/master/docs/screenshot.png)
@@ -119,6 +124,7 @@ You can set all  the following variables:
   * Default value: `ROOT`
 * `PLANTUML_CONFIG_FILE`
   * Local path to a PlantUML configuration file (identical to the `-config` flag on the CLI)
+  * File content will be added before each PlantUML diagram code.
   * Default value: `null`
 * `PLANTUML_LIMIT_SIZE`
   * Limits image width and height
@@ -135,6 +141,13 @@ You can set all  the following variables:
 * `ALLOW_PLANTUML_INCLUDE`
   * Enables `!include` processing which can read files from the server into diagrams. Files are read relative to the current working directory.
   * Default value: `false`
+* `PLANTUML_SECURITY_PROFILE`
+  * Set PlantUML security profile. See [PlantUML security](https://plantuml.com/security).
+  * Default value: `INTERNET`
+* `PLANTUML_PROPERTY_FILE`
+  * Set PlantUML system properties (like over the Java command line using the `-Dpropertyname=value` syntax).
+  * To see what kind of file content is supported, see the documentation of [`java.util.Properties.load`](https://docs.oracle.com/javase/8/docs/api/java/util/Properties.html#load-java.io.Reader-).
+  * Default value: `null`
 
 
 ## Alternate: How to build your docker image

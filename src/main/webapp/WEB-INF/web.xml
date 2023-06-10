@@ -71,6 +71,7 @@
   <servlet>
     <servlet-name>plantumlservlet</servlet-name>
     <servlet-class>net.sourceforge.plantuml.servlet.PlantUmlServlet</servlet-class>
+    <load-on-startup>0</load-on-startup>
   </servlet>
   <servlet-mapping>
     <servlet-name>plantumlservlet</servlet-name>
