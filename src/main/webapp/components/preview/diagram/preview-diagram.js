@@ -57,21 +57,27 @@ async function setDiagram(type, encodedDiagram, index) {
     setVisibility(pdf, type === "pdf");
   }
   // update diagram
-  if (type === "png") {
-    png.src = buildUrl("png", encodedDiagram, index);
-    const map = await requestDiagram("map", encodedDiagram, index);
-    setDiagramMap(map);
-  } else if (type === "svg") {
-    const svg = await requestDiagram("svg", encodedDiagram, index);
-    setSvgDiagram(svg);
-  } else if (type === "txt") {
-    txt.innerHTML = await requestDiagram("txt", encodedDiagram, index);
-  } else if (type === "pdf") {
-    pdf.data = buildUrl("pdf", encodedDiagram, index);
-  } else {
-    const message = "unknown diagram type: " + type;
-    (console.error || console.log)(message);
-    return Promise.reject(message);
+  try {
+    if (type === "png") {
+      png.src = buildUrl("png", encodedDiagram, index);
+      const map = await requestDiagram("map", encodedDiagram, index);
+      setDiagramMap(map);
+    } else if (type === "svg") {
+      const svg = await requestDiagram("svg", encodedDiagram, index);
+      setSvgDiagram(svg);
+    } else if (type === "txt") {
+      txt.innerHTML = await requestDiagram("txt", encodedDiagram, index);
+    } else if (type === "pdf") {
+      pdf.data = buildUrl("pdf", encodedDiagram, index);
+    } else {
+      const message = "unknown diagram type: " + type;
+      (console.error || console.log)(message);
+      return Promise.reject(message);
+    }
+    setDiagramVisibility(type);
+  } catch (e) {
+    // This should only happen if for example a broken diagram is requested.
+    // Therefore, since the error message is already included in the response image, prevent further error messages.
+    //(console.error || console.log)(e);
   }
-  setDiagramVisibility(type);
 }
