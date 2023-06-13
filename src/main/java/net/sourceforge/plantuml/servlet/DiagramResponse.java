@@ -39,7 +39,6 @@ import net.sourceforge.plantuml.ErrorUml;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.NullOutputStream;
-import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.SourceStringReader;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.utils.Base64Coder;
