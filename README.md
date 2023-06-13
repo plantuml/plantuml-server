@@ -18,11 +18,15 @@ PlantUML Server is a web application to generate UML diagrams on-the-fly.
 
 > [PlantUML is **not** affected by the log4j vulnerability.](https://github.com/plantuml/plantuml/issues/826)
 
-> **Breaking changes**:
-> PlantUML Server sets `PLANTUML_SECURITY_PROFILE` to `INTERNET` by default starting with version `v1.2023.9`.
-> You can change its behavior back to work like before if you set the environment variable `PLANTUML_SECURITY_PROFILE` to `LEGACY`.
-> But before you do that, please take a look to [PlantUMLs Security](https://plantuml.com/security) page.
-
+> **Breaking changes**:  
+> The PlantUML core removed the deprecated `ALLOW_PLANTUML_INCLUDE` environment property feature and switch to the
+> `PLANTUML_SECURITY_PROFILE` concept with version `v1.2023.9`.
+> All details about PlantUML's security can be found on <https://plantuml.com/security>.
+>
+> By default PlantUML server sets the `PLANTUML_SECURITY_PROFILE` to `INTERNET`.
+> If you need more access to e.g. other ports than 80 (http) and 443 (https) or even access to local files, please
+> consider using one of the allowlist features.
+> It is strongly advised **not** to set the `PLANTUML_SECURITY_PROFILE` below `INTERNET`!
 
 ![PlantUML Server](https://raw.githubusercontent.com/plantuml/plantuml-server/master/docs/screenshot.png)
 
@@ -122,6 +126,18 @@ You can set all  the following variables:
 * `BASE_URL`
   * PlantUML Base URL path
   * Default value: `ROOT`
+* `PLANTUML_SECURITY_PROFILE`
+  * Set PlantUML security profile. See [PlantUML security](https://plantuml.com/security).
+  * If you need more access to e.g. other ports than 80 (http) and 443 (https) or even access to local files, please consider using one of the allowlist features:
+    * `plantuml.allowlist.path`
+    * `plantuml.include.path`
+    * `plantuml.allowlist.url`
+  * It is strongly advised **not** to set the `PLANTUML_SECURITY_PROFILE` below `INTERNET`!
+  * Default value: `INTERNET`
+* `PLANTUML_PROPERTY_FILE`
+  * Set PlantUML system properties (like over the Java command line using the `-Dpropertyname=value` syntax).
+  * To see what kind of file content is supported, see the documentation of [`java.util.Properties.load`](https://docs.oracle.com/javase/8/docs/api/java/util/Properties.html#load-java.io.Reader-).
+  * Default value: `null`
 * `PLANTUML_CONFIG_FILE`
   * Local path to a PlantUML configuration file (identical to the `-config` flag on the CLI)
   * File content will be added before each PlantUML diagram code.
@@ -138,16 +154,6 @@ You can set all  the following variables:
 * `HTTP_PROXY_READ_TIMEOUT`
   * when calling the `proxy` endpoint, the value of `HTTP_PROXY_READ_TIMEOUT` will be the connection read timeout in milliseconds
   * Default value: `10000` (10 seconds)
-* `ALLOW_PLANTUML_INCLUDE`
-  * Enables `!include` processing which can read files from the server into diagrams. Files are read relative to the current working directory.
-  * Default value: `false`
-* `PLANTUML_SECURITY_PROFILE`
-  * Set PlantUML security profile. See [PlantUML security](https://plantuml.com/security).
-  * Default value: `INTERNET`
-* `PLANTUML_PROPERTY_FILE`
-  * Set PlantUML system properties (like over the Java command line using the `-Dpropertyname=value` syntax).
-  * To see what kind of file content is supported, see the documentation of [`java.util.Properties.load`](https://docs.oracle.com/javase/8/docs/api/java/util/Properties.html#load-java.io.Reader-).
-  * Default value: `null`
 
 
 ## Alternate: How to build your docker image
