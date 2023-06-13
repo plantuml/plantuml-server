@@ -111,11 +111,6 @@ public class DiagramResponse {
             return;
         }
         initialized = true;
-        // set allow include to false by default
-        OptionFlags.ALLOW_INCLUDE = false;
-        if ("true".equalsIgnoreCase(System.getenv("ALLOW_PLANTUML_INCLUDE"))) {
-            OptionFlags.ALLOW_INCLUDE = true;
-        }
         // set security profile to INTERNET by default
         // NOTE: this property is cached inside PlantUML and cannot be changed after the first call of PlantUML
         System.setProperty("PLANTUML_SECURITY_PROFILE", SecurityProfile.INTERNET.toString());
