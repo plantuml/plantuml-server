@@ -29,6 +29,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -56,6 +57,16 @@ import net.sourceforge.plantuml.version.Version;
  * right format. Its own responsibility is to produce the right HTTP headers.
  */
 public class DiagramResponse {
+
+    private static class BlockSelection {
+        private final BlockUml block;
+        private final int systemIdx;
+
+        BlockSelection(BlockUml blk, int idx) {
+            block = blk;
+            systemIdx = idx;
+        }
+    }
 
     /**
      * X-Powered-By http header value included in every response by default.
@@ -163,20 +174,48 @@ public class DiagramResponse {
             response.getOutputStream().write(encodedBytes.getBytes());
             return;
         }
-        final BlockUml blockUml = reader.getBlocks().get(0);
-        if (notModified(blockUml)) {
-            addHeaderForCache(blockUml);
+
+        final BlockSelection blockSelection = getOutputBlockSelection(reader, idx);
+        if (blockSelection == null) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+
+        if (notModified(blockSelection.block)) {
+            addHeaderForCache(blockSelection.block);
             response.sendError(HttpServletResponse.SC_NOT_MODIFIED);
             return;
         }
         if (StringUtils.isDiagramCacheable(uml)) {
-            addHeaderForCache(blockUml);
+            addHeaderForCache(blockSelection.block);
         }
-        final Diagram diagram = blockUml.getDiagram();
+        final Diagram diagram = blockSelection.block.getDiagram();
         if (diagram instanceof PSystemError) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
-        diagram.exportDiagram(response.getOutputStream(), idx, new FileFormatOption(format));
+        diagram.exportDiagram(response.getOutputStream(), blockSelection.systemIdx, new FileFormatOption(format));
+    }
+
+    private BlockSelection getOutputBlockSelection(SourceStringReader reader, int numImage) {
+        if (numImage < 0) {
+            return null;
+        }
+
+        Collection<BlockUml> blocks = reader.getBlocks();
+        if (blocks.isEmpty()) {
+            return null;
+        }
+
+        for (BlockUml b : blocks) {
+            final Diagram system = b.getDiagram();
+            final int nbInSystem = system.getNbImages();
+            if (numImage < nbInSystem) {
+                return new BlockSelection(b, numImage);
+            }
+            numImage -= nbInSystem;
+        }
+
+        return null;
     }
 
     /**
