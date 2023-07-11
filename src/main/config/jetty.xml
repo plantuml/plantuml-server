@@ -64,7 +64,8 @@
       </Array>
     </Arg>
 
-    <!-- Change port according to property. Default is 8080 -->
+    <!-- Change host and port according to properties. Default is 0.0.0.0 and 8080. -->
+    <Set name="host"><Property name="jetty.http.host" deprecated="jetty.host" default="0.0.0.0" /></Set>
     <Set name="port"><Property name="jetty.http.port" deprecated="jetty.port" default="8080" /></Set>
   </New>
 
