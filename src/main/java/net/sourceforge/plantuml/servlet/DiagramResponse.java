@@ -157,10 +157,10 @@ public class DiagramResponse {
         response.addHeader("Access-Control-Allow-Origin", "*");
         response.setContentType(getContentType());
 
-        final Defines defines = getPreProcDefines();
-        SourceStringReader reader = new SourceStringReader(defines, uml, CONFIG);
-        if (CONFIG.size() > 0 && reader.getBlocks().get(0).getDiagram().getWarningOrError() != null) {
-            reader = new SourceStringReader(uml);
+        final SourceStringReader reader = getSourceStringReader(uml);
+        if (reader == null) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No UML diagram found");
+            return;
         }
 
         if (format == FileFormat.BASE64) {
@@ -216,6 +216,27 @@ public class DiagramResponse {
         }
 
         return null;
+    }
+
+    private SourceStringReader getSourceStringReader(String uml) {
+        SourceStringReader reader = getSourceStringReaderWithConfig(uml);
+        if (reader.getBlocks().isEmpty()) {
+            uml = "@startuml\n" + uml + "\n@enduml";
+            reader = getSourceStringReaderWithConfig(uml);
+            if (reader.getBlocks().isEmpty()) {
+                return null;
+            }
+        }
+        return reader;
+    }
+
+    private SourceStringReader getSourceStringReaderWithConfig(String uml) {
+        final Defines defines = getPreProcDefines();
+        SourceStringReader reader = new SourceStringReader(defines, uml, CONFIG);
+        if (!CONFIG.isEmpty() && reader.getBlocks().get(0).getDiagram().getWarningOrError() != null) {
+            reader = new SourceStringReader(defines, uml);
+        }
+        return reader;
     }
 
     /**
