@@ -157,6 +157,10 @@ public class DiagramResponse {
         response.addHeader("Access-Control-Allow-Origin", "*");
         response.setContentType(getContentType());
 
+        if (idx < 0) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, String.format("Invalid diagram index: {0}", idx));
+            return;
+        }
         final SourceStringReader reader = getSourceStringReader(uml);
         if (reader == null) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No UML diagram found");
@@ -285,19 +289,36 @@ public class DiagramResponse {
      * @throws IOException if an input or output exception occurred
      */
     public void sendMap(String uml, int idx) throws IOException {
-        if (idx < 0) {
-            idx = 0;
-        }
         response.addHeader("Access-Control-Allow-Origin", "*");
         response.setContentType(getContentType());
-        SourceStringReader reader = new SourceStringReader(uml);
-        final BlockUml blockUml = reader.getBlocks().get(0);
-        if (StringUtils.isDiagramCacheable(uml)) {
-            addHeaderForCache(blockUml);
+
+        if (idx < 0) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, String.format("Invalid diagram index: {0}", idx));
+            return;
         }
-        final Diagram diagram = blockUml.getDiagram();
-        ImageData map = diagram.exportDiagram(new NullOutputStream(), idx,
-                new FileFormatOption(FileFormat.PNG, false));
+        final SourceStringReader reader = getSourceStringReader(uml);
+        if (reader == null) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No UML diagram found");
+            return;
+        }
+        final BlockSelection blockSelection = getOutputBlockSelection(reader, idx);
+        if (blockSelection == null) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+
+        if (StringUtils.isDiagramCacheable(uml)) {
+            addHeaderForCache(blockSelection.block);
+        }
+        final Diagram diagram = blockSelection.block.getDiagram();
+        if (diagram instanceof PSystemError) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        }
+        ImageData map = diagram.exportDiagram(
+            new NullOutputStream(),
+            blockSelection.systemIdx,
+            new FileFormatOption(FileFormat.PNG, false)
+        );
         if (map.containsCMapData()) {
             PrintWriter httpOut = response.getWriter();
             final String cmap = map.getCMapData("plantuml");
