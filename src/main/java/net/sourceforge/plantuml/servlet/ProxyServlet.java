@@ -29,7 +29,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.imageio.IIOException;
@@ -39,11 +38,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import net.sourceforge.plantuml.BlockUml;
 import net.sourceforge.plantuml.FileFormat;
-import net.sourceforge.plantuml.SourceStringReader;
-import net.sourceforge.plantuml.core.Diagram;
-import net.sourceforge.plantuml.core.UmlSource;
 
 /**
  * Proxy servlet of the webapp.
@@ -108,29 +103,23 @@ public class ProxyServlet extends HttpServlet {
         final String source = request.getParameter("src");
         final String index = request.getParameter("idx");
 
+        final int idx = index == null ? 0 : Integer.parseInt(index);
         final URL srcUrl = validateURL(source, response);
         if (srcUrl == null) {
             return;  // error is already set/handled inside `validateURL`
         }
 
-        // generate the response
-        String diagmarkup = getSource(srcUrl);
-        SourceStringReader reader = new SourceStringReader(diagmarkup);
-        int n = index == null ? 0 : Integer.parseInt(index);
-        List<BlockUml> blocks = reader.getBlocks();
-        BlockUml block = blocks.get(n);
-        Diagram diagram = block.getDiagram();
-        UmlSource umlSrc = diagram.getSource();
-        String uml = umlSrc.getPlainString("\n");
+        // fetch diagram from URL
+        final String uml = getSource(srcUrl);
 
         // generate the response
         DiagramResponse dr = new DiagramResponse(response, getOutputFormat(fmt), request);
         try {
             // special handling for the MAP since it's not using "#sendDiagram()" like the other types
             if ("map".equals(fmt)) {
-                dr.sendMap(uml, 0);
+                dr.sendMap(uml, idx);
             } else {
-                dr.sendDiagram(uml, 0);
+                dr.sendDiagram(uml, idx);
             }
         } catch (IIOException e) {
             // Browser has closed the connection, so the HTTP OutputStream is closed
