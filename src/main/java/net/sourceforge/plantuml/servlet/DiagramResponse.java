@@ -121,6 +121,10 @@ public class DiagramResponse {
             return;
         }
         initialized = true;
+        // set headless mode manually since otherwise Windows 11 seems to have some issues with it
+        // see Issue#311 :: https://github.com/plantuml/plantuml-server/issues/311
+        // NOTE: This can only be set before any awt/X11/... related stuff is loaded
+        System.setProperty("java.awt.headless", "true");
         // set security profile to INTERNET by default
         // NOTE: this property is cached inside PlantUML and cannot be changed after the first call of PlantUML
         System.setProperty("PLANTUML_SECURITY_PROFILE", SecurityProfile.INTERNET.toString());
