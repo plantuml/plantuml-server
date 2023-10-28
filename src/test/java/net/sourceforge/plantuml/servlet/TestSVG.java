@@ -8,32 +8,40 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Scanner;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import net.sourceforge.plantuml.servlet.utils.TestUtils;
+import net.sourceforge.plantuml.servlet.utils.WebappTestCase;
+
 
 public class TestSVG extends WebappTestCase {
 
     /**
      * Verifies the generation of the SVG for the Bob -> Alice sample
      */
+    @Test
     public void testSimpleSequenceDiagram() throws IOException {
         final URL url = new URL(getServerUrl() + "/svg/" + TestUtils.SEQBOB);
         final URLConnection conn = url.openConnection();
         // Analyze response
         // Verifies the Content-Type header
-        assertEquals(
-            "Response content type is not SVG",
+        Assertions.assertEquals(
             "image/svg+xml",
-            conn.getContentType().toLowerCase()
+            conn.getContentType().toLowerCase(),
+            "Response content type is not SVG"
         );
         // Get the content and verify its size
         String diagram = getContentText(conn);
         int diagramLen = diagram.length();
-        assertTrue(diagramLen > 1000);
-        assertTrue(diagramLen < 3000);
+        Assertions.assertTrue(diagramLen > 1000);
+        Assertions.assertTrue(diagramLen < 3000);
     }
 
     /**
      * Verifies the generation of the SVG for the Bob -> Alice sample
      */
+    @Test
     public void testPostedSequenceDiagram() throws IOException {
         final URL url = new URL(getServerUrl() + "/svg");
         final HttpURLConnection conn = (HttpURLConnection)url.openConnection();
@@ -46,27 +54,24 @@ public class TestSVG extends WebappTestCase {
         }
         // Analyze response
         // HTTP response 200
-        assertEquals(
-            "Bad HTTP status received",
-            200,
-            conn.getResponseCode()
-        );
+        Assertions.assertEquals(200, conn.getResponseCode(), "Bad HTTP status received");
         // Verifies the Content-Type header
-        assertEquals(
-            "Response content type is not SVG",
+        Assertions.assertEquals(
             "image/svg+xml",
-            conn.getContentType().toLowerCase()
+            conn.getContentType().toLowerCase(),
+            "Response content type is not SVG"
         );
         // Get the content and verify its size
         String diagram = getContentText(conn.getInputStream());
         int diagramLen = diagram.length();
-        assertTrue(diagramLen > 1000);
-        assertTrue(diagramLen < 3000);
+        Assertions.assertTrue(diagramLen > 1000);
+        Assertions.assertTrue(diagramLen < 3000);
     }
 
     /**
      * Verifies the generation of the SVG for the Bob -> Alice sample
      */
+    @Test
     public void testPostedInvalidSequenceDiagram() throws IOException {
         final URL url = new URL(getServerUrl() + "/svg");
         final HttpURLConnection conn = (HttpURLConnection)url.openConnection();
@@ -79,16 +84,13 @@ public class TestSVG extends WebappTestCase {
         }
         // Analyze response
         // HTTP response 400
-        assertEquals(
-            "Bad HTTP status received",
-            400,
-            conn.getResponseCode()
-        );
+        Assertions.assertEquals(400, conn.getResponseCode(), "Bad HTTP status received");
     }
 
     /**
      * Check the content of the SVG
      */
+    @Test
     public void testSequenceDiagramContent() throws IOException {
         final URL url = new URL(getServerUrl() + "/svg/" + TestUtils.SEQBOB);
         // Analyze response
@@ -109,8 +111,8 @@ public class TestSVG extends WebappTestCase {
                     aliceCounter++;
                 }
             }
-            assertTrue(bobCounter == 2);
-            assertTrue(aliceCounter == 2);
+            Assertions.assertTrue(bobCounter == 2);
+            Assertions.assertTrue(aliceCounter == 2);
         }
     }
 

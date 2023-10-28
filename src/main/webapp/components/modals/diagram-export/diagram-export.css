@@ -1,0 +1,7 @@
+/*********************
+* Diagram Export CSS *
+**********************/
+
+#diagram-export.modal .label-input-pair label {
+  min-width: 8rem;
+}

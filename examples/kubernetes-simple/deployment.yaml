@@ -1,0 +1,84 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plantuml
+  labels:
+    app.kubernetes.io/name: plantuml
+    app.kubernetes.io/instance: plantuml
+spec:
+  replicas: 3  # Can be adjusted
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: plantuml
+      app.kubernetes.io/instance: plantuml
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: plantuml
+        app.kubernetes.io/instance: plantuml
+    spec:
+      containers:
+        - name: plantuml
+          securityContext:
+            allowPrivilegeEscalation: false
+          image: plantuml/plantuml-server:jetty-v1.2022.6
+          imagePullPolicy: Always
+          # env:  # In case of different base URL
+          #   - name: BASE_URL
+          #     value: plantuml
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            tcpSocket:
+              port: http
+          readinessProbe:
+            tcpSocket:
+              port: http
+          resources:
+            limits:
+              cpu: 500m
+              memory: 2048Mi
+            requests:
+              cpu: 250m
+              memory: 1024Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: plantuml
+  labels:
+    app.kubernetes.io/name: plantuml
+    app.kubernetes.io/instance: plantuml
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: plantuml
+    app.kubernetes.io/instance: plantuml
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: plantuml
+  labels:
+    app.kubernetes.io/name: plantuml
+    app.kubernetes.io/instance: plantuml
+spec:
+  rules:
+  - host: plantuml-example.localhost
+    http:
+      paths:
+      - backend:
+          service:
+            name: plantuml
+            port:
+              number: 80
+        path: /
+        pathType: Prefix

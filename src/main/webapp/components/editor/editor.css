@@ -1,0 +1,28 @@
+/*************
+* Editor CSS *
+**************/
+
+.editor {
+  border: 3px solid var(--border-color);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+@media screen and (max-width: 900px) {
+  .editor {
+    height: 20em;
+  }
+}
+.editor .monaco-editor-container {
+  overflow: hidden;
+  position: relative;
+}
+
+#monaco-editor {
+  height: 100%;
+}
+/* Hack to display the icons and emojis in the auto completion documentation in a visible size.
+ * (see PlantUmlLanguageFeatures.register{Icon,Emoji}Completion) */
+#monaco-editor .overlayWidgets .suggest-details p img[alt="icon"],
+#monaco-editor .overlayWidgets .suggest-details p img[alt="emoji"] {
+  height: 1.2rem;
+}

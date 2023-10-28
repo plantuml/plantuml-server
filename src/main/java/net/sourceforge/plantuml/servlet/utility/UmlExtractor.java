@@ -29,7 +29,6 @@ import java.net.URLDecoder;
 
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
-import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.SourceStringReader;
 import net.sourceforge.plantuml.code.Transcoder;
 import net.sourceforge.plantuml.code.TranscoderUtil;
@@ -41,13 +40,6 @@ import net.sourceforge.plantuml.core.ImageData;
  * of the requested URI.
  */
 public abstract class UmlExtractor {
-
-    static {
-        OptionFlags.ALLOW_INCLUDE = false;
-        if ("true".equalsIgnoreCase(System.getenv("ALLOW_PLANTUML_INCLUDE"))) {
-            OptionFlags.ALLOW_INCLUDE = true;
-        }
-    }
 
     /**
      * Build the complete UML source from the compressed source extracted from the

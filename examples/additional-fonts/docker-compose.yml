@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  plantuml-server:
+    image: plantuml/plantuml-server:jetty
+    container_name: plantuml-server
+    ports:
+      - "80:8080"
+    environment:
+      - TZ=Europe/Berlin
+      - BASE_URL=plantuml
+    volumes:
+      - /usr/share/fonts:/var/lib/jetty/.local/share/fonts/host:ro

@@ -29,24 +29,16 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.cert.Certificate;
-import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.imageio.IIOException;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLPeerUnverifiedException;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import net.sourceforge.plantuml.BlockUml;
 import net.sourceforge.plantuml.FileFormat;
-import net.sourceforge.plantuml.OptionFlags;
-import net.sourceforge.plantuml.SourceStringReader;
-import net.sourceforge.plantuml.core.Diagram;
-import net.sourceforge.plantuml.core.UmlSource;
 
 /**
  * Proxy servlet of the webapp.
@@ -56,49 +48,83 @@ import net.sourceforge.plantuml.core.UmlSource;
 @SuppressWarnings("SERIAL")
 public class ProxyServlet extends HttpServlet {
 
-    static {
-        OptionFlags.ALLOW_INCLUDE = false;
-        if ("true".equalsIgnoreCase(System.getenv("ALLOW_PLANTUML_INCLUDE"))) {
-            OptionFlags.ALLOW_INCLUDE = true;
+    public static boolean forbiddenURL(String full) {
+        if (full == null) {
+            return true;
         }
+        if (full.startsWith("https://") == false && full.startsWith("http://") == false) {
+            return true;
+        }
+        if (full.matches("^https?://[-#.0-9:\\[\\]+]+/.*")) {
+            return true;
+        }
+        if (full.matches("^https?://[^.]+/.*")) {
+            return true;
+        }
+        if (full.matches("^https?://[^.]+$")) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Validate external URL.
+     *
+     * @param url URL to validate
+     * @param response  response object to `sendError` including error message; if `null` no error will be send
+     *
+     * @return valid URL; otherwise `null`
+     *
+     * @throws IOException  `response.sendError` can result in a `IOException`
+     */
+    public static URL validateURL(String url, HttpServletResponse response) throws IOException {
+        final URL parsedUrl;
+        try {
+            parsedUrl = new URL(url);
+        } catch (MalformedURLException mue) {
+            if (response != null) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "URL malformed.");
+            }
+            return null;
+        }
+        // Check if URL is in a forbidden format (e.g. IP-Address)
+        if (forbiddenURL(url)) {
+            if (response != null) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Forbidden URL format.");
+            }
+            return null;
+        }
+        return parsedUrl;
     }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-
         final String fmt = request.getParameter("fmt");
         final String source = request.getParameter("src");
         final String index = request.getParameter("idx");
-        final URL srcUrl;
-        // Check if the src URL is valid
-        try {
-            srcUrl = new URL(source);
-        } catch (MalformedURLException mue) {
-            mue.printStackTrace();
-            response.setStatus(400);
-            return;
+
+        final int idx = index == null ? 0 : Integer.parseInt(index);
+        final URL srcUrl = validateURL(source, response);
+        if (srcUrl == null) {
+            return;  // error is already set/handled inside `validateURL`
         }
 
-        // generate the response
-        String diagmarkup = getSource(srcUrl);
-        SourceStringReader reader = new SourceStringReader(diagmarkup);
-        int n = index == null ? 0 : Integer.parseInt(index);
-        List<BlockUml> blocks = reader.getBlocks();
-        BlockUml block = blocks.get(n);
-        Diagram diagram = block.getDiagram();
-        UmlSource umlSrc = diagram.getSource();
-        String uml = umlSrc.getPlainString();
-        //System.out.println("uml=" + uml);
+        // fetch diagram from URL
+        final String uml = getSource(srcUrl);
 
         // generate the response
         DiagramResponse dr = new DiagramResponse(response, getOutputFormat(fmt), request);
         try {
-            dr.sendDiagram(uml, 0);
+            // special handling for the MAP since it's not using "#sendDiagram()" like the other types
+            if ("map".equals(fmt)) {
+                dr.sendMap(uml, idx);
+            } else {
+                dr.sendDiagram(uml, idx);
+            }
         } catch (IIOException e) {
             // Browser has closed the connection, so the HTTP OutputStream is closed
             // Silently catch the exception to avoid annoying log
         }
-        dr = null;
     }
 
     /**
@@ -111,25 +137,10 @@ public class ProxyServlet extends HttpServlet {
      * @throws IOException if an input or output exception occurred
      */
     private String getSource(final URL url) throws IOException {
-        String line;
-        BufferedReader rd;
-        StringBuilder sb;
-        try {
-            HttpURLConnection con = getConnection(url);
-            rd = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            sb = new StringBuilder();
-
-            while ((line = rd.readLine()) != null) {
-                sb.append(line + '\n');
-            }
-            rd.close();
-            return sb.toString();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            rd = null;
+        HttpURLConnection conn = getConnection(url);
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+            return br.lines().collect(Collectors.joining("\n"));
         }
-        return "";
     }
 
     /**
@@ -144,19 +155,16 @@ public class ProxyServlet extends HttpServlet {
         if (format == null) {
             return FileFormat.PNG;
         }
-        if (format.equals("svg")) {
-            return FileFormat.SVG;
+        switch (format.toLowerCase()) {
+            case "png": return FileFormat.PNG;
+            case "svg": return FileFormat.SVG;
+            case "eps": return FileFormat.EPS;
+            case "epstext": return FileFormat.EPS_TEXT;
+            case "txt": return FileFormat.UTXT;
+            case "map": return FileFormat.UTXT;
+            case "pdf": return FileFormat.PDF;
+            default: return FileFormat.PNG;
         }
-        if (format.equals("eps")) {
-            return FileFormat.EPS;
-        }
-        if (format.equals("epstext")) {
-            return FileFormat.EPS_TEXT;
-        }
-        if (format.equals("txt")) {
-            return FileFormat.UTXT;
-        }
-        return FileFormat.PNG;
     }
 
     /**
@@ -168,48 +176,20 @@ public class ProxyServlet extends HttpServlet {
      *
      * @throws IOException if an input or output exception occurred
      */
-    private HttpURLConnection getConnection(final URL url) throws IOException {
-        final HttpURLConnection con = (HttpURLConnection) url.openConnection();
-        //if (con instanceof HttpsURLConnection) {
-        //    printHttpsCert((HttpsURLConnection) con);
-        //}
-        con.setRequestMethod("GET");
+    public static HttpURLConnection getConnection(final URL url) throws IOException {
+        final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
         String token = System.getenv("HTTP_AUTHORIZATION");
         if (token != null) {
-            con.setRequestProperty("Authorization", token);
+            conn.setRequestProperty("Authorization", token);
         }
-        con.setReadTimeout(10000); // 10 seconds
-        con.connect();
-        return con;
-    }
-
-    /**
-     * Debug method used to dump the certificate info.
-     *
-     * @param con the https connection
-     */
-    @SuppressWarnings("unused")
-    private void printHttpsCert(final HttpsURLConnection con) {
-        if (con != null) {
-            try {
-                System.out.println("Response Code : " + con.getResponseCode());
-                System.out.println("Cipher Suite : " + con.getCipherSuite());
-                System.out.println("\n");
-
-                Certificate[] certs = con.getServerCertificates();
-                for (Certificate cert : certs) {
-                    System.out.println("Cert Type : " + cert.getType());
-                    System.out.println("Cert Hash Code : " + cert.hashCode());
-                    System.out.println("Cert Public Key Algorithm : " + cert.getPublicKey().getAlgorithm());
-                    System.out.println("Cert Public Key Format : " + cert.getPublicKey().getFormat());
-                    System.out.println("\n");
-                }
-
-            } catch (SSLPeerUnverifiedException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        final String timeoutString = System.getenv("HTTP_PROXY_READ_TIMEOUT");
+        int timeout = 10000; // 10 seconds as default
+        if (timeoutString != null && timeoutString.matches("^\\d+$")) {
+            timeout = Integer.parseInt(timeoutString);
         }
+        conn.setReadTimeout(timeout);
+        conn.connect();
+        return conn;
     }
 }

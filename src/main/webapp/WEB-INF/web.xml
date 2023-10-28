@@ -60,17 +60,18 @@
     <servlet-class>org.eclipse.jetty.jsp.JettyJspServlet</servlet-class>
     <init-param>
       <param-name>compilerSourceVM</param-name>
-      <param-value>1.7</param-value>
+      <param-value>1.8</param-value>
     </init-param>
     <init-param>
       <param-name>compilerTargetVM</param-name>
-      <param-value>1.7</param-value>
+      <param-value>1.8</param-value>
     </init-param>
   </servlet>
 
   <servlet>
     <servlet-name>plantumlservlet</servlet-name>
     <servlet-class>net.sourceforge.plantuml.servlet.PlantUmlServlet</servlet-class>
+    <load-on-startup>0</load-on-startup>
   </servlet>
   <servlet-mapping>
     <servlet-name>plantumlservlet</servlet-name>
@@ -109,6 +110,15 @@
   <servlet-mapping>
     <servlet-name>svgservlet</servlet-name>
     <url-pattern>/svg/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>pdfservlet</servlet-name>
+    <servlet-class>net.sourceforge.plantuml.servlet.PdfServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>pdfservlet</servlet-name>
+    <url-pattern>/pdf/*</url-pattern>
   </servlet-mapping>
 
   <servlet>
@@ -192,6 +202,32 @@
     <url-pattern>/language</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>asciicoderservlet</servlet-name>
+    <servlet-class>net.sourceforge.plantuml.servlet.AsciiCoderServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>asciicoderservlet</servlet-name>
+    <url-pattern>/coder/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>plantumluihelperservlet</servlet-name>
+    <servlet-class>net.sourceforge.plantuml.servlet.PlantUmlUIHelperServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>plantumluihelperservlet</servlet-name>
+    <url-pattern>/ui-helper/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>metadataservlet</servlet-name>
+    <servlet-class>net.sourceforge.plantuml.servlet.MetadataServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>metadataservlet</servlet-name>
+    <url-pattern>/metadata/*</url-pattern>
+  </servlet-mapping>
 
   <!-- ========================================================== -->
   <!-- Error Handler -->
