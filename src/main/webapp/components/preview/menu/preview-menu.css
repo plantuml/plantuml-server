@@ -1,0 +1,38 @@
+/*******************
+* Preview Menu CSS *
+********************/
+
+.preview-menu {
+  margin-left: 5%;
+  margin-right: 5%;
+}
+.diagram-link img, .btn-dock {
+  width: 2.5rem;
+}
+.btn-settings {
+  width: 2.2rem;
+  margin-left: auto;
+  margin-right: 0.25rem;
+}
+.menu-r {
+  min-width: 3rem;
+}
+.menu-r .btn-float-r {
+  float: right;
+  margin-left: 0.25rem;
+  text-align: right;
+}
+.diagram-links {
+  align-items: center;
+  display: flex;
+}
+.diagram-link {
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
+}
+.diagram-links .diagram-link:first-of-type {
+  margin-left: 0.5rem;
+}
+.diagram-links .diagram-link:last-of-type {
+  margin-right: 0;
+}

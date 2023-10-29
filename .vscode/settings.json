@@ -2,21 +2,29 @@
     "java.configuration.updateBuildConfiguration": "automatic",
     "cSpell.words": [
         "Arnaud",
+        "buildx",
         "ditaa",
         "endditaa",
         "enduml",
         "epstext",
         "etag",
+        "ghaction",
+        "inmemory",
         "Lalloni",
+        "monaco",
         "plantuml",
+        "puml",
         "Roques",
         "servlet",
         "servlets",
         "startditaa",
         "startuml",
-        "utxt",
-        "ghaction",
-        "buildx"
+        "undock",
+        "utxt"
     ],
-    "cSpell.allowCompoundWords": true
+    "cSpell.allowCompoundWords": true,
+    "svg.preview.background": "dark-transparent",
+    "files.associations": {
+        "*.jspf": "html"
+    }
 }

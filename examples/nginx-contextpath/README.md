@@ -41,10 +41,6 @@ YEAH! You are now using PlantUML behind a simple Nginx reverse proxy.
 
 # PlantUML
 location /plantuml/ {
-    proxy_set_header  HOST               $host;
-    proxy_set_header  X-Forwarded-Host   $host;
-    proxy_set_header  X-Forwarded-Proto  $scheme;
-
     proxy_pass http://plantuml-server:8080/plantuml/;
 }
 
@@ -52,11 +48,30 @@ location /plantuml/ {
 ```
 
 - `location /plantuml/` to reverse only the context path `/plantuml`
-- `proxy_set_header HOST $host` and `proxy_set_header X-Forwarded-Host $host` to replaces local plantuml server ip with FQDN
-- `proxy_set_header X-Forwarded-Proto $scheme` to use reverse proxy protocol schema instead of communication schema between reverse proxy and plantuml server
 - `proxy_pass http://plantuml-server:8080/plantuml/` to set reverse proxy path to plantuml server.
   Use the docker container name `plantuml-server` instead of ip addresses.
   Also, use the same context path (`BASE_URL`) as PlantUML, which is configurable as an environment variable in the docker-compose file.
+
+NOTE: `BASE_URL`, `location` and therefore the `proxy_pass` should have the some context path!
+If that is not possible it may be possible to solve the problem by using NGINX `sub_filter`:
+```nginx
+# PlantUML
+location /plantuml/ {
+    sub_filter '<base href="/" />' '<base href="/plantuml/" />';
+    sub_filter_types text/html;
+
+    proxy_pass http://plantuml-server:8080/;
+}
+```
+
+NOTE: Since [PR#256](https://github.com/plantuml/plantuml-server/pull/256) it is possible to use deep base URLs.
+So with e.g. `BASE_URL=foo/bar` the following is possible:
+```nginx
+# PlantUML
+location /foo/bar/ {
+    proxy_pass http://plantuml-server:8080/foo/bar/;
+}
+```
 
 
 ## Nginx and PlantUML server
@@ -69,8 +84,8 @@ services:
     image: plantuml/plantuml-server:jetty
     container_name: plantuml-server
     environment:
-      - TZ="Europe/Berlin"
-      - BASE_URL="plantuml"
+      - TZ=Europe/Berlin
+      - BASE_URL=plantuml
 
   nginx:
     image: nginx:alpine
@@ -78,7 +93,7 @@ services:
     ports:
       - "80:80"
     environment:
-      - TZ="Europe/Berlin"
+      - TZ=Europe/Berlin
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
 ```

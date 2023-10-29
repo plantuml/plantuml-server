@@ -23,12 +23,14 @@
  */
 package net.sourceforge.plantuml.servlet;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,14 +40,16 @@ import net.sourceforge.plantuml.ErrorUml;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.NullOutputStream;
-import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.SourceStringReader;
 import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.code.Base64Coder;
+import net.sourceforge.plantuml.utils.Base64Coder;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.error.PSystemError;
+import net.sourceforge.plantuml.preproc.Defines;
+import net.sourceforge.plantuml.security.SecurityProfile;
+import net.sourceforge.plantuml.security.SecurityUtils;
 import net.sourceforge.plantuml.version.Version;
 
 /**
@@ -54,27 +58,33 @@ import net.sourceforge.plantuml.version.Version;
  */
 public class DiagramResponse {
 
-    /**
-     * {@link FileFormat} to http content type mapping.
-     */
-    private static final Map<FileFormat, String> CONTENT_TYPE;
+    private static class BlockSelection {
+        private final BlockUml block;
+        private final int systemIdx;
+
+        BlockSelection(BlockUml blk, int idx) {
+            block = blk;
+            systemIdx = idx;
+        }
+    }
+
     /**
      * X-Powered-By http header value included in every response by default.
      */
     private static final String POWERED_BY = "PlantUML Version " + Version.versionString();
 
+    /**
+     * PLANTUML_CONFIG_FILE content.
+     */
+    private static final List<String> CONFIG = new ArrayList<>();
+
+    /**
+     * Cache/flag to ensure that the `init()` method is called only once.
+     */
+    private static boolean initialized = false;
+
     static {
-        OptionFlags.ALLOW_INCLUDE = false;
-        if ("true".equalsIgnoreCase(System.getenv("ALLOW_PLANTUML_INCLUDE"))) {
-            OptionFlags.ALLOW_INCLUDE = true;
-        }
-        CONTENT_TYPE = Collections.unmodifiableMap(new HashMap<FileFormat, String>() {{
-            put(FileFormat.PNG, "image/png");
-            put(FileFormat.SVG, "image/svg+xml");
-            put(FileFormat.EPS, "application/postscript");
-            put(FileFormat.UTXT, "text/plain;charset=UTF-8");
-            put(FileFormat.BASE64, "text/plain; charset=x-user-defined");
-        }});
+        init();
     }
 
     /**
@@ -104,6 +114,42 @@ public class DiagramResponse {
     }
 
     /**
+     * Initialize PlantUML configurations and properties as well as loading the PlantUML config file.
+     */
+    public static void init() {
+        if (initialized) {
+            return;
+        }
+        initialized = true;
+        // set headless mode manually since otherwise Windows 11 seems to have some issues with it
+        // see Issue#311 :: https://github.com/plantuml/plantuml-server/issues/311
+        // NOTE: This can only be set before any awt/X11/... related stuff is loaded
+        System.setProperty("java.awt.headless", System.getProperty("java.awt.headless", "true"));
+        // set security profile to INTERNET by default
+        // NOTE: this property is cached inside PlantUML and cannot be changed after the first call of PlantUML
+        System.setProperty("PLANTUML_SECURITY_PROFILE", SecurityProfile.INTERNET.toString());
+        if (System.getenv("PLANTUML_SECURITY_PROFILE") != null) {
+            System.setProperty("PLANTUML_SECURITY_PROFILE", System.getenv("PLANTUML_SECURITY_PROFILE"));
+        }
+        // load properties from file
+        if (System.getenv("PLANTUML_PROPERTY_FILE") != null) {
+            try (FileReader propertyFileReader = new FileReader(System.getenv("PLANTUML_PROPERTY_FILE"))) {
+                System.getProperties().load(propertyFileReader);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        // load PlantUML config file
+        if (System.getenv("PLANTUML_CONFIG_FILE") != null) {
+            try (BufferedReader br = new BufferedReader(new FileReader(System.getenv("PLANTUML_CONFIG_FILE")))) {
+                br.lines().forEach(CONFIG::add);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
      * Render and send a specific uml diagram.
      *
      * @param uml textual UML diagram(s) source
@@ -113,10 +159,18 @@ public class DiagramResponse {
      */
     public void sendDiagram(String uml, int idx) throws IOException {
         response.addHeader("Access-Control-Allow-Origin", "*");
-        response.addHeader("Access-Control-Expose-Headers", "*");
-
         response.setContentType(getContentType());
-        SourceStringReader reader = new SourceStringReader(uml);
+
+        if (idx < 0) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, String.format("Invalid diagram index: {0}", idx));
+            return;
+        }
+        final SourceStringReader reader = getSourceStringReader(uml);
+        if (reader == null) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No UML diagram found");
+            return;
+        }
+
         if (format == FileFormat.BASE64) {
             byte[] imageBytes;
             try (ByteArrayOutputStream outstream = new ByteArrayOutputStream()) {
@@ -128,20 +182,86 @@ public class DiagramResponse {
             response.getOutputStream().write(encodedBytes.getBytes());
             return;
         }
-        final BlockUml blockUml = reader.getBlocks().get(0);
-        if (notModified(blockUml)) {
-            addHeaderForCache(blockUml);
+
+        final BlockSelection blockSelection = getOutputBlockSelection(reader, idx);
+        if (blockSelection == null) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+
+        if (notModified(blockSelection.block)) {
+            addHeaderForCache(blockSelection.block);
             response.sendError(HttpServletResponse.SC_NOT_MODIFIED);
             return;
         }
         if (StringUtils.isDiagramCacheable(uml)) {
-            addHeaderForCache(blockUml);
+            addHeaderForCache(blockSelection.block);
         }
-        final Diagram diagram = blockUml.getDiagram();
+        final Diagram diagram = blockSelection.block.getDiagram();
         if (diagram instanceof PSystemError) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
-        diagram.exportDiagram(response.getOutputStream(), idx, new FileFormatOption(format));
+        diagram.exportDiagram(response.getOutputStream(), blockSelection.systemIdx, new FileFormatOption(format));
+    }
+
+    private BlockSelection getOutputBlockSelection(SourceStringReader reader, int numImage) {
+        if (numImage < 0) {
+            return null;
+        }
+
+        Collection<BlockUml> blocks = reader.getBlocks();
+        if (blocks.isEmpty()) {
+            return null;
+        }
+
+        for (BlockUml b : blocks) {
+            final Diagram system = b.getDiagram();
+            final int nbInSystem = system.getNbImages();
+            if (numImage < nbInSystem) {
+                return new BlockSelection(b, numImage);
+            }
+            numImage -= nbInSystem;
+        }
+
+        return null;
+    }
+
+    private SourceStringReader getSourceStringReader(String uml) {
+        SourceStringReader reader = getSourceStringReaderWithConfig(uml);
+        if (reader.getBlocks().isEmpty()) {
+            uml = "@startuml\n" + uml + "\n@enduml";
+            reader = getSourceStringReaderWithConfig(uml);
+            if (reader.getBlocks().isEmpty()) {
+                return null;
+            }
+        }
+        return reader;
+    }
+
+    private SourceStringReader getSourceStringReaderWithConfig(String uml) {
+        final Defines defines = getPreProcDefines();
+        SourceStringReader reader = new SourceStringReader(defines, uml, CONFIG);
+        if (!CONFIG.isEmpty() && reader.getBlocks().get(0).getDiagram().getWarningOrError() != null) {
+            reader = new SourceStringReader(defines, uml);
+        }
+        return reader;
+    }
+
+    /**
+     * Get PlantUML preprocessor defines.
+     *
+     * @return preprocessor defines
+     */
+    private Defines getPreProcDefines() {
+        final Defines defines;
+        if (SecurityUtils.getSecurityProfile() == SecurityProfile.UNSECURE) {
+            // set dirpath to current dir but keep filename and filenameNoExtension undefined
+            defines = Defines.createWithFileName(new java.io.File("dummy.puml"));
+            defines.overrideFilename("");
+        } else {
+            defines = Defines.createEmpty();
+        }
+        return defines;
     }
 
     /**
@@ -173,18 +293,36 @@ public class DiagramResponse {
      * @throws IOException if an input or output exception occurred
      */
     public void sendMap(String uml, int idx) throws IOException {
-        if (idx < 0) {
-            idx = 0;
-        }
+        response.addHeader("Access-Control-Allow-Origin", "*");
         response.setContentType(getContentType());
-        SourceStringReader reader = new SourceStringReader(uml);
-        final BlockUml blockUml = reader.getBlocks().get(0);
-        if (StringUtils.isDiagramCacheable(uml)) {
-            addHeaderForCache(blockUml);
+
+        if (idx < 0) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, String.format("Invalid diagram index: {0}", idx));
+            return;
         }
-        final Diagram diagram = blockUml.getDiagram();
-        ImageData map = diagram.exportDiagram(new NullOutputStream(), idx,
-                new FileFormatOption(FileFormat.PNG, false));
+        final SourceStringReader reader = getSourceStringReader(uml);
+        if (reader == null) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No UML diagram found");
+            return;
+        }
+        final BlockSelection blockSelection = getOutputBlockSelection(reader, idx);
+        if (blockSelection == null) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+
+        if (StringUtils.isDiagramCacheable(uml)) {
+            addHeaderForCache(blockSelection.block);
+        }
+        final Diagram diagram = blockSelection.block.getDiagram();
+        if (diagram instanceof PSystemError) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        }
+        ImageData map = diagram.exportDiagram(
+            new NullOutputStream(),
+            blockSelection.systemIdx,
+            new FileFormatOption(FileFormat.PNG, false)
+        );
         if (map.containsCMapData()) {
             PrintWriter httpOut = response.getWriter();
             final String cmap = map.getCMapData("plantuml");
@@ -255,7 +393,7 @@ public class DiagramResponse {
      * @return response content type
      */
     private String getContentType() {
-        return CONTENT_TYPE.get(format);
+        return format.getMimeType();
     }
 
 }

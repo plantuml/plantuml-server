@@ -61,13 +61,18 @@ public class OldProxyServlet extends HttpServlet {
         Matcher proxyMatcher = PROXY_PATTERN.matcher(uri);
         if (!proxyMatcher.matches()) {
             // Bad URI format.
-            response.setStatus(400);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "URL malformed.");
             return;
         }
 
         String num = proxyMatcher.group(2); // Optional number of the diagram source
         String format = proxyMatcher.group(4); // Expected format of the generated diagram
         String sourceURL = proxyMatcher.group(5);
+        if (ProxyServlet.forbiddenURL(sourceURL)) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Forbidden URL format.");
+            return;
+        }
+
         handleImageProxy(response, num, format, sourceURL);
     }
 

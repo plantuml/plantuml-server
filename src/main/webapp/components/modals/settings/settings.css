@@ -1,0 +1,8 @@
+/***************
+* Settings CSS *
+****************/
+
+#settings #settings-monaco-editor {
+  height: 17rem;
+  border: 1px solid var(--border-color);
+}
