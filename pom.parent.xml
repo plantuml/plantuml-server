@@ -61,7 +61,7 @@
     <jetty.contextpath>/${wtp.contextName}</jetty.contextpath>
 
     <!-- main versions -->
-    <plantuml.version>1.2023.12</plantuml.version>
+    <plantuml.version>1.2023.13</plantuml.version>
     <!-- Please keep the jetty version identical with the docker image -->
     <jetty.version>11.0.15</jetty.version>
     <!--
@@ -124,7 +124,9 @@
       <groupId>net.sourceforge.plantuml</groupId>
       <artifactId>plantuml</artifactId>
       <version>${plantuml.version}</version>
-      <scope>compile</scope>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/plantuml-1.2023.12.jar</systemPath>
+
     </dependency>
     <dependency>
       <groupId>org.webjars.npm</groupId>
