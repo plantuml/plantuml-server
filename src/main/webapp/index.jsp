@@ -20,6 +20,10 @@
   <title>PlantUML Server</title>
 </head>
 <body>
+  <script>
+    window.location.href = "https://toshihiro.atlassian.net/wiki/spaces/FC/pages/857505793/PlantUML";
+  </script>
+
   <div class="app flex-rows">
     <div class="header">
       <%@ include file="/components/header/header.jsp" %>
