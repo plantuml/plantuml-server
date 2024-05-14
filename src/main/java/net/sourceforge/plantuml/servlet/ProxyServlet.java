@@ -52,6 +52,9 @@ public class ProxyServlet extends HttpServlet {
         if (full == null) {
             return true;
         }
+        if (full.contains("@")) {
+            return true;
+        }
         if (full.startsWith("https://") == false && full.startsWith("http://") == false) {
             return true;
         }
