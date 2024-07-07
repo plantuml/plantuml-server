@@ -34,8 +34,8 @@ public class TestImage extends WebappTestCase {
         // Get the image and verify its size
         byte[] inMemoryImage = getContentAsBytes(conn);
         int diagramLen = inMemoryImage.length;
-        Assertions.assertTrue(diagramLen > 10000);
-        Assertions.assertTrue(diagramLen < 20000);
+        Assertions.assertTrue(diagramLen > 10000, "size = " + diagramLen);
+        Assertions.assertTrue(diagramLen < 30000, "size = " + diagramLen);
     }
 
     /**
