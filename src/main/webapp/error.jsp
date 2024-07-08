@@ -1,4 +1,5 @@
 <%@ page isErrorPage="true" contentType="text/html; charset=utf-8" pageEncoding="utf-8" session="false" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -21,9 +22,9 @@
     <jsp:useBean id="now" class="java.util.Date" />
     <ul>
         <li><%= now.toString() %></li>
-        <li>Request that failed: <%= pageContext.getErrorData().getRequestURI() %></li>
-        <li>Status code: <%= pageContext.getErrorData().getStatusCode() %></li>
-        <li>Exception: <%= pageContext.getErrorData().getThrowable() %></li>
+        <li>Request that failed: <code><c:out value="${pageContext.errorData.requestURI}"/></code></li>
+        <li>Status code: <code><c:out value="${pageContext.errorData.statusCode}"/></code></li>
+        <li>Exception: <code><c:out value="${pageContext.errorData.throwable}"/></code></li>
     </ul>
     <hr/>
 </body>
