@@ -88,13 +88,13 @@ jobs:
       - build-jdk8
     steps:
       - name: retrieve generated war files (jre8)
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.7
         with:
           name: war-jre8
           path: artifacts
 
       - name: retrieve generated war files (jre11)
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.7
         with:
           name: war-jre11
           path: artifacts
