@@ -60,7 +60,7 @@ In this way the server is run on an embedded jetty server.
 You can specify the port at which it runs:
 
 ```sh
-mvn jetty:run -Djetty.http.port=9999
+mvn jetty:run -D jetty.http.port=9999
 ```
 
 
