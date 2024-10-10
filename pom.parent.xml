@@ -226,6 +226,21 @@
       <version>${jetty-server.version}</version>
       <scope>test</scope>
     </dependency>
+	<dependency>
+	  <groupId>org.eclipse.elk</groupId>
+	  <artifactId>org.eclipse.elk.core</artifactId>
+	  <version>0.9.1</version>
+	</dependency>
+	<dependency>
+	  <groupId>org.eclipse.elk</groupId>
+	  <artifactId>org.eclipse.elk.alg.layered</artifactId>
+	  <version>0.9.1</version>
+	</dependency>
+	<dependency>
+	  <groupId>org.eclipse.elk</groupId>
+	  <artifactId>org.eclipse.elk.alg.mrtree</artifactId>
+	  <version>0.9.1</version>
+	</dependency>
   </dependencies>
 
   <build>
