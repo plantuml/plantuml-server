@@ -111,8 +111,8 @@ public class TestSVG extends WebappTestCase {
                     aliceCounter++;
                 }
             }
-            Assertions.assertTrue(bobCounter == 2);
-            Assertions.assertTrue(aliceCounter == 2);
+            Assertions.assertTrue(bobCounter == 3);
+            Assertions.assertTrue(aliceCounter == 3);
         }
     }
 
