@@ -8,7 +8,7 @@ RUN mvn --batch-mode --define java.net.useSystemProxies=true package
 
 ########################################################################################
 
-FROM jetty:11.0.18-jre17-alpine-eclipse-temurin
+FROM jetty:11.0.24-jre17-alpine-eclipse-temurin
 
 # Proxy and OldProxy need empty path segments support in URIs
 # Hence: allow AMBIGUOUS_EMPTY_SEGMENT
