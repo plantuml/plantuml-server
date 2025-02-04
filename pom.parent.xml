@@ -63,7 +63,7 @@
     <!-- main versions -->
     <plantuml.version>1.2025.0</plantuml.version>
     <!-- Please keep the jetty version identical with the docker image -->
-    <jetty.version>11.0.24</jetty.version>
+    <jetty.version>11.0.18</jetty.version>
     <!--
       While changing the version, please update the versions in the following files as well:
       - src/main/webapp/components/app-head.jsp (script import)
