@@ -37,7 +37,7 @@ jobs:
         run: cp target/plantuml.war target/plantuml-jsp-${{ steps.version.outputs.VERSION }}.war
 
       - name: temporarily save generated war files
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: war-jre11
           path: target/plantuml*-${{ steps.version.outputs.VERSION }}.war
@@ -76,7 +76,7 @@ jobs:
         run: cp target/plantuml.war target/plantuml-jre8-jsp-${{ steps.version.outputs.VERSION }}.war
 
       - name: temporarily save generated war files
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: war-jre8
           path: target/plantuml*-${{ steps.version.outputs.VERSION }}.war
