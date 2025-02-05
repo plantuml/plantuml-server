@@ -98,20 +98,7 @@ And run `docker-compose up`. This will start a modified version of the image usi
 
 You can apply some option to your PlantUML server with environment variable.
 
-If you run the directly the jar:
-```sh
-# NOTE: jetty-runner is deprecated.
-# build war file and jetty-runner
-mvn package
-# start directly
-# java $JVM_ARGS -jar jetty-runner.jar $JETTY_ARGS
-java -jar target/dependency/jetty-runner.jar --config src/main/config/jetty.xml --port 9999 --path /plantuml target/plantuml.war
-# see help for more possible options
-java -jar target/dependency/jetty-runner.jar --help
-```
-Note: `--config src/main/config/jetty.xml` is only necessary if you need support for empty path segments in URLs (e.g. for the old proxy)
-
-Alternatively, start over maven and pass the option with `-D` flag
+If you're using the `jetty` Maven plugin, use the -D` flag to pass environment variables:
 ```sh
 mvn jetty:run -D THE_ENV_VARIABLE=THE_ENV_VALUE -Djetty.http.port=9999
 ```
