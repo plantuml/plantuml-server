@@ -41,7 +41,7 @@
       This artifact is required for:
         1. EmbeddedJettyServer -> scope: test
         2. Tomcat docker image -> scope: compile
-      BUT: Jetty docker image as well as jetty-runner will crash on runtime if
+      BUT: Jetty docker image will crash on runtime if
            this artifact is included because it's already provided so that the
            artifact would apear multiple times on the classpath.
            You can test it via: `mvn jetty:run [-Dapache-jsp.scope=compile]`
@@ -63,7 +63,7 @@
     <!-- main versions -->
     <plantuml.version>1.2025.0</plantuml.version>
     <!-- Please keep the jetty version identical with the docker image -->
-    <jetty.version>11.0.18</jetty.version>
+    <jetty.version>11.0.24</jetty.version>
     <!--
       While changing the version, please update the versions in the following files as well:
       - src/main/webapp/components/app-head.jsp (script import)
@@ -111,7 +111,6 @@
 
     <!-- plugins -->
     <maven-eclipse-plugin.version>2.10</maven-eclipse-plugin.version>
-    <jetty-runner.version>${jetty.version}</jetty-runner.version>
     <jetty-maven-plugin.version>${jetty.version}</jetty-maven-plugin.version>
     <duplicate-finder-maven-plugin.version>1.5.1</duplicate-finder-maven-plugin.version>
     <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
@@ -437,23 +436,6 @@
                   <version>${monaco-editor.version}</version>
                   <includes>**/min/vs/loader.js,**/min/vs/**/*,**/min-maps/vs/**/*</includes>
                   <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-          <!-- provide jetty-runner -->
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.eclipse.jetty</groupId>
-                  <artifactId>jetty-runner</artifactId>
-                  <version>${jetty-runner.version}</version>
-                  <destFileName>jetty-runner.jar</destFileName>
                 </artifactItem>
               </artifactItems>
             </configuration>
