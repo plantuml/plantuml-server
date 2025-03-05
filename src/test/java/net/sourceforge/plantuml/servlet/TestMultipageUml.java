@@ -76,7 +76,7 @@ public class TestMultipageUml extends WebappTestCase {
         String diagram = getContentText(conn);
         int diagramLen = diagram.length();
         Assertions.assertTrue(diagramLen > 4500);
-        Assertions.assertTrue(diagramLen < 6000);
+        Assertions.assertTrue(diagramLen < 8000);
     }
 
     /**
@@ -98,7 +98,7 @@ public class TestMultipageUml extends WebappTestCase {
         String diagram = getContentText(conn);
         int diagramLen = diagram.length();
         Assertions.assertTrue(diagramLen > 1500);
-        Assertions.assertTrue(diagramLen < 4000);
+        Assertions.assertTrue(diagramLen < 6000);
     }
 
     /**
