@@ -82,8 +82,8 @@
     <jlatexmath-font-greek.version>${jlatexmath.version}</jlatexmath-font-greek.version>
     <jlatexmath-font-cyrillic.version>${jlatexmath.version}</jlatexmath-font-cyrillic.version>
     <!-- PDF -->
-    <batik.version>1.17</batik.version>
-    <fop.version>2.8</fop.version>
+    <batik.version>1.19</batik.version>
+    <fop.version>2.11</fop.version>
 
     <!-- Testing -->
     <junit.version>5.9.3</junit.version>
