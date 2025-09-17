@@ -228,17 +228,17 @@
 	<dependency>
 	  <groupId>org.eclipse.elk</groupId>
 	  <artifactId>org.eclipse.elk.core</artifactId>
-	  <version>0.9.1</version>
+	  <version>0.7.1</version>
 	</dependency>
 	<dependency>
 	  <groupId>org.eclipse.elk</groupId>
 	  <artifactId>org.eclipse.elk.alg.layered</artifactId>
-	  <version>0.9.1</version>
+	  <version>0.7.1</version>
 	</dependency>
 	<dependency>
 	  <groupId>org.eclipse.elk</groupId>
 	  <artifactId>org.eclipse.elk.alg.mrtree</artifactId>
-	  <version>0.9.1</version>
+	  <version>0.7.1</version>
 	</dependency>
   </dependencies>
 
@@ -609,6 +609,31 @@
       </plugin>
     </plugins>
   </build>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>33.4.8-jre</version>
+			</dependency>
+      <dependency>
+        <groupId>org.eclipse.elk</groupId>
+        <artifactId>org.eclipse.elk.core</artifactId>
+        <version>0.7.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.elk</groupId>
+        <artifactId>org.eclipse.elk.alg.layered</artifactId>
+        <version>0.7.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.elk</groupId>
+        <artifactId>org.eclipse.elk.alg.mrtree</artifactId>
+        <version>0.7.1</version>
+      </dependency>
+      
+		</dependencies>
+	</dependencyManagement>
 
   <reporting>
     <plugins>
