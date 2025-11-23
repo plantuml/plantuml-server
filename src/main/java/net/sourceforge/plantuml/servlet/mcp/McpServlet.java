@@ -119,14 +119,20 @@ public class McpServlet extends HttpServlet {
         try {
             JsonObject requestBody = readJsonRequest(request);
 
-            if (pathInfo.equals("/render")) {
+            if (pathInfo.equals("/check")) {
+                handleCheck(requestBody, response);
+            } else if (pathInfo.equals("/render")) {
                 handleRender(requestBody, response);
+            } else if (pathInfo.equals("/metadata")) {
+                handleMetadata(requestBody, response);
             } else if (pathInfo.equals("/render-url")) {
                 handleRenderUrl(requestBody, response);
             } else if (pathInfo.equals("/analyze")) {
                 handleAnalyze(requestBody, response);
             } else if (pathInfo.equals("/workspace/create")) {
                 handleWorkspaceCreate(requestBody, response);
+            } else if (pathInfo.equals("/workspace/put")) {
+                handleWorkspaceUpdate(requestBody, response);
             } else if (pathInfo.equals("/workspace/update")) {
                 handleWorkspaceUpdate(requestBody, response);
             } else if (pathInfo.equals("/workspace/get")) {
@@ -138,6 +144,10 @@ public class McpServlet extends HttpServlet {
             } else {
                 sendError(response, HttpServletResponse.SC_NOT_FOUND, "Endpoint not found");
             }
+        } catch (com.google.gson.JsonSyntaxException e) {
+            // Handle JSON parsing errors
+            sendError(response, HttpServletResponse.SC_BAD_REQUEST,
+                "Invalid JSON: " + e.getMessage());
         } catch (Exception e) {
             // Log error (servlet container will handle logging)
             sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
@@ -240,6 +250,106 @@ public class McpServlet extends HttpServlet {
         sendJson(response, result);
     }
 
+    private void handleCheck(JsonObject requestBody, HttpServletResponse response)
+            throws IOException {
+        String source = getJsonString(requestBody, "source", null);
+        if (source == null || source.isEmpty()) {
+            sendError(response, HttpServletResponse.SC_BAD_REQUEST, "Missing 'source' field");
+            return;
+        }
+
+        try {
+            // Try to parse the diagram to check for syntax errors
+            SourceStringReader reader = new SourceStringReader(source);
+            // Use NullOutputStream to avoid generating actual image data
+            reader.outputImage(new net.sourceforge.plantuml.servlet.utility.NullOutputStream(),
+                0, new FileFormatOption(FileFormat.PNG));
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("ok", true);
+            result.put("errors", new Object[0]);
+            sendJson(response, result);
+        } catch (Exception e) {
+            Map<String, Object> result = new HashMap<>();
+            result.put("ok", false);
+            Map<String, Object> error = new HashMap<>();
+            error.put("line", 0);
+            error.put("message", e.getMessage() != null ? e.getMessage() : "Syntax error");
+            result.put("errors", new Object[]{error});
+            sendJson(response, result);
+        }
+    }
+
+    private void handleMetadata(JsonObject requestBody, HttpServletResponse response)
+            throws IOException {
+        String source = getJsonString(requestBody, "source", null);
+        if (source == null || source.isEmpty()) {
+            sendError(response, HttpServletResponse.SC_BAD_REQUEST, "Missing 'source' field");
+            return;
+        }
+
+        try {
+            // Extract basic metadata from the source
+            Map<String, Object> result = new HashMap<>();
+
+            // Parse participants/entities from the source
+            java.util.List<String> participants = new java.util.ArrayList<>();
+            String[] lines = source.split("\n");
+            for (String line : lines) {
+                // Simple parsing for common diagram elements
+                line = line.trim();
+                if (line.matches("^[a-zA-Z0-9_]+\\s*->.*") || line.matches(".*->\\s*[a-zA-Z0-9_]+.*")) {
+                    // Extract participant names from arrow notations
+                    String[] parts = line.split("->");
+                    for (String part : parts) {
+                        String trimmed = part.trim();
+                        if (!trimmed.isEmpty()) {
+                            String[] tokens = trimmed.split("\\s+");
+                            if (tokens.length > 0) {
+                                String name = tokens[0].replaceAll("[^a-zA-Z0-9_]", "");
+                                if (!name.isEmpty() && !participants.contains(name)) {
+                                    participants.add(name);
+                                }
+                            }
+                        }
+                    }
+                } else if (line.matches("^(class|interface|entity|participant)\\s+[a-zA-Z0-9_]+.*")) {
+                    String[] parts = line.split("\\s+");
+                    if (parts.length >= 2) {
+                        String name = parts[1].replaceAll("[^a-zA-Z0-9_]", "");
+                        if (!name.isEmpty() && !participants.contains(name)) {
+                            participants.add(name);
+                        }
+                    }
+                }
+            }
+
+            result.put("participants", participants.toArray(new String[0]));
+            result.put("directives", new String[0]);
+
+            // Detect diagram type
+            String diagramType = "unknown";
+            if (source.contains("@startuml")) {
+                if (source.contains("->") || source.contains("participant")) {
+                    diagramType = "sequence";
+                } else if (source.contains("class") || source.contains("interface")) {
+                    diagramType = "class";
+                } else if (source.contains("state")) {
+                    diagramType = "state";
+                } else if (source.contains("usecase") || source.contains("actor")) {
+                    diagramType = "usecase";
+                }
+            }
+            result.put("diagramType", diagramType);
+            result.put("warnings", new String[0]);
+
+            sendJson(response, result);
+        } catch (Exception e) {
+            sendError(response, HttpServletResponse.SC_BAD_REQUEST,
+                "Metadata extraction failed: " + e.getMessage());
+        }
+    }
+
     private void handleRender(JsonObject requestBody, HttpServletResponse response)
             throws IOException {
         String source = getJsonString(requestBody, "source", null);
@@ -258,20 +368,22 @@ public class McpServlet extends HttpServlet {
             reader.outputImage(outputStream, 0, new FileFormatOption(fileFormat));
 
             byte[] imageBytes = outputStream.toByteArray();
-            String dataUrl = formatDataUrl(imageBytes, fileFormat);
-            String sha256 = computeSha256(imageBytes);
+            String dataBase64 = Base64.getEncoder().encodeToString(imageBytes);
 
             Map<String, Object> result = new HashMap<>();
-            result.put("status", "ok");
+            result.put("ok", true);
             result.put("format", format);
-            result.put("dataUrl", dataUrl);
-            result.put("renderTimeMs", System.currentTimeMillis() - startTime);
-            result.put("sha256", sha256);
+            result.put("dataBase64", dataBase64);
 
             sendJson(response, result);
         } catch (Exception e) {
-            sendError(response, HttpServletResponse.SC_BAD_REQUEST,
-                "Rendering failed: " + e.getMessage());
+            Map<String, Object> errorResult = new HashMap<>();
+            errorResult.put("ok", false);
+            errorResult.put("errors", new Object[]{
+                java.util.Collections.singletonMap("message", "Rendering failed: " + e.getMessage())
+            });
+            response.setStatus(HttpServletResponse.SC_OK);
+            sendJson(response, errorResult);
         }
     }
 
