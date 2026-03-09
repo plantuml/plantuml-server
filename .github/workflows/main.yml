@@ -6,7 +6,7 @@ on:
       - "v*"
 
 jobs:
-  build-jdk11:
+  build-jdk17:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: "zulu"
-          java-version: 11
+          java-version: 17
           check-latest: true
           cache: "maven"
 
@@ -39,18 +39,18 @@ jobs:
       - name: temporarily save generated war files
         uses: actions/upload-artifact@v4
         with:
-          name: war-jre11
+          name: war-jre17
           path: target/plantuml*-${{ steps.version.outputs.VERSION }}.war
 
   publish-releases:
     runs-on: ubuntu-latest
     needs:
-      - build-jdk11
+      - build-jdk17
     steps:
       - name: retrieve generated war files
         uses: actions/download-artifact@v4.1.7
         with:
-          name: war-jre11
+          name: war-jre17
           path: artifacts
 
       - name: display structure of downloaded files
@@ -147,7 +147,7 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: "zulu"
-          java-version: 11
+          java-version: 17
           check-latest: true
           cache: "maven"
 

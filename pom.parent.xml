@@ -45,7 +45,7 @@
            this artifact is included because it's already provided so that the
            artifact would apear multiple times on the classpath.
            You can test it via: `mvn jetty:run [-Dapache-jsp.scope=compile]`
-           Error: java.util.ServiceConfigurationError: org.apache.juli.logging.Log: org.eclipse.jetty.apache.jsp.JuliLog not a subtype
+           Error: java.util.ServiceConfigurationError: org.apache.juli.logging.Log: org.eclipse.jetty.ee11.apache.jsp.JuliLog not a subtype
       HENCE: Default is the "test" scope and for Tomcat docker image building add:
         -Dapache-jsp.scope=compile
     -->
@@ -63,7 +63,7 @@
     <!-- main versions -->
     <plantuml.version>1.2026.2</plantuml.version>
     <!-- Please keep the jetty version identical with the docker image -->
-    <jetty.version>11.0.24</jetty.version>
+    <jetty.version>12.1.6</jetty.version>
     <!--
       While changing the version, please update the versions in the following files as well:
       - src/main/webapp/components/app-head.jsp (script import)
@@ -73,7 +73,7 @@
     <monaco-editor.version>0.36.1</monaco-editor.version>
 
     <!-- dependencies -->
-    <jstl.version>1.2</jstl.version>
+    <jakarta-servlet.version>6.1.0</jakarta-servlet.version>
     <apache-jsp.version>${jetty.version}</apache-jsp.version>
     <jetty-annotations.version>${jetty.version}</jetty-annotations.version>
     <glassfish-jstl.version>${jetty.version}</glassfish-jstl.version>
@@ -132,16 +132,34 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>apache-jsp</artifactId>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <version>${jakarta-servlet.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty.ee11</groupId>
+      <artifactId>jetty-ee11-apache-jsp</artifactId>
       <version>${apache-jsp.version}</version>
       <scope>${apache-jsp.scope}</scope>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-annotations</artifactId>
+      <groupId>org.eclipse.jetty.ee11</groupId>
+      <artifactId>jetty-ee11-annotations</artifactId>
       <version>${jetty-annotations.version}</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty.ee11</groupId>
+      <artifactId>jetty-ee11-glassfish-jstl</artifactId>
+      <version>${glassfish-jstl.version}</version>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>jakarta.el</groupId>
+          <artifactId>jakarta.el-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <!-- jlatexmath -->
     <dependency>
@@ -223,6 +241,12 @@
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-server</artifactId>
       <version>${jetty-server.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty.ee11</groupId>
+      <artifactId>jetty-ee11-webapp</artifactId>
+      <version>${jetty.version}</version>
       <scope>test</scope>
     </dependency>
 	<dependency>
@@ -454,8 +478,8 @@
       </plugin>
       <!-- configure jetty -->
       <plugin>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-maven-plugin</artifactId>
+        <groupId>org.eclipse.jetty.ee11</groupId>
+        <artifactId>jetty-ee11-maven-plugin</artifactId>
         <version>${jetty-maven-plugin.version}</version>
         <configuration>
           <!-- jetty.xml
@@ -464,7 +488,7 @@
             Hence: allow AMBIGUOUS_EMPTY_SEGMENT
           -->
           <jettyXmls>${basedir}/src/main/config/jetty.xml</jettyXmls>
-          <scanIntervalSeconds>5</scanIntervalSeconds>
+          <scan>5</scan>
           <webApp>
             <contextPath>${jetty.contextpath}</contextPath>
           </webApp>
