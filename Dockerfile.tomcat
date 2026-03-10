@@ -1,4 +1,4 @@
-FROM maven:3-eclipse-temurin-11 AS builder
+FROM maven:3-eclipse-temurin-17 AS builder
 
 COPY pom.xml pom.parent.xml /app/
 COPY src/main /app/src/main/
@@ -8,7 +8,7 @@ RUN mvn --batch-mode --define java.net.useSystemProxies=true -Dapache-jsp.scope=
 
 ########################################################################################
 
-FROM tomcat:10-jdk11
+FROM tomcat:11-jdk17
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \

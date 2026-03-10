@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java-version: [ 11, 17 ]
+        java-version: [ 17, 21, 25 ]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -51,7 +51,7 @@ jobs:
     needs: test-mvn-livecycle
     strategy:
       matrix:
-        java-version: [ 11, 17 ]
+        java-version: [ 17, 21, 25 ]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -72,7 +72,7 @@ jobs:
     needs: test-mvn-livecycle
     strategy:
       matrix:
-        java-version: [ 11, 17 ]
+        java-version: [ 17, 21, 25 ]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -102,7 +102,7 @@ jobs:
     needs: test-mvn-livecycle
     strategy:
       matrix:
-        java-version: [ 11, 17 ]
+        java-version: [ 17, 21, 25 ]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -134,7 +134,7 @@ jobs:
     needs: test-mvn-livecycle
     strategy:
       matrix:
-        java-version: [ 11, 17 ]
+        java-version: [ 17, 21, 25 ]
     steps:
       - uses: actions/checkout@v3
         with:
