@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"net.sourceforge.plantuml.servlet"},{"l":"net.sourceforge.plantuml.servlet.utility"}]
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"net.sourceforge.plantuml.servlet"},{"l":"net.sourceforge.plantuml.servlet.utility"}];updateSearchResults();
