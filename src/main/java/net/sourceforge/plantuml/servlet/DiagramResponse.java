@@ -254,7 +254,7 @@ public class DiagramResponse {
      */
     private Defines getPreProcDefines() {
         final Defines defines;
-        if (SecurityUtils.getSecurityProfile() == SecurityProfile.UNSECURE) {
+        if (SecurityUtils.getSecurityProfile() == SecurityProfile.INSECURE) {
             // set dirpath to current dir but keep filename and filenameNoExtension undefined
             defines = Defines.createWithFileName(new java.io.File("dummy.puml"));
             defines.overrideFilename("");
