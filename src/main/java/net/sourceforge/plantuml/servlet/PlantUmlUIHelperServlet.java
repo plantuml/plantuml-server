@@ -53,8 +53,8 @@ import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.emoji.data.Dummy;
 import net.sourceforge.plantuml.json.Json;
 import net.sourceforge.plantuml.json.JsonArray;
+import net.sourceforge.plantuml.openiconic.OpenIconic;
 import net.sourceforge.plantuml.theme.ThemeUtils;
-import net.sourceforge.plantuml.openiconic.data.DummyIcon;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -119,7 +119,7 @@ public class PlantUmlUIHelperServlet extends HttpServlet {
     }
 
     private String[] getIcons() throws IOException {
-        InputStream in = DummyIcon.class.getResourceAsStream("all.txt");
+        InputStream in = OpenIconic.class.getResourceAsStream("/openiconic/all.txt");
         try (BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
             return br.lines().toArray(String[]::new);
         }
@@ -142,7 +142,7 @@ public class PlantUmlUIHelperServlet extends HttpServlet {
             sprite.append("  ]]></style>\n");
             sprite.append("</defs>\n");
             for (String name : iconNames) {
-                try (InputStream in = DummyIcon.class.getResourceAsStream(name + ".svg")) {
+                try (InputStream in = OpenIconic.class.getResourceAsStream("/openiconic/" + name + ".svg")) {
                     DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
                     docFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
                     docFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
