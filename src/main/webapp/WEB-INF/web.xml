@@ -101,6 +101,14 @@
     <servlet-name>imgservlet</servlet-name>
     <url-pattern>/img/*</url-pattern>
   </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>imgservlet</servlet-name>
+    <url-pattern>/dpng/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>imgservlet</servlet-name>
+    <url-pattern>/dimg/*</url-pattern>
+  </servlet-mapping>
 
   <servlet>
     <servlet-name>svgservlet</servlet-name>
@@ -109,6 +117,10 @@
   <servlet-mapping>
     <servlet-name>svgservlet</servlet-name>
     <url-pattern>/svg/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>svgservlet</servlet-name>
+    <url-pattern>/dsvg/*</url-pattern>
   </servlet-mapping>
 
   <servlet>
@@ -119,6 +131,10 @@
     <servlet-name>pdfservlet</servlet-name>
     <url-pattern>/pdf/*</url-pattern>
   </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>pdfservlet</servlet-name>
+    <url-pattern>/dpdf/*</url-pattern>
+  </servlet-mapping>
 
   <servlet>
     <servlet-name>epsservlet</servlet-name>
@@ -127,6 +143,10 @@
   <servlet-mapping>
     <servlet-name>epsservlet</servlet-name>
     <url-pattern>/eps/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>epsservlet</servlet-name>
+    <url-pattern>/deps/*</url-pattern>
   </servlet-mapping>
 
   <servlet>
@@ -137,6 +157,10 @@
     <servlet-name>epstextservlet</servlet-name>
     <url-pattern>/epstext/*</url-pattern>
   </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>epstextservlet</servlet-name>
+    <url-pattern>/depstext/*</url-pattern>
+  </servlet-mapping>
 
   <servlet>
     <servlet-name>base64servlet</servlet-name>
@@ -145,6 +169,10 @@
   <servlet-mapping>
     <servlet-name>base64servlet</servlet-name>
     <url-pattern>/base64/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>base64servlet</servlet-name>
+    <url-pattern>/dbase64/*</url-pattern>
   </servlet-mapping>
 
   <servlet>

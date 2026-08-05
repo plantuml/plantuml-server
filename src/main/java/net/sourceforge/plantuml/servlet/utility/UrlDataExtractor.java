@@ -35,7 +35,7 @@ public abstract class UrlDataExtractor {
      * URL regex pattern to easily extract index and encoded diagram.
      */
     private static final Pattern URL_PATTERN = Pattern.compile(
-        "/\\w+(?:/(?<idx>\\d+))?(?:/(?<encoded>[^/]+))?/?$"
+        "/(?<type>\\w+)(?:/(?<idx>\\d+))?(?:/(?<encoded>[^/]+))?/?$"
     );
 
     /**
@@ -98,5 +98,35 @@ public abstract class UrlDataExtractor {
             return fallback;
         }
         return encoded;
+    }
+
+    /**
+     * Determines whether the UML diagram should be rendered in dark mode based on the URL.
+     *
+     * <p>If the URL contains a diagram output type prefixed with {@code d}, the UML diagram
+     * will be rendered in dark mode by default.</p>
+     *
+     * <p>Examples:
+     *   <ul>
+     *     <li>{@code /diagram/dsvg} -> dark mode (output type: {@code dsvg})</li>
+     *     <li>{@code /diagram/svg}  -> light mode (output type: {@code svg})</li>
+     *   </ul>
+     * </p>
+     *
+     * @param url the URL to analyze, e.g., obtained from {@code request.getRequestURI()}
+     *
+     * @return {@code true} if the UML diagram should be rendered in dark mode,
+     *         {@code false} if it should not, or {@code null} if the URL could not be analyzed
+     */
+    public static Boolean isDarkModeUrl(final String url) {
+        final Matcher matcher = URL_PATTERN.matcher(url);
+        if (!matcher.find()) {
+            return null;
+        }
+        String outputType = matcher.group("type");
+        if (outputType == null) {
+            return null;
+        }
+        return outputType.startsWith("d");
     }
 }
