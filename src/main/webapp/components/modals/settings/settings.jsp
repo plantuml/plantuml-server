@@ -21,7 +21,7 @@
           <option value="IDENTITY">Identity</option>
           <option value="TEAVM_LIGHT">TeaVM Light</option>
           <option value="TEAVM_DARK">TeaVM Dark</option>
-          <option value="DARK_MODE">DARK MODE</option>
+          <option value="DARK_MODE">Dark Mode</option>
           <option value="LIGTHNESS_INVERSE">Ligthness Inverse</option>
           <option value="MONOCHROME">Monochrome</option>
           <option value="MONOCHROME_REVERSE">Monochrome Reverse</option>
