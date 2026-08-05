@@ -23,7 +23,7 @@ const { applyConfig, updateConfig } = (function() {
   };
 
   function applyConfig() {
-    setTheme(document.appConfig.theme);
+    setTheme(document.appConfig.uiTheme);
     document.editor?.updateOptions(document.appConfig.editorCreateOptions);
     document.settingsEditor?.updateOptions(document.appConfig.editorCreateOptions);
   }

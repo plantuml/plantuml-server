@@ -54,10 +54,10 @@ PlantUmlLanguageFeatures.makeRequest = function(
   } = {}
 ) {
   function getResolveResponse(xhr) {
-    return responseType === "json" ? xhr.response : xhr.responseText;
+    return ["json", "blob"].includes(responseType) ? xhr.response : xhr.responseText;
   }
   function getRejectResponse(xhr) {
-    return responseType === "json"
+    return ["json", "blob"].includes(responseType)
       ? { status: xhr.status, response: xhr.response }
       : { status: xhr.status, responseText: xhr.responseText };
   }
