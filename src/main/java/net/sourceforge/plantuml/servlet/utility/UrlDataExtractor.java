@@ -108,10 +108,9 @@ public abstract class UrlDataExtractor {
      *
      * <p>Examples:
      *   <ul>
-     *     <li>{@code /diagram/dsvg} -> dark mode (output type: {@code dsvg})</li>
-     *     <li>{@code /diagram/svg}  -> light mode (output type: {@code svg})</li>
+     *     <li>{@code /diagram/dsvg} -> dark mode</li>
+     *     <li>{@code /diagram/svg}  -> light mode</li>
      *   </ul>
-     * </p>
      *
      * @param url the URL to analyze, e.g., obtained from {@code request.getRequestURI()}
      *

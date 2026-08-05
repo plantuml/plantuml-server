@@ -177,7 +177,6 @@ public class DiagramResponse {
      *     <li>Via the URL by prefixing the diagram type with {@code d} for dark mode, e.g., {@code /dpng/...}.</li>
      *   </ol>
      * If both are specified, the HTTP header {@code X-Preferred-Color-Mapper} takes precedence.
-     * </p>
      *
      * @param req the HTTP request containing headers and URL information
      *
