@@ -90,7 +90,8 @@ public class PlantUmlUIHelperServlet extends HttpServlet {
         String errorMsg = null;
         if (requestItem == null) {
             errorMsg = "Request item not set.";
-        } else if (requestHelper == null) {
+        }
+        if (requestHelper == null) {
             errorMsg = "Unknown requested item: " + requestItem;
         }
         if (errorMsg != null) {

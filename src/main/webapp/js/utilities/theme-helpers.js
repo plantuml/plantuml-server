@@ -26,14 +26,19 @@ function initTheme() {
   }
   function onMediaColorPreferencesChanged(event) {
     const theme = event.matches ? "dark" : "light";
-    document.appConfig.theme = theme
+    document.appConfig.uiTheme = theme;
+    if (["dark", "light"].includes(document.appConfig.umlColorMapper)) {
+      // if uml theme is not explicitly set to specific color map use media color
+      document.appConfig.umlColorMapper = theme;
+    }
     changeEditorThemeSettingIfNecessary(theme);
     updateConfig(document.appConfig);
   }
   // set theme to last saved settings or browser preference or "light"
-  document.appConfig.theme = document.appConfig.theme || getBrowserThemePreferences() || "light";
-  setTheme(document.appConfig.theme);
-  changeEditorThemeSettingIfNecessary(document.appConfig.theme);
+  document.appConfig.uiTheme = document.appConfig.uiTheme || getBrowserThemePreferences() || "light";
+  document.appConfig.umlColorMapper = document.appConfig.umlColorMapper || getBrowserThemePreferences() || "light";
+  setTheme(document.appConfig.uiTheme);
+  changeEditorThemeSettingIfNecessary(document.appConfig.uiTheme);
   // listen to browser change event
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", onMediaColorPreferencesChanged);
 }

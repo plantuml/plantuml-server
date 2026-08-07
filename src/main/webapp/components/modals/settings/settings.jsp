@@ -6,10 +6,25 @@
     </div>
     <div class="modal-main flex-main">
       <div class="label-input-pair flex-columns">
-        <label for="theme">Theme:</label>
-        <select class="flex-main" id="theme" name="theme">
+        <label for="uiTheme">UI Theme:</label>
+        <select class="flex-main" id="uiTheme" name="uiTheme">
           <option value="light">Light</option>
           <option value="dark">Dark</option>
+        </select>
+      </div>
+      <div class="label-input-pair flex-columns">
+        <label for="umlColorMapper">UML Color Mapper:</label>
+        <select class="flex-main" id="umlColorMapper" name="umlColorMapper">
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+          <hr />
+          <option value="IDENTITY">Identity</option>
+          <option value="TEAVM_LIGHT">TeaVM Light</option>
+          <option value="TEAVM_DARK">TeaVM Dark</option>
+          <option value="DARK_MODE">Dark Mode</option>
+          <option value="LIGTHNESS_INVERSE">Ligthness Inverse</option>
+          <option value="MONOCHROME">Monochrome</option>
+          <option value="MONOCHROME_REVERSE">Monochrome Reverse</option>
         </select>
       </div>
       <div class="label-input-pair flex-columns">

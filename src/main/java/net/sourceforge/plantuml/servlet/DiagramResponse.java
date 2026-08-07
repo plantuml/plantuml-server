@@ -47,9 +47,11 @@ import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.error.PSystemError;
+import net.sourceforge.plantuml.klimt.color.ColorMapper;
 import net.sourceforge.plantuml.preproc.Defines;
 import net.sourceforge.plantuml.security.SecurityProfile;
 import net.sourceforge.plantuml.security.SecurityUtils;
+import net.sourceforge.plantuml.servlet.utility.UrlDataExtractor;
 import net.sourceforge.plantuml.version.Version;
 
 /**
@@ -92,6 +94,10 @@ public class DiagramResponse {
      */
     private FileFormat format;
     /**
+     * Color mapper.
+     */
+    private ColorMapper colorMapper;
+    /**
      * Http request.
      */
     private HttpServletRequest request;
@@ -108,9 +114,22 @@ public class DiagramResponse {
      * @param req http request
      */
     public DiagramResponse(HttpServletResponse res, FileFormat fmt, HttpServletRequest req) {
+        this(res, fmt, req, getColorMapper(req));
+    }
+
+    /**
+     * Create new diagram response instance.
+     *
+     * @param res http response
+     * @param fmt target file format
+     * @param req http request
+     * @param cm color mapper
+     */
+    public DiagramResponse(HttpServletResponse res, FileFormat fmt, HttpServletRequest req, ColorMapper cm) {
         response = res;
         format = fmt;
         request = req;
+        colorMapper = cm;
     }
 
     /**
@@ -150,6 +169,44 @@ public class DiagramResponse {
     }
 
     /**
+     * Retrieves the color mapper based on the HTTP request.
+     *
+     * <p>The color mapper can be specified in two ways:
+     *   <ol>
+     *     <li>Via the HTTP header {@code X-Preferred-Color-Mapper}, or</li>
+     *     <li>Via the URL by prefixing the diagram type with {@code d} for dark mode, e.g., {@code /dpng/...}.</li>
+     *   </ol>
+     * If both are specified, the HTTP header {@code X-Preferred-Color-Mapper} takes precedence.
+     *
+     * @param req the HTTP request containing headers and URL information
+     *
+     * @return the color mapper based on the request, with fallback to {@link ColorMapper#IDENTITY}
+     */
+    public static ColorMapper getColorMapper(HttpServletRequest req) {
+        String colorMapperName = req.getHeader("X-Preferred-Color-Mapper");
+        if (colorMapperName != null) {
+            switch (colorMapperName.toUpperCase()) {
+                // specific net.sourceforge.plantuml.klimt.color.ColorMapper values
+                case "IDENTITY":           return ColorMapper.IDENTITY;
+                case "TEAVM_LIGHT":        return ColorMapper.TEAVM_LIGHT;
+                case "TEAVM_DARK":         return ColorMapper.TEAVM_DARK;
+                case "DARK_MODE":          return ColorMapper.DARK_MODE;
+                case "LIGTHNESS_INVERSE":  return ColorMapper.LIGTHNESS_INVERSE;
+                case "MONOCHROME":         return ColorMapper.MONOCHROME;
+                case "MONOCHROME_REVERSE": return ColorMapper.MONOCHROME_REVERSE;
+                // defaults
+                case "DARK":  return ColorMapper.DARK_MODE;
+                case "LIGHT": return ColorMapper.IDENTITY;
+                default:      break;
+            }
+        }
+        if (UrlDataExtractor.isDarkModeUrl(req.getRequestURI())) {
+            return ColorMapper.DARK_MODE;
+        }
+        return ColorMapper.IDENTITY;
+    }
+
+    /**
      * Render and send a specific uml diagram.
      *
      * @param uml textual UML diagram(s) source
@@ -174,7 +231,7 @@ public class DiagramResponse {
         if (format == FileFormat.BASE64) {
             byte[] imageBytes;
             try (ByteArrayOutputStream outstream = new ByteArrayOutputStream()) {
-                reader.outputImage(outstream, idx, new FileFormatOption(FileFormat.PNG));
+                reader.outputImage(outstream, idx, new FileFormatOption(FileFormat.PNG).withColorMapper(colorMapper));
                 imageBytes = outstream.toByteArray();
             }
             final String base64 = Base64Coder.encodeLines(imageBytes).replaceAll("\\s", "");
@@ -201,7 +258,11 @@ public class DiagramResponse {
         if (diagram instanceof PSystemError) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
-        diagram.exportDiagram(response.getOutputStream(), blockSelection.systemIdx, new FileFormatOption(format));
+        diagram.exportDiagram(
+            response.getOutputStream(),
+            blockSelection.systemIdx,
+            new FileFormatOption(format).withColorMapper(colorMapper)
+        );
     }
 
     private BlockSelection getOutputBlockSelection(SourceStringReader reader, int numImage) {
@@ -321,7 +382,7 @@ public class DiagramResponse {
         ImageData map = diagram.exportDiagram(
             new NullOutputStream(),
             blockSelection.systemIdx,
-            new FileFormatOption(FileFormat.PNG, false)
+            new FileFormatOption(FileFormat.PNG, false).withColorMapper(colorMapper)
         );
         if (map.containsCMapData()) {
             PrintWriter httpOut = response.getWriter();
@@ -342,7 +403,7 @@ public class DiagramResponse {
         SourceStringReader reader = new SourceStringReader(uml);
         DiagramDescription desc = reader.outputImage(
             new NullOutputStream(),
-            new FileFormatOption(FileFormat.PNG, false)
+            new FileFormatOption(FileFormat.PNG, false).withColorMapper(colorMapper)
         );
         PrintWriter httpOut = response.getWriter();
         httpOut.print(desc.getDescription());
