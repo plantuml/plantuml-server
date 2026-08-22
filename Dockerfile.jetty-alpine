@@ -8,7 +8,7 @@ RUN mvn --batch-mode --define java.net.useSystemProxies=true package
 
 ########################################################################################
 
-FROM jetty:12.1.6-jdk17-alpine-eclipse-temurin
+FROM jetty:12.1.6-jdk21-alpine-eclipse-temurin
 
 RUN java -jar "$JETTY_HOME/start.jar" --add-modules=ee11-deploy,ee11-annotations,ee11-jsp,ee11-jstl
 
