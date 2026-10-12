@@ -39,6 +39,11 @@ async function initApp() {
     }
   }
 
+  if (!["light", "IDENTITY"].includes(document.appConfig.umlColorMapper)) {
+    // re-render image to support uml color themes
+    initializeDiagram(true);
+  }
+
   document.appConfig.autoRefreshState = "complete";
 }
 

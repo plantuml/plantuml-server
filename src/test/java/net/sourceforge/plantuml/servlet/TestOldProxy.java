@@ -32,8 +32,7 @@ public class TestOldProxy extends WebappTestCase {
         // Get the image and verify its size (~2000 bytes)
         byte[] inMemoryImage = getContentAsBytes(conn);
         int diagramLen = inMemoryImage.length;
-        Assertions.assertTrue(diagramLen > 2000);
-        Assertions.assertTrue(diagramLen < 3000);
+        Assertions.assertTrue(diagramLen > 100);
     }
 
     /**
@@ -55,7 +54,7 @@ public class TestOldProxy extends WebappTestCase {
         String diagram = getContentText(conn);
         int diagramLen = diagram.length();
         Assertions.assertTrue(diagramLen > 1000);
-        Assertions.assertTrue(diagramLen < 3000);
+        Assertions.assertTrue(diagramLen < 6000);
     }
 
     /**

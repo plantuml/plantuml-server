@@ -51,7 +51,7 @@ public class OldProxyServlet extends HttpServlet {
     /**
      * Proxy request URI regex pattern.
      */
-    private static final Pattern PROXY_PATTERN = Pattern.compile("/\\w+/proxy/((\\d+)/)?((\\w+)/)?(https?://.*)");
+    private static final Pattern PROXY_PATTERN = Pattern.compile("/\\w+/proxy/((\\d+)/)?((\\w+)/)?(https?://[^@]*)");
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {

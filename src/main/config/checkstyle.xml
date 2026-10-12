@@ -63,7 +63,7 @@
       <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit" />
       <property name="severity" value="ignore" />
     </module>
-    <module name="JavadocStyle">
+    <module name="SummaryJavadoc">
       <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit" />
       <property name="severity" value="ignore" />
     </module>

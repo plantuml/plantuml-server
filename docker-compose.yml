@@ -1,11 +1,9 @@
-version: '3.3'
-
 services:
   plantuml-server:
     build:
       context: .
       dockerfile: Dockerfile.jetty
-    image: plantuml/plantuml-server:jetty-local
+    image: plantuml/plantuml-server:jetty
     container_name: plantuml-server
     ports:
       - 8080:8080

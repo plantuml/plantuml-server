@@ -11,3 +11,5 @@ out/
 *.iml
 *.ipr
 *.iws
+build
+.gradle

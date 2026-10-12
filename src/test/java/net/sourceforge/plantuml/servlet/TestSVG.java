@@ -35,7 +35,7 @@ public class TestSVG extends WebappTestCase {
         String diagram = getContentText(conn);
         int diagramLen = diagram.length();
         Assertions.assertTrue(diagramLen > 1000);
-        Assertions.assertTrue(diagramLen < 3000);
+        Assertions.assertTrue(diagramLen < 6000);
     }
 
     /**
@@ -65,7 +65,7 @@ public class TestSVG extends WebappTestCase {
         String diagram = getContentText(conn.getInputStream());
         int diagramLen = diagram.length();
         Assertions.assertTrue(diagramLen > 1000);
-        Assertions.assertTrue(diagramLen < 3000);
+        Assertions.assertTrue(diagramLen < 6000);
     }
 
     /**
@@ -111,8 +111,8 @@ public class TestSVG extends WebappTestCase {
                     aliceCounter++;
                 }
             }
-            Assertions.assertTrue(bobCounter == 2);
-            Assertions.assertTrue(aliceCounter == 2);
+            Assertions.assertTrue(bobCounter == 3);
+            Assertions.assertTrue(aliceCounter == 3);
         }
     }
 

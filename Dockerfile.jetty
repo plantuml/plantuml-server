@@ -1,4 +1,4 @@
-FROM maven:3-eclipse-temurin-11 AS builder
+FROM maven:3-eclipse-temurin-17 AS builder
 
 COPY pom.xml pom.parent.xml /app/
 COPY src/main /app/src/main/
@@ -8,12 +8,14 @@ RUN mvn --batch-mode --define java.net.useSystemProxies=true package
 
 ########################################################################################
 
-FROM jetty:11.0.15-jre11
+FROM jetty:12.1.6-jdk21-eclipse-temurin
+
+RUN java -jar "$JETTY_HOME/start.jar" --add-modules=ee11-deploy,ee11-annotations,ee11-jsp,ee11-jstl
 
 # Proxy and OldProxy need empty path segments support in URIs
 # Hence: allow AMBIGUOUS_EMPTY_SEGMENT
 # Changes are only active if `/generate-jetty-start.sh` is called!
-RUN sed -i 's/# jetty\.httpConfig\.uriCompliance=DEFAULT/jetty.httpConfig.uriCompliance=DEFAULT,AMBIGUOUS_EMPTY_SEGMENT/g' /var/lib/jetty/start.d/server.ini
+RUN echo "jetty.httpConfig.uriCompliance=DEFAULT,AMBIGUOUS_EMPTY_SEGMENT" >> /var/lib/jetty/start.d/server.ini
 
 USER root
 
@@ -26,8 +28,8 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* && \
     /generate-jetty-start.sh
 
+ARG GRAPHVIZ_VERSION=14.0.1
 # Build Graphviz from source because there are no binary distributions for recent versions
-ARG GRAPHVIZ_VERSION
 ARG GRAPHVIZ_BUILD_DIR=/tmp/graphiz-build
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -39,7 +41,6 @@ RUN apt-get update && \
         && \
     mkdir -p $GRAPHVIZ_BUILD_DIR && \
     cd $GRAPHVIZ_BUILD_DIR && \
-    GRAPHVIZ_VERSION=${GRAPHVIZ_VERSION:-$(curl -s https://gitlab.com/api/v4/projects/4207231/releases/ | jq -r '.[] | .name' | sort -V -r | head -1)} && \
     curl -o graphviz.tar.gz https://gitlab.com/api/v4/projects/4207231/packages/generic/graphviz-releases/${GRAPHVIZ_VERSION}/graphviz-${GRAPHVIZ_VERSION}.tar.gz && \
     tar -xzf graphviz.tar.gz && \
     cd graphviz-$GRAPHVIZ_VERSION && \

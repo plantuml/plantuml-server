@@ -2,14 +2,14 @@ package net.sourceforge.plantuml.servlet.server;
 
 import java.util.EnumSet;
 
+import org.eclipse.jetty.ee11.webapp.WebAppContext;
 import org.eclipse.jetty.http.UriCompliance;
 import org.eclipse.jetty.http.UriCompliance.Violation;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.DefaultHandler;
-import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.webapp.WebAppContext;
 
 public class EmbeddedJettyServer implements ServerUtils {
 
@@ -30,20 +30,19 @@ public class EmbeddedJettyServer implements ServerUtils {
         server.addConnector(connector);
 
         // PlantUML server web application
-        WebAppContext context = new WebAppContext(server, "src/main/webapp", EmbeddedJettyServer.contextPath);
+        WebAppContext context = new WebAppContext("src/main/webapp", EmbeddedJettyServer.contextPath);
         context.addVirtualHosts(virtualHosts);
 
         // Add static webjars resource files
         // The maven-dependency-plugin in the pom.xml provides these files.
         WebAppContext res = new WebAppContext(
-            server,
             "target/classes/META-INF/resources/webjars",
             EmbeddedJettyServer.contextPath + "/webjars"
         );
         res.addVirtualHosts(virtualHosts);
 
         // Create server handler
-        HandlerList handlers = new HandlerList();
+        Handler.Sequence handlers = new Handler.Sequence();
         handlers.addHandler(res);                   // provides: /plantuml/webjars
         handlers.addHandler(context);               // provides: /plantuml
         handlers.addHandler(new DefaultHandler());  // provides: /

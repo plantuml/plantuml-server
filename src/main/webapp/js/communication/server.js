@@ -7,7 +7,10 @@ function makeRequest(
   url,
   {
     data = null,
-    headers = { "Content-Type": "text/plain" },
+    headers = {
+      "Content-Type": "text/plain",
+      "X-Preferred-Color-Mapper": document.appConfig.umlColorMapper,
+    },
     responseType = "text",
     baseUrl = "",
   } = {}

@@ -37,13 +37,13 @@ To know more about PlantUML, please visit https://plantuml.com.
 
 ## Requirements
 
-- jre/jdk 11 or above
+- jre/jdk 17 or above
 - apache maven 3.0.2 or above
 
 ## Recommendations
 
-- Jetty 11 or above
-- Tomcat 10 or above
+- Jetty 12.1 or above
+- Tomcat 11 or above
 
 
 ## How to run the server
@@ -98,20 +98,7 @@ And run `docker-compose up`. This will start a modified version of the image usi
 
 You can apply some option to your PlantUML server with environment variable.
 
-If you run the directly the jar:
-```sh
-# NOTE: jetty-runner is deprecated.
-# build war file and jetty-runner
-mvn package
-# start directly
-# java $JVM_ARGS -jar jetty-runner.jar $JETTY_ARGS
-java -jar target/dependency/jetty-runner.jar --config src/main/config/jetty.xml --port 9999 --path /plantuml target/plantuml.war
-# see help for more possible options
-java -jar target/dependency/jetty-runner.jar --help
-```
-Note: `--config src/main/config/jetty.xml` is only necessary if you need support for empty path segments in URLs (e.g. for the old proxy)
-
-Alternatively, start over maven and pass the option with `-D` flag
+If you're using the `jetty` Maven plugin, use the -D` flag to pass environment variables:
 ```sh
 mvn jetty:run -D THE_ENV_VARIABLE=THE_ENV_VALUE -Djetty.http.port=9999
 ```
@@ -136,7 +123,7 @@ You can set all  the following variables:
   * Default value: `INTERNET`
 * `PLANTUML_PROPERTY_FILE`
   * Set PlantUML system properties (like over the Java command line using the `-Dpropertyname=value` syntax).
-  * To see what kind of file content is supported, see the documentation of [`java.util.Properties.load`](https://docs.oracle.com/javase/8/docs/api/java/util/Properties.html#load-java.io.Reader-).
+  * To see what kind of file content is supported, see the documentation of [`java.util.Properties.load`](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Properties.html#load(java.io.Reader)).
   * Default value: `null`
 * `PLANTUML_CONFIG_FILE`
   * Local path to a PlantUML configuration file (identical to the `-config` flag on the CLI)
@@ -183,11 +170,6 @@ NOTE: If you want that the generated war includes the `apache-jsp` artifact run:
 mvn package -Dapache-jsp.scope=compile
 ```
 
-If you want to generate the war with java 8 as target just remove the src/test directory and use `pom.jdk8.xml`.
-```sh
-rm -rf src/test
-mvn package -f pom.jdk8.xml [-Dapache-jsp.scope=compile]
-```
 
 ## Use with reverse-proxy
 
