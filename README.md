@@ -119,6 +119,7 @@ You can set all  the following variables:
     * `plantuml.allowlist.path`
     * `plantuml.include.path`
     * `plantuml.allowlist.url`
+  * With `SANDBOX`, the `proxy` and `metadata` endpoints and `uml?metadata=` are disabled (no remote URL access).
   * It is strongly advised **not** to set the `PLANTUML_SECURITY_PROFILE` below `INTERNET`!
   * Default value: `INTERNET`
 * `PLANTUML_PROPERTY_FILE`
@@ -141,6 +142,9 @@ You can set all  the following variables:
 * `HTTP_PROXY_READ_TIMEOUT`
   * when calling the `proxy` endpoint, the value of `HTTP_PROXY_READ_TIMEOUT` will be the connection read timeout in milliseconds
   * Default value: `10000` (10 seconds)
+* `PLANTUML_ALLOW_PRIVATE_URLS`
+  * by default the `proxy`, `metadata` and `uml?metadata=` endpoints refuse hosts resolving to loopback, private, link-local or otherwise non-public addresses; set it to `true` to allow them
+  * Default value: `false`
 
 
 ## Alternate: How to build your docker image

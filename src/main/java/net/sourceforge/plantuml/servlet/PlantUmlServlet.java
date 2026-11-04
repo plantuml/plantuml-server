@@ -25,9 +25,7 @@ package net.sourceforge.plantuml.servlet;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import javax.net.ssl.HttpsURLConnection;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -199,11 +197,15 @@ public class PlantUmlServlet extends AsciiCoderServlet {
         // 2. metadata
         String metadata = request.getParameter("metadata");
         if (metadata != null) {
-            try (InputStream img = getImage(new URL(metadata))) {
-                MetadataTag metadataTag = new MetadataTag(img, "plantuml");
-                String data = metadataTag.getData();
-                if (data != null) {
-                    return data;
+            // same URL validation as the proxy servlet (SSRF protection); invalid URLs are ignored
+            final URL metadataUrl = ProxyServlet.validateURL(metadata, null);
+            if (metadataUrl != null) {
+                try (InputStream img = getImage(metadataUrl)) {
+                    MetadataTag metadataTag = new MetadataTag(img, "plantuml");
+                    String data = metadataTag.getData();
+                    if (data != null) {
+                        return data;
+                    }
                 }
             }
         }
@@ -301,31 +303,6 @@ public class PlantUmlServlet extends AsciiCoderServlet {
     }
 
     /**
-     * Get open http connection from URL.
-     *
-     * @param url URL to open connection
-     *
-     * @return open http connection
-     *
-     * @throws IOException if an input or output exception occurred
-     */
-    private static HttpURLConnection getConnection(URL url) throws IOException {
-        if (url.getProtocol().startsWith("https")) {
-            HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
-            con.setReadTimeout(10000); // 10 seconds
-            con.connect();
-            return con;
-        } else {
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
-            con.setReadTimeout(10000); // 10 seconds
-            con.connect();
-            return con;
-        }
-    }
-
-    /**
      * Get image input stream from URL.
      *
      * @param url URL to open connection
@@ -335,10 +312,8 @@ public class PlantUmlServlet extends AsciiCoderServlet {
      * @throws IOException if an input or output exception occurred
      */
     private static InputStream getImage(URL url) throws IOException {
-        InputStream is = null;
-        HttpURLConnection con = getConnection(url);
-        is = con.getInputStream();
-        return is;
+        // resolves and checks the host once, validates redirects (SSRF protection)
+        return SafeHttpClient.get(url, null, 10000).getInputStream(); // 10 seconds
     }
 
 }

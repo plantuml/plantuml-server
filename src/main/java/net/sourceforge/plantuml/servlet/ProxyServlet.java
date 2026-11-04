@@ -26,9 +26,11 @@ package net.sourceforge.plantuml.servlet;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
+import java.net.Inet6Address;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.stream.Collectors;
 
 import javax.imageio.IIOException;
@@ -58,7 +60,7 @@ public class ProxyServlet extends HttpServlet {
         if (full.startsWith("https://") == false && full.startsWith("http://") == false) {
             return true;
         }
-        if (full.matches("^https?://[-#.0-9:\\[\\]+]+/.*")) {
+        if (full.matches("^https?://[-#.0-9:\\[\\]+]+([/?].*)?$")) {
             return true;
         }
         if (full.matches("^https?://[^.]+/.*")) {
@@ -90,6 +92,13 @@ public class ProxyServlet extends HttpServlet {
             }
             return null;
         }
+        // The SANDBOX security profile does not allow any remote URL access
+        if (isRemoteAccessDisabled()) {
+            if (response != null) {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Remote URL access is disabled.");
+            }
+            return null;
+        }
         // Check if URL is in a forbidden format (e.g. IP-Address)
         if (forbiddenURL(url)) {
             if (response != null) {
@@ -97,7 +106,81 @@ public class ProxyServlet extends HttpServlet {
             }
             return null;
         }
+        // Check that the host does not resolve to an internal address (SSRF protection)
+        if (resolvesToForbiddenAddress(parsedUrl.getHost())) {
+            if (response != null) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Forbidden URL host.");
+            }
+            return null;
+        }
         return parsedUrl;
+    }
+
+    /**
+     * Whether the security profile ({@code PLANTUML_SECURITY_PROFILE}, environment variable
+     * or system property) forbids any remote URL access: this is the case of {@code SANDBOX}.
+     */
+    static boolean isRemoteAccessDisabled() {
+        return "SANDBOX".equalsIgnoreCase(String.valueOf(System.getenv("PLANTUML_SECURITY_PROFILE")).trim())
+            || "SANDBOX".equalsIgnoreCase(String.valueOf(System.getProperty("PLANTUML_SECURITY_PROFILE")).trim());
+    }
+
+    /**
+     * Whether internal addresses are allowed (environment variable or system property
+     * {@code PLANTUML_ALLOW_PRIVATE_URLS}); intended for tests and trusted deployments only.
+     */
+    static boolean allowPrivateUrls() {
+        return "true".equalsIgnoreCase(System.getenv("PLANTUML_ALLOW_PRIVATE_URLS"))
+            || "true".equalsIgnoreCase(System.getProperty("PLANTUML_ALLOW_PRIVATE_URLS"));
+    }
+
+    /**
+     * Resolve the host name and check every resulting address.
+     *
+     * @param host host name of the URL
+     *
+     * @return {@code true} if the host cannot be resolved or if any of its addresses is not public
+     */
+    static boolean resolvesToForbiddenAddress(final String host) {
+        if (allowPrivateUrls()) {
+            return false;
+        }
+        if (host == null || host.isEmpty()) {
+            return true;
+        }
+        try {
+            for (final InetAddress address : InetAddress.getAllByName(host)) {
+                if (isForbiddenAddress(address)) {
+                    return true;
+                }
+            }
+        } catch (UnknownHostException e) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Whether the address is loopback, wildcard, link-local (e.g. cloud metadata), private,
+     * multicast, carrier-grade NAT, unique-local IPv6 or an IPv4-mapped/compatible form of those.
+     */
+    static boolean isForbiddenAddress(final InetAddress address) {
+        if (address.isAnyLocalAddress() || address.isLoopbackAddress() || address.isLinkLocalAddress()
+            || address.isSiteLocalAddress() || address.isMulticastAddress()) {
+            return true;
+        }
+        final byte[] b = address.getAddress();
+        if (address instanceof Inet6Address) {
+            // unique local addresses fc00::/7
+            return (b[0] & 0xFE) == 0xFC;
+        }
+        final int b0 = b[0] & 0xFF;
+        final int b1 = b[1] & 0xFF;
+        return b0 == 0                             // 0.0.0.0/8
+            || (b0 == 100 && b1 >= 64 && b1 <= 127) // 100.64.0.0/10 carrier-grade NAT
+            || (b0 == 192 && b1 == 0 && (b[2] & 0xFF) == 0) // 192.0.0.0/24
+            || (b0 == 198 && (b1 == 18 || b1 == 19)) // 198.18.0.0/15 benchmarking
+            || b0 >= 240;                          // reserved + broadcast
     }
 
     @Override
@@ -140,8 +223,8 @@ public class ProxyServlet extends HttpServlet {
      * @throws IOException if an input or output exception occurred
      */
     private String getSource(final URL url) throws IOException {
-        HttpURLConnection conn = getConnection(url);
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+        try (SafeHttpClient.Response response = fetch(url);
+             BufferedReader br = new BufferedReader(new InputStreamReader(response.getInputStream()))) {
             return br.lines().collect(Collectors.joining("\n"));
         }
     }
@@ -171,28 +254,25 @@ public class ProxyServlet extends HttpServlet {
     }
 
     /**
-     * Get open http connection from URL.
+     * Fetch a URL (GET).
+     * The host is resolved and checked once and the connection is opened on the checked address
+     * (protection against DNS rebinding); redirects are followed manually and checked again.
+     * See {@link SafeHttpClient}.
      *
-     * @param url URL to open connection
+     * @param url URL to fetch
      *
-     * @return open http connection
+     * @return response; the caller has to close it
      *
      * @throws IOException if an input or output exception occurred
+     *                     or if the URL or a redirect points to a forbidden target
      */
-    public static HttpURLConnection getConnection(final URL url) throws IOException {
-        final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
-        String token = System.getenv("HTTP_AUTHORIZATION");
-        if (token != null) {
-            conn.setRequestProperty("Authorization", token);
-        }
+    static SafeHttpClient.Response fetch(final URL url) throws IOException {
+        final String token = System.getenv("HTTP_AUTHORIZATION");
         final String timeoutString = System.getenv("HTTP_PROXY_READ_TIMEOUT");
         int timeout = 10000; // 10 seconds as default
         if (timeoutString != null && timeoutString.matches("^\\d+$")) {
             timeout = Integer.parseInt(timeoutString);
         }
-        conn.setReadTimeout(timeout);
-        conn.connect();
-        return conn;
+        return SafeHttpClient.get(url, token, timeout);
     }
 }

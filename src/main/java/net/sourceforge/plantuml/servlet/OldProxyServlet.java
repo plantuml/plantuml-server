@@ -25,7 +25,6 @@ package net.sourceforge.plantuml.servlet;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.regex.Matcher;
@@ -68,12 +67,12 @@ public class OldProxyServlet extends HttpServlet {
         String num = proxyMatcher.group(2); // Optional number of the diagram source
         String format = proxyMatcher.group(4); // Expected format of the generated diagram
         String sourceURL = proxyMatcher.group(5);
-        if (ProxyServlet.forbiddenURL(sourceURL)) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Forbidden URL format.");
-            return;
+        final URL sourceUrl = ProxyServlet.validateURL(sourceURL, response);
+        if (sourceUrl == null) {
+            return;  // error is already set/handled inside `validateURL`
         }
 
-        handleImageProxy(response, num, format, sourceURL);
+        handleImageProxy(response, num, format, sourceUrl);
     }
 
     /**
@@ -82,7 +81,7 @@ public class OldProxyServlet extends HttpServlet {
      * @param response http response
      * @param num image number/index of uml {@code source}
      * @param format file format name
-     * @param source diagram source URL
+     * @param source diagram source URL (already validated)
      *
      * @throws IOException if an input or output exception occurred
      */
@@ -90,7 +89,7 @@ public class OldProxyServlet extends HttpServlet {
         HttpServletResponse response,
         String num,
         String format,
-        String source
+        URL source
     ) throws IOException {
         SourceStringReader reader = new SourceStringReader(getSource(source));
         int n = num == null ? 0 : Integer.parseInt(num);
@@ -103,17 +102,16 @@ public class OldProxyServlet extends HttpServlet {
     /**
      * Get textual diagram source from URL.
      *
-     * @param uri diagram source URL
+     * @param url diagram source URL
      *
      * @return textual diagram source
      *
      * @throws IOException if an input or output exception occurred
      */
-    private String getSource(final String uri) throws IOException {
-        final URL url = new URL(uri);
+    private String getSource(final URL url) throws IOException {
         try (
-            InputStream responseStream = url.openStream();
-            InputStreamReader isr = new InputStreamReader(responseStream);
+            SafeHttpClient.Response remote = SafeHttpClient.get(url, null, 10000); // 10 seconds
+            InputStreamReader isr = new InputStreamReader(remote.getInputStream());
             BufferedReader br = new BufferedReader(isr);
         ) {
             String line;

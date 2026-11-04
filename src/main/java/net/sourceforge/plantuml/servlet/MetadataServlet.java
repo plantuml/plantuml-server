@@ -27,7 +27,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.logging.Level;
@@ -65,9 +64,9 @@ public class MetadataServlet extends HttpServlet {
             return;  // error is already set/handled inside `validateURL`
         }
         // fetch image via URL and extract meta data from it
-        final HttpURLConnection conn = ProxyServlet.getConnection(url);
-        try (InputStream is = conn.getInputStream()) {
-            handleRequest(request, response, is, conn.getContentType(), null);
+        try (SafeHttpClient.Response remote = ProxyServlet.fetch(url);
+             InputStream is = remote.getInputStream()) {
+            handleRequest(request, response, is, remote.getContentType(), null);
         }
     }
 

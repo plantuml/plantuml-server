@@ -66,6 +66,9 @@ jobs:
 
       - name: Run tests against jetty embedded server
         run: mvn --batch-mode clean test -DskipTests=false -Dgroups=\!graphviz-test
+        env:
+          # the tests fetch their resources from the local test server (see ProxyServlet SSRF protection)
+          PLANTUML_ALLOW_PRIVATE_URLS: "true"
 
   test-mvn-jetty-run:
     runs-on: ubuntu-latest
@@ -90,6 +93,8 @@ jobs:
 
       - name: Start jetty server over maven
         run: mvn --batch-mode jetty:run &
+        env:
+          PLANTUML_ALLOW_PRIVATE_URLS: "true"
 
       - name: Wait 20 seconds (to let maven start the jetty server)
         run: sleep 20s
@@ -121,7 +126,7 @@ jobs:
       - name: Build the jetty docker stack
         run: |
           docker image build -f Dockerfile.jetty -t plantuml-server:local .
-          docker run -d --hostname=test.localhost -p 8080:8080 -e BASE_URL=plantuml plantuml-server:local
+          docker run -d --hostname=test.localhost -p 8080:8080 -e BASE_URL=plantuml -e PLANTUML_ALLOW_PRIVATE_URLS=true plantuml-server:local
 
       - name: Check running containers
         run: docker ps
@@ -153,7 +158,7 @@ jobs:
       - name: Build the tomcat docker stack
         run: |
           docker image build -f Dockerfile.tomcat -t plantuml-server:local .
-          docker run -d --hostname=test.localhost -p 8080:8080 -e BASE_URL=plantuml plantuml-server:local
+          docker run -d --hostname=test.localhost -p 8080:8080 -e BASE_URL=plantuml -e PLANTUML_ALLOW_PRIVATE_URLS=true plantuml-server:local
 
       - name: Check running containers
         run: docker ps

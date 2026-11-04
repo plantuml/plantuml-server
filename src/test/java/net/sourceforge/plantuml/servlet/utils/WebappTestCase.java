@@ -26,6 +26,8 @@ public abstract class WebappTestCase {
     }
 
     public WebappTestCase(String name) {
+        // tests fetch their resources from the local test server
+        System.setProperty("PLANTUML_ALLOW_PRIVATE_URLS", "true");
         String uri = System.getProperty("system.test.server", "");
         if (!uri.isEmpty()) {
             // mvn test -DskipTests=false -DargLine="-Dsystem.test.server=http://localhost:8080/plantuml"
