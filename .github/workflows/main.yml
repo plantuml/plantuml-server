@@ -147,7 +147,8 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: "zulu"
-          java-version: 17
+          # JDK 21+ required: versions-maven-plugin loads the Tycho 5 p2 extension (class file 65)
+          java-version: 21
           check-latest: true
           cache: "maven"
 
